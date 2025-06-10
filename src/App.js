@@ -1,25 +1,1484 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import * as THREE from 'three';
+import logo from './assets/logobabes.png';
+
+const GlobalCSS = `
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+    :root {
+      --primary-color: #fff;
+      --secondary-color: #000;
+      --accent-color: #fff;
+      --accent-color-rgb: 255, 255, 255;
+      --bg-color: #050505;
+    }
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Space Grotesk', sans-serif;
+        color: var(--primary-color);
+    }
+    body {
+        background-color: var(--bg-color);
+        overflow-x: hidden;
+        min-height: 100vh;
+        cursor: none;
+    }
+    body.modal-open {
+        overflow: hidden;
+    }
+    .gradient-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: radial-gradient(
+        600px circle at var(--mouse-x) var(--mouse-y),
+        rgba(255, 255, 255, 0.08),
+        transparent 80%
+      );
+      z-index: -2;
+      transition: background 0.2s linear;
+    }
+    #bg-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+    }
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+    header {
+        position: fixed;
+        top: 20px;
+        left: 0;
+        width: 100%;
+        z-index: 10;
+        display: flex;
+        justify-content: center;
+        transition: top 0.3s ease-in-out;
+    }
+    nav {
+        display: flex;
+        align-items: center;
+        background: rgba(30, 30, 30, 0.6);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 99px;
+        padding: 8px 15px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        transition: all 0.3s ease-in-out;
+    }
+    .logo img {
+        width: 130px;
+        height: 52px;
+        transition: transform 0.4s ease-in-out;
+    }
+    .logo img:hover {
+        transform: scale(1.08) rotate(-2deg);
+    }
+    .nav-links {
+        display: flex;
+        gap: 30px;
+        margin-left: 25px;
+    }
+    .nav-links a {
+        text-decoration: none;
+        font-size: 14px;
+        text-transform: uppercase;
+        position: relative;
+        transition: color 0.3s ease, transform 0.3s ease;
+        padding: 5px 0;
+        cursor: none;
+    }
+    .nav-links a::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: -2px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--accent-color);
+        transition: width 0.4s ease-in-out;
+    }
+    .nav-links a:hover {
+        color: var(--accent-color);
+        transform: translateY(-2px);
+    }
+    .nav-links a:hover::after {
+        width: 100%;
+    }
+    .mobile-menu-btn {
+        display: none;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        font-size: 24px;
+        padding: 0 15px;
+    }
+    .mobile-nav {
+        display: none;
+        position: fixed;
+        top: 100px;
+        left: 0;
+        width: 100%;
+        background: rgba(0, 0, 0, 0.95);
+        padding: 20px;
+        flex-direction: column;
+        gap: 20px;
+        z-index: 9;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .mobile-nav a {
+        text-decoration: none;
+        font-size: 16px;
+        text-transform: uppercase;
+        color: #fff;
+        transition: color 0.3s ease;
+    }
+    .mobile-nav a:hover {
+        color: var(--accent-color);
+    }
+    .page {
+        min-height: 100vh;
+        padding: 150px 0 100px;
+        position: relative;
+        z-index: 2;
+    }
+    .hero {
+        display: flex;
+        align-items: center;
+        position: relative;
+        z-index: 2;
+    }
+    .hero-content {
+        max-width: 600px;
+        margin-right: auto;
+    }
+    h1 {
+        font-size: 100px;
+        font-weight: 700;
+        line-height: 1;
+        text-transform: uppercase;
+        transition: transform 0.5s ease, text-shadow 0.5s ease;
+        text-shadow: 0 0 20px rgba(var(--accent-color-rgb), 0.2);
+    }
+    h1:hover {
+        transform: scale(1.03);
+        text-shadow: 0 0 30px rgba(var(--accent-color-rgb), 0.5);
+    }
+    h1 span {
+        border-bottom: 5px solid var(--accent-color);
+        color: var(--accent-color);
+    }
+    .tagline {
+        font-size: 28px;
+        margin: 20px 0 40px;
+        opacity: 0.9;
+        transition: opacity 0.3s ease, letter-spacing 0.3s ease;
+    }
+    .tagline:hover {
+        opacity: 1;
+        letter-spacing: 1px;
+    }
+    .description {
+        font-size: 18px;
+        line-height: 1.8;
+        opacity: 0.8;
+        max-width: 600px;
+    }
+    .buttons {
+        display: flex;
+        gap: 25px;
+        margin-top: 40px;
+    }
+    .btn {
+        padding: 15px 35px;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        text-transform: uppercase;
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+    }
+    #host-btn {
+      background: #fff;
+      color: #000;
+      border: 1px solid #fff;
+    }
+    #host-btn:hover {
+      background: transparent;
+      color: #fff;
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+    }
+    #gig-btn {
+      background: #fff;
+      color: #000;
+      border: 1px solid #fff;
+    }
+    #gig-btn:hover {
+      background: transparent;
+      color: #fff;
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+    }
+    .section-title {
+        font-size: 48px;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 80px;
+        text-transform: uppercase;
+        transition: letter-spacing 0.3s ease, text-shadow 0.3s ease;
+        position: relative;
+        display: inline-block;
+        color: #fff;
+    }
+    .section-title:after {
+        content: '';
+        position: absolute;
+        bottom: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: var(--accent-color);
+        border-radius: 2px;
+        transition: width 0.4s ease-in-out;
+    }
+    .section-title:hover:after {
+        width: 100%;
+    }
+    .section-title:hover {
+        letter-spacing: 3px;
+        text-shadow: 0 0 15px rgba(var(--accent-color-rgb), 0.4);
+    }
+    .title-container {
+        text-align: center;
+        margin-bottom: 80px;
+    }
+    .feature-grid, .customer-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 50px;
+    }
+    .card {
+        background: rgba(30, 30, 30, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 40px;
+        border-radius: 12px;
+        transition: all 0.4s ease-in-out;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    .card.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    .card:hover {
+        transform: translateY(-15px) scale(1.03);
+        background: rgba(40, 40, 40, 0.7);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .card-icon {
+        font-size: 40px;
+        margin-bottom: 25px;
+        display: inline-block;
+        transition: transform 0.4s ease-in-out;
+    }
+    .card:hover .card-icon {
+        transform: scale(1.2) rotate(10deg);
+    }
+    .card-title {
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+    .card-desc {
+        font-size: 16px;
+        line-height: 1.8;
+        opacity: 0.8;
+    }
+    footer {
+        padding: 80px 0 40px;
+        background: rgba(10, 10, 10, 0.8);
+        position: relative;
+        z-index: 2;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        overflow: hidden;
+    }
+    .footer-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 20px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 40px;
+        position: relative;
+    }
+    .footer-company {
+        position: relative;
+    }
+    .footer-company h3 {
+        font-size: 28px;
+        margin-bottom: 20px;
+        white-space: nowrap;
+        color: var(--accent-color);
+    }
+    .footer-company p {
+        opacity: 0.8;
+        margin-bottom: 30px;
+        line-height: 1.6;
+    }
+    .footer-links-group h4 {
+        font-size: 20px;
+        margin-bottom: 25px;
+        position: relative;
+        display: inline-block;
+    }
+    .footer-links-group h4::after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 50%;
+        height: 2px;
+        background: var(--accent-color);
+        transition: width 0.3s ease-in-out;
+    }
+    .footer-links-group:hover h4::after {
+        width: 100%;
+    }
+    .footer-links {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    .footer-links a {
+        text-decoration: none;
+        font-size: 16px;
+        opacity: 0.7;
+        transition: opacity 0.3s ease, color 0.3s ease, padding-left 0.3s ease;
+        cursor: pointer;
+    }
+    .footer-links a:hover {
+        opacity: 1;
+        color: var(--accent-color);
+        padding-left: 8px;
+    }
+    .footer-social {
+        display: flex;
+        gap: 20px;
+        margin-top: 30px;
+    }
+    .footer-social a {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        transition: all 0.3s ease-in-out;
+        text-decoration: none;
+        font-size: 20px;
+    }
+    .footer-social a:hover {
+        transform: scale(1.15) translateY(-3px);
+        box-shadow: 0 0 15px rgba(var(--accent-color-rgb),0.6);
+        background: var(--accent-color);
+        color: #000;
+    }
+    .copyright {
+        text-align: center;
+        font-size: 14px;
+        opacity: 0.6;
+        margin-top: 60px;
+        position: relative;
+        z-index: 1;
+    }
+    .steps {
+        margin: 60px 0;
+    }
+    .step {
+        display: flex;
+        margin-bottom: 50px;
+        position: relative;
+        opacity: 0;
+        transform: translateX(-50px);
+        transition: all 0.6s ease-in-out;
+    }
+    .step.visible {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    .step-number {
+        font-size: 120px;
+        font-weight: 700;
+        color: rgba(var(--accent-color-rgb), 0.2);
+        margin-right: 30px;
+        line-height: 1;
+        transition: color 0.3s ease-in-out;
+    }
+    .step:hover .step-number {
+        color: rgba(var(--accent-color-rgb), 0.4);
+    }
+    .step-content {
+        padding-top: 20px;
+    }
+    .step-title {
+        font-size: 28px;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+    .step-desc {
+        font-size: 18px;
+        line-height: 1.6;
+        max-width: 600px;
+    }
+    .step::after {
+        content: '';
+        position: absolute;
+        left: 25px;
+        top: 120px;
+        height: calc(100% - 60px);
+        width: 2px;
+        background: linear-gradient(to bottom, rgba(var(--accent-color-rgb), 0.3), transparent);
+    }
+    .step:last-child::after {
+        display: none;
+    }
+    .testimonials {
+        margin: 80px 0;
+    }
+    .testimonial {
+        padding: 40px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        margin-bottom: 40px;
+        position: relative;
+        background: rgba(30, 30, 30, 0.6);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-radius: 12px;
+        transition: all 0.3s ease-in-out;
+    }
+    .testimonial:hover {
+        transform: scale(1.02);
+        border-color: rgba(255, 255, 255, 0.2);
+    }
+    .testimonial-text {
+        font-size: 20px;
+        line-height: 1.6;
+        margin-bottom: 20px;
+        font-style: italic;
+        opacity: 0.9;
+    }
+    .testimonial-author {
+        display: flex;
+        align-items: center;
+    }
+    .author-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: var(--accent-color);
+        color: #000;
+        margin-right: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+    }
+    .author-name {
+        font-weight: 600;
+        font-size: 18px;
+    }
+    .author-role {
+        opacity: 0.7;
+        font-size: 14px;
+    }
+    .faq {
+        margin: 60px 0;
+    }
+    .faq-item {
+        margin-bottom: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        overflow: hidden;
+        transition: all 0.4s ease-in-out;
+        background: rgba(30, 30, 30, 0.6);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
+    .faq-item:hover {
+        border-color: rgba(255, 255, 255, 0.2);
+    }
+    .faq-question {
+        padding: 20px;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 18px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    .faq-question:hover {
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--accent-color);
+    }
+    .faq-question::after {
+        content: '+';
+        font-size: 24px;
+        transition: transform 0.3s ease-in-out;
+    }
+    .faq-question.active::after {
+        content: '-';
+        transform: rotate(180deg);
+    }
+    .faq-answer {
+        padding: 0 20px;
+        max-height: 0;
+        overflow: hidden;
+        transition: all 0.4s ease-in-out;
+    }
+    .faq-answer.active {
+        padding: 0 20px 20px;
+        max-height: 500px;
+    }
+    .faq-answer-content {
+        line-height: 1.6;
+        opacity: 0.8;
+    }
+    .cursor {
+        width: 25px;
+        height: 25px;
+        border: 2px solid #fff;
+        border-radius: 50%;
+        position: fixed;
+        pointer-events: none;
+        transform: translate(-50%, -50%);
+        z-index: 9999;
+        transition: width 0.2s ease, height 0.2s ease, border 0.2s ease, opacity 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+    }
+    .cursor-dot {
+        width: 6px;
+        height: 6px;
+        background: #fff;
+        border-radius: 50%;
+        position: fixed;
+        pointer-events: none;
+        transform: translate(-50%, -50%);
+        z-index: 9999;
+    }
+    .cursor.grow {
+      background-color: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+    .app-buttons {
+        display: flex;
+        gap: 25px;
+        margin-top: 40px;
+    }
+    .app-btn {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 15px 25px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease-in-out;
+        position: relative;
+        overflow: hidden;
+    }
+    .app-btn:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        border-color: rgba(var(--accent-color-rgb), 0.4);
+        background: rgba(var(--accent-color-rgb), 0.1);
+    }
+    .app-btn-icon {
+        font-size: 18px;
+    }
+    .app-btn-content {
+        display: flex;
+        flex-direction: column;
+    }
+    .app-btn-label {
+        font-size: 10px;
+        opacity: 0.8;
+    }
+    .app-btn-name {
+        font-size: 14px;
+        font-weight: 600;
+    }
+    .app-btn-tooltip {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        transform: translateY(100%);
+        transition: all 0.3s ease-in-out;
+        font-weight: 600;
+        text-align: center;
+        padding: 0 10px;
+        font-size: 12px;
+    }
+    .app-btn:hover .app-btn-tooltip {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 100;
+        backdrop-filter: blur(10px);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+    .modal.show {
+        opacity: 1;
+        visibility: visible;
+    }
+    .modal-content {
+        background: rgba(20, 20, 20, 0.8);
+        width: 90%;
+        max-width: 600px;
+        padding: 40px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border-radius: 12px;
+        position: relative;
+        animation: modalFadeIn 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+        opacity: 0;
+        transform: translateY(-30px) scale(0.95);
+        box-shadow: 0 0 50px rgba(var(--accent-color-rgb), 0.1);
+    }
+    .modal.show .modal-content {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    @keyframes modalFadeIn {
+        to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .modal-close {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-size: 28px;
+        cursor: pointer;
+        transition: transform 0.3s ease, color 0.3s ease;
+    }
+    .modal-close:hover {
+        transform: rotate(90deg) scale(1.2);
+        color: var(--accent-color);
+    }
+    .modal-title {
+        font-size: 36px;
+        margin-bottom: 20px;
+        text-transform: uppercase;
+        color: var(--accent-color);
+    }
+    .modal-subtitle {
+        font-size: 18px;
+        margin-bottom: 30px;
+        opacity: 0.8;
+    }
+    .feature-list {
+        margin-bottom: 30px;
+    }
+    .feature-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    .feature-icon {
+        margin-right: 15px;
+        font-size: 20px;
+        color: var(--accent-color);
+    }
+    .feature-text {
+        font-size: 16px;
+        line-height: 1.5;
+    }
+    .ripple {
+        position: fixed;
+        border-radius: 50%;
+        border: 2px solid rgba(var(--accent-color-rgb), 0.5);
+        background: transparent;
+        transform: scale(0);
+        animation: ripple 1s ease-out;
+        pointer-events: none;
+        z-index: 999;
+    }
+    @keyframes ripple {
+      to {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+    .growth-pattern {
+        position: absolute;
+        right: 50px;
+        top: 40%;
+        transform: translateY(-50%);
+        width: 350px;
+        height: 400px;
+        z-index: 3;
+    }
+    .growth-icon {
+        position: absolute;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 80px;
+        opacity: 0.9;
+        animation: float 4s ease-in-out infinite;
+        text-shadow: 0 0 25px currentColor, 0 0 10px rgba(255,255,255,0.4);
+    }
+    .growth-icon.rupee { top: 0; left: 150px; color: #fff; animation-delay: 0s; }
+    .growth-icon.growth { top: 150px; left: 50px; color: var(--accent-color); animation-delay: 1s; }
+    .growth-icon.chart { top: 300px; left: 200px; color: #fff; animation-delay: 2s; }
+    .growth-icon.network { top: 100px; left: 250px; color: #fff; animation-delay: 3s; }
+    @keyframes float {
+        0% { transform: translateY(0) rotate(0deg); }
+        50% { transform: translateY(-30px) rotate(5deg); }
+        100% { transform: translateY(0) rotate(0deg); }
+    }
+
+    @media (max-width: 768px) {
+        header {
+            top: 0;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        nav {
+            justify-content: space-between;
+            width: 100%;
+            background: none;
+            backdrop-filter: none;
+            border: none;
+            border-radius: 0;
+            padding: 0;
+            box-shadow: none;
+        }
+        h1 { font-size: 40px; line-height: 1.1; word-break: break-word; max-width: 100%; }
+        .tagline { font-size: 22px; }
+        .nav-links { display: none; }
+        .mobile-menu-btn { display: block; position: static; }
+        .mobile-nav.active { display: flex; }
+        .hero-content { max-width: 100%; padding: 0 10px; }
+        .logo img { width: 120px; height: 50px; }
+        .footer-container { text-align: center; }
+        .footer-social { justify-content: center; }
+        .footer-company h3 { font-size: 24px; }
+        .step { flex-direction: column; }
+        .step-number { font-size: 80px; margin-right: 0; margin-bottom: 10px; }
+        .step::after { display: none; }
+        .growth-pattern { display: none; }
+        .cursor, .cursor-dot { display: none; }
+        body { cursor: auto; }
+        .app-buttons { flex-direction: column; gap: 15px; }
+        .modal-content { padding: 30px; }
+        .modal-title { font-size: 28px; }
+        .buttons { flex-direction: column; }
+    }
+`;
+
+const useIntersectionObserver = (options) => {
+    const containerRef = useRef(null);
+    const [isVisible, setIsVisible] = useState(false);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver((entries) => {
+            const [entry] = entries;
+            if (entry.isIntersecting) {
+                setIsVisible(true);
+                if (containerRef.current) {
+                    observer.unobserve(containerRef.current);
+                }
+            }
+        }, options);
+        if (containerRef.current) observer.observe(containerRef.current);
+
+        return () => {
+            if (containerRef.current) {
+                observer.unobserve(containerRef.current);
+            }
+        };
+    }, [containerRef, options]);
+
+    return [containerRef, isVisible];
+};
+
+const ParticleBackground = () => {
+    const canvasRef = useRef(null);
+
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        const resizeCanvas = () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        };
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedX = Math.random() * 0.4 - 0.2;
+                this.speedY = Math.random() * 0.4 - 0.2;
+                this.opacity = Math.random() * 0.5 + 0.1;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x < 0 || this.x > canvas.width) this.speedX = -this.speedX;
+                if (this.y < 0 || this.y > canvas.height) this.speedY = -this.speedY;
+            }
+            draw() {
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        const initParticles = () => {
+            particles = [];
+            const particleCount = Math.min(100, Math.floor(canvas.width * canvas.height / 8000));
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+        initParticles();
+
+        let animationFrameId;
+        const animate = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            animationFrameId = requestAnimationFrame(animate);
+        };
+        animate();
+
+        const handleResize = () => {
+            resizeCanvas();
+            initParticles();
+        };
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+            cancelAnimationFrame(animationFrameId);
+        }
+    }, []);
+
+    return <canvas id="bg-canvas" ref={canvasRef}></canvas>;
+};
+
+const GradientBackground = () => {
+    useEffect(() => {
+        const updateMousePosition = (ev) => {
+            if (!document.body) return;
+            const { clientX, clientY } = ev;
+            document.body.style.setProperty('--mouse-x', `${clientX}px`);
+            document.body.style.setProperty('--mouse-y', `${clientY}px`);
+        };
+        window.addEventListener('mousemove', updateMousePosition);
+
+        return () => {
+            window.removeEventListener('mousemove', updateMousePosition);
+        }
+    }, []);
+    return <div className="gradient-bg"></div>;
+};
+
+const CustomCursor = () => {
+    const cursorRef = useRef(null);
+    const dotRef = useRef(null);
+    const [isHovering, setIsHovering] = useState(false);
+
+    const mouseX = useRef(window.innerWidth / 2);
+    const mouseY = useRef(window.innerHeight / 2);
+    const dotX = useRef(window.innerWidth / 2);
+    const dotY = useRef(window.innerHeight / 2);
+    const requestRef = useRef(null);
+
+    useEffect(() => {
+        const onMouseMove = (e) => {
+            mouseX.current = e.clientX;
+            mouseY.current = e.clientY;
+        };
+
+        const animate = () => {
+            const lagFactor = 5; 
+            
+            if (cursorRef.current) {
+                cursorRef.current.style.top = `${mouseY.current}px`;
+                cursorRef.current.style.left = `${mouseX.current}px`;
+            }
+
+            dotX.current += (mouseX.current - dotX.current) / lagFactor;
+            dotY.current += (mouseY.current - dotY.current) / lagFactor;
+            
+            if (dotRef.current) {
+                dotRef.current.style.top = `${dotY.current}px`;
+                dotRef.current.style.left = `${dotX.current}px`;
+            }
+            
+            requestRef.current = requestAnimationFrame(animate);
+        };
+        
+        animate();
+
+        const onMouseOver = (e) => {
+            if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON' || e.target.closest('a, button')) {
+                setIsHovering(true);
+            }
+        };
+
+        const onMouseOut = (e) => {
+             if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON' || e.target.closest('a, button')) {
+                setIsHovering(false);
+            }
+        };
+
+        window.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseover', onMouseOver);
+        document.addEventListener('mouseout', onMouseOut);
+
+        return () => {
+            window.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseover', onMouseOver);
+            document.removeEventListener('mouseout', onMouseOut);
+            cancelAnimationFrame(requestRef.current);
+        };
+    }, []);
+
+    return (
+        <>
+            <div ref={cursorRef} className={`cursor ${isHovering ? 'grow' : ''}`}></div>
+            <div ref={dotRef} className="cursor-dot"></div>
+        </>
+    );
+};
+
+const RippleEffect = () => {
+    const [ripples, setRipples] = useState([]);
+
+    useEffect(() => {
+        const handleClick = (e) => {
+            const newRipple = {
+                x: e.clientX,
+                y: e.clientY,
+                id: Date.now()
+            };
+            setRipples(current => [...current, newRipple]);
+
+            setTimeout(() => {
+                setRipples(current => current.filter(r => r.id !== newRipple.id));
+            }, 1000);
+        };
+        document.addEventListener('click', handleClick);
+        return () => document.removeEventListener('click', handleClick);
+    }, []);
+
+    return (
+        <>
+            {ripples.map(ripple => (
+                <div key={ripple.id} className="ripple" style={{ left: ripple.x, top: ripple.y }}></div>
+            ))}
+        </>
+    );
+};
+
+const Header = ({ onNavigate, activePage, onToggleMobileNav }) => {
+    const navItems = ['Home', 'Why Us', 'How It Works', 'Customers', 'FAQ'];
+    const pageIds = ['home-page', 'why-us-page', 'how-page', 'customers-page', 'faq-page'];
+    
+    const [logoSrc, setLogoSrc] = useState(logo);
+
+    return (
+        <header>
+            <nav>
+                <div className="logo">
+                    <img
+                        src={logoSrc}
+                        alt="KrewsUp Logo"
+                        onError={() => setLogoSrc('https://via.placeholder.com/150x60?text=KrewsUp')}
+                    />
+                </div>
+                <div className="nav-links">
+                    {navItems.map((item, index) => (
+                        <a
+                            key={item}
+                            href={`#${pageIds[index]}`}
+                            className={activePage === pageIds[index] ? 'active' : ''}
+                            onClick={(e) => { e.preventDefault(); onNavigate(pageIds[index]); }}
+                        >
+                            {item}
+                        </a>
+                    ))}
+                </div>
+                <button className="mobile-menu-btn" onClick={onToggleMobileNav}>☰</button>
+            </nav>
+            <MobileNav navItems={navItems} pageIds={pageIds} onNavigate={onNavigate} />
+        </header>
+    );
+};
+
+const MobileNav = ({ navItems, pageIds, onNavigate }) => {
+    return (
+        <div className="mobile-nav">
+            {navItems.map((item, index) => (
+                <a
+                    key={item}
+                    href={`#${pageIds[index]}`}
+                    onClick={(e) => { e.preventDefault(); onNavigate(pageIds[index]); }}
+                >
+                    {item}
+                </a>
+            ))}
+        </div>
+    );
+};
+
+const Modal = ({ id, title, subtitle, features, show, onClose }) => (
+    <div id={id} className={`modal ${show ? 'show' : ''}`} onClick={onClose}>
+        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <span className="modal-close" onClick={onClose}>×</span>
+            <h3 className="modal-title">{title}</h3>
+            {subtitle && <p className="modal-subtitle">{subtitle}</p>}
+            <div className="feature-list">
+                {features.map((feature, index) => (
+                    <div key={index} className="feature-item">
+                        {feature.icon && <span className="feature-icon">{feature.icon}</span>}
+                        <span className="feature-text">{feature.text}</span>
+                    </div>
+                ))}
+            </div>
+        </div>
+    </div>
+);
+
+const AnimatedCard = ({ children, className }) => {
+    const [ref, isVisible] = useIntersectionObserver({ threshold: 0.1 });
+    return (
+        <div ref={ref} className={`${className} ${isVisible ? 'visible' : ''}`}>
+            {children}
+        </div>
+    );
+};
+
+const FaqItem = ({ question, answer }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    return (
+        <div className="faq-item">
+            <div className={`faq-question ${isOpen ? 'active' : ''}`} onClick={() => setIsOpen(!isOpen)}>
+                {question}
+            </div>
+            <div className={`faq-answer ${isOpen ? 'active' : ''}`}>
+                <div className="faq-answer-content">{answer}</div>
+            </div>
+        </div>
+    );
+};
+
+const FooterThreeAnimation = () => {
+    const mountRef = useRef(null);
+
+    useEffect(() => {
+        const mount = mountRef.current;
+        if (!mount) return;
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, mount.clientWidth / mount.clientHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true });
+        renderer.setSize(mount.clientWidth, mount.clientHeight);
+        mount.appendChild(renderer.domElement);
+        camera.position.z = 35;
+    
+        const vertices = [];
+        const particleCount = 40;
+        for (let i = 0; i < particleCount; i++) {
+            vertices.push(
+                (Math.random() - 0.5) * 120,
+                (Math.random() - 0.5) * 25,
+                (Math.random() - 0.5) * 60
+            );
+        }
+        const geometry = new THREE.BufferGeometry();
+        geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+        const material = new THREE.PointsMaterial({ size: 0.8, color: 0xffffff, transparent: true, opacity: 0.25 });
+        const particles = new THREE.Points(geometry, material);
+        scene.add(particles);
+    
+        let frameId;
+        const animate = () => {
+            frameId = requestAnimationFrame(animate);
+            const positions = particles.geometry.attributes.position.array;
+            for (let i = 0; i < particleCount * 3; i += 3) {
+                positions[i + 1] = Math.sin(Date.now() * 0.001 + positions[i]) * 5;
+            }
+            particles.geometry.attributes.position.needsUpdate = true;
+            renderer.render(scene, camera);
+        };
+        animate();
+    
+        const onResize = () => {
+            if (!mount) return;
+            camera.aspect = mount.clientWidth / mount.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(mount.clientWidth, mount.clientHeight);
+        };
+        window.addEventListener('resize', onResize);
+    
+        return () => {
+            window.removeEventListener('resize', onResize);
+            cancelAnimationFrame(frameId);
+            if (mount.contains(renderer.domElement)) {
+                mount.removeChild(renderer.domElement);
+            }
+        };
+    }, []);
+    
+    return <div id="footer-three-container" ref={mountRef} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0 }} />;
+};
+
+const Footer = ({ onOpenModal }) => {
+  return (
+    <footer>
+      <FooterThreeAnimation />
+      <div className="footer-container">
+        <div className="footer-company">
+          <h3>KrewsUp Tech Pvt Ltd</h3>
+          <p>Empowering India's gig economy with innovative solutions</p>
+          <div className="footer-social">
+            <a href="#" className="twitter"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+            <a href="#" className="linkedin"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.067 0-1.14.92-2.066 2.063-2.066 1.14 0 2.066.926 2.066 2.066 0 1.141-.926 2.067-2.066 2.067zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+            <a href="#" className="instagram"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.703-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.072-1.689.072-4.948 0-3.259-.013-3.67-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
+          </div>
+        </div>
+        <div className="footer-links-group">
+          <h4>Contact</h4>
+          <div className="footer-links">
+            <a>raghav@krewsup.com</a>
+            <a>+91-8296058467</a>
+            <a>G2-401, Shriram Shreyas Apartments, Kodigehalli, Telecomlayout, Vidyaranyapura, Bangalore-560097, Karnataka, India</a>
+          </div>
+        </div>
+        <div className="footer-links-group">
+          <h4>Policies</h4>
+          <div className="footer-links">
+            <a onClick={() => onOpenModal('about')}>About Us</a>
+            <a onClick={() => onOpenModal('privacy')}>Privacy Policy</a>
+            <a onClick={() => onOpenModal('terms')}>Terms & Conditions</a>
+          </div>
+        </div>
+      </div>
+      <p className="copyright">© 2025 KrewsUp Technologies Private Limited.<br/> All Rights Reserved.</p>
+    </footer>
+  );
+};
+
+const HomePage = ({ onOpenModal }) => (
+    <section className="page">
+        <div className="hero">
+            <div className="hero-content">
+                <h1>Brew.<br />Your.<br /><span>Connections.</span></h1>
+                <p className="tagline">Bharat's Ultimate Gig Platform</p>
+                <p className="description">KrewsUp is revolutionizing the gig economy by creating a seamless bridge between talent and opportunity. We connect event hosts with skilled aspirants, ensuring fast payments, verified profiles, and limitless growth potential.</p>
+                <div className="buttons">
+                    <button className="btn" id="host-btn" onClick={() => onOpenModal('host')}>Host an Event</button>
+                    <button className="btn" id="gig-btn" onClick={() => onOpenModal('gig')}>Find a Gig</button>
+                </div>
+                <div className="app-buttons">
+                    <div className="app-btn">
+                        <div className="app-btn-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 22 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.09997 22C7.78997 22.05 6.79997 20.68 5.95997 19.47C4.24997 17 2.93997 12.45 4.69997 9.39C5.56997 7.87 7.12997 6.91 8.81997 6.88C10.1 6.86 11.32 7.75 12.11 7.75C12.89 7.75 14.37 6.68 15.92 6.84C16.57 6.87 18.39 7.1 19.56 8.82C19.47 8.88 17.39 10.1 17.41 12.63C17.44 15.65 20.06 16.66 20.09 16.67C20.06 16.74 19.67 18.11 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.09 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z" fill="white"/>
+                            </svg>
+                        </div>
+                        <div className="app-btn-content">
+                            <span className="app-btn-label">Download on the</span>
+                            <span className="app-btn-name">App Store</span>
+                        </div>
+                        <div className="app-btn-tooltip">Stay tight! We're still under development</div>
+                    </div>
+                    <div className="app-btn">
+                        <div className="app-btn-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M3.60938 3.15234C3.29688 3.48047 3.125 3.99609 3.125 4.67969V19.3203C3.125 20.0039 3.29688 20.5195 3.60938 20.8477L3.70312 20.9414L13.1016 11.543V11.4414L3.70312 2.05859L3.60938 3.15234Z" fill="white"/>
+                                <path d="M17.168 15.6094L13.1016 11.543V11.4414L17.168 7.37499L17.2852 7.44921L22.0117 10.0547C23.4023 10.8555 23.4023 12.1289 22.0117 12.9297L17.2852 15.5352L17.168 15.6094Z" fill="white"/>
+                                <path d="M17.2852 15.5352L13.1016 11.5L3.60938 20.8477C4.0625 21.3281 4.78125 21.3867 5.5625 20.9297L17.2852 15.5352Z" fill="white"/>
+                                <path d="M17.2852 7.44921L5.5625 2.05468C4.78125 1.59765 4.0625 1.65625 3.60938 2.14062L13.1016 11.5L17.2852 7.44921Z" fill="white"/>
+                            </svg>
+                        </div>
+                        <div className="app-btn-content">
+                            <span className="app-btn-label">GET IT ON</span>
+                            <span className="app-btn-name">Google Play</span>
+                        </div>
+                        <div className="app-btn-tooltip">Coming soon! We're working hard to launch</div>
+                    </div>
+                </div>
+            </div>
+            <div className="growth-pattern">
+              <div className="growth-icon rupee">₹</div>
+              <div className="growth-icon growth">📈</div>
+              <div className="growth-icon chart">📊</div>
+              <div className="growth-icon network">🌐</div>
+            </div>
+        </div>
+        <div className="testimonials">
+            <div className="testimonial">
+                <p className="testimonial-text">KrewsUp completely changed how we staff our events. In just a few clicks, we connect with reliable talent who are passionate and professional. The same-day payments keep everyone happy and coming back for more gigs.</p>
+                <div className="testimonial-author"><div className="author-avatar">A</div><div><div className="author-name">Arjun Mehta</div><div className="author-role">Event Director, BlinkEvents Pune</div></div></div>
+            </div>
+            <div className="testimonial">
+                <p className="testimonial-text">I love the flexibility KrewsUp offers. I can pick gigs that match my skills and schedule, and the quick payouts make it so much easier to manage my finances as a freelancer.</p>
+                <div className="testimonial-author"><div className="author-avatar">S</div><div><div className="author-name">Sneha Kapoor</div><div className="author-role">Freelance Photographer, Delhi</div></div></div>
+            </div>
+            <div className="testimonial">
+                <p className="testimonial-text">The verification process gave me confidence to hire through KrewsUp. Every technician we’ve worked with has been skilled and dependable, making our productions smoother than ever.</p>
+                <div className="testimonial-author"><div className="author-avatar">V</div><div><div className="author-name">Vikram Singh</div><div className="author-role">Producer, Mumbai Film Co.</div></div></div>
+            </div>
+            <div className="testimonial">
+                <p className="testimonial-text">KrewsUp’s platform is a lifesaver for small businesses like mine. I can quickly find staff for busy days, and the insurance coverage adds an extra layer of security.</p>
+                <div className="testimonial-author"><div className="author-avatar">N</div><div><div className="author-name">Neha Gupta</div><div className="author-role">Café Owner, Bangalore</div></div></div>
+            </div>
+        </div>
+    </section>
+);
+
+const WhyUsPage = () => {
+    const features = [
+        { icon: '⚡', title: 'Instant Gigs', desc: 'Find or post gigs in seconds. Our intelligent matching algorithm connects the right talent with the right opportunities based on skills, location, and availability.' },
+        { icon: '💸', title: 'Same-Day Payments', desc: 'Cash in your account within 24 hours of completing your gig. Our secure payment system ensures you get paid quickly with complete transparency.' },
+        { icon: '🔒', title: 'Verified Profiles', desc: 'Our rigorous verification process ensures every user is authentic and trustworthy. ID verification, skills assessment, and review systems maintain quality standards.' },
+        { icon: '🌐', title: 'Pan-India Network', desc: 'Active in 23 cities across India with plans to expand to 50+ by end of year. Find opportunities or talent anywhere in the country without geographical limitations.' },
+        { icon: '📱', title: 'Mobile-First Experience', desc: 'Our app-centric approach means you can manage your entire gig life from your smartphone. Real-time notifications, location services, and seamless communication.' },
+        { icon: '📊', title: 'Performance Analytics', desc: 'Access detailed insights about your gigs, earnings, and ratings. Track your growth, identify improvement areas, and showcase your experience effectively.' },
+        { icon: '🎯', title: 'Skill Development', desc: 'Enhance your professional skills through our curated workshops, mentorship programs, and performance feedback system to boost your career growth.' },
+        { icon: '🛡️', title: 'Insurance Coverage', desc: 'Every gig comes with basic insurance coverage for unforeseen circumstances, providing peace of mind for both hosts and talent.' },
+    ];
+    return (
+        <section className="page">
+            <div className="title-container"><h2 className="section-title">Why KrewsUp?</h2></div>
+            <div className="feature-grid">
+                {features.map(f => (
+                    <AnimatedCard key={f.title} className="card">
+                        <div className="card-icon">{f.icon}</div>
+                        <h3 className="card-title">{f.title}</h3>
+                        <p className="card-desc">{f.desc}</p>
+                    </AnimatedCard>
+                ))}
+            </div>
+        </section>
+    );
+};
+
+const HowItWorksPage = () => {
+    const steps = [
+        { num: '01', title: 'Create Your Profile', desc: 'Sign up and build your detailed profile showcasing your skills, experience, and availability. Complete verification to access premium gigs and increase your trustworthiness.' },
+        { num: '02', title: 'Find or Post Gigs', desc: 'Browse available opportunities or create your own gig listings with detailed requirements, location, timing, and compensation. Our algorithm matches the right talent with the right gigs.' },
+        { num: '03', title: 'Connect and Confirm', desc: 'Direct communication with potential matches, discuss details, and confirm arrangements through our secure platform. Clear expectations and documentation protect both parties.' },
+        { num: '04', title: 'Complete the Gig', desc: 'Show up, deliver exceptional service, and track your hours through our app\'s built-in time and location verification system. Get real-time feedback during the gig.' },
+        { num: '05', title: 'Get Paid & Review', desc: 'Receive payment within 24 hours of gig completion. Share your experience through our review system to help build the community\'s trust network and improve future matches.' },
+    ];
+    return (
+        <section className="page">
+            <div className="title-container"><h2 className="section-title">How It Works</h2></div>
+            <div className="steps">
+                {steps.map(s => (
+                    <AnimatedCard key={s.num} className="step">
+                        <div className="step-number">{s.num}</div>
+                        <div className="step-content">
+                            <h3 className="step-title">{s.title}</h3>
+                            <p className="step-desc">{s.desc}</p>
+                        </div>
+                    </AnimatedCard>
+                ))}
+            </div>
+        </section>
+    );
+};
+
+const CustomersPage = () => {
+    const customers = [
+        { icon: '🎭', title: 'Event Organizers', desc: 'From large corporate events to intimate gatherings, we provide reliable staff for all your needs including hosts, servers, technicians, and security personnel.' },
+        { icon: '🏢', title: 'Corporate Teams', desc: 'Scale your workforce during peak seasons or find specialists for short-term projects without lengthy recruitment processes or long-term commitments.' },
+        { icon: '🎬', title: 'Production Houses', desc: 'Access a diverse pool of creative talent from camera operators to makeup artists, ensuring your production runs smoothly with qualified professionals.' },
+        { icon: '🎓', title: 'Skilled Professionals', desc: 'Find flexible work opportunities that fit your schedule, showcase your talents, and expand your professional network while earning competitive wages.' },
+    ];
+    return (
+        <section className="page">
+            <div className="title-container"><h2 className="section-title">Our Customers</h2></div>
+            <div className="customer-grid">
+                {customers.map(c => (
+                    <AnimatedCard key={c.title} className="card">
+                        <div className="card-icon">{c.icon}</div>
+                        <h3 className="card-title">{c.title}</h3>
+                        <p className="card-desc">{c.desc}</p>
+                    </AnimatedCard>
+                ))}
+            </div>
+             <div className="testimonials">
+                <div className="testimonial">
+                    <p className="testimonial-text">As a college student, KrewsUp has been a game-changer for me. I can find weekend gigs that fit my schedule, gain real-world experience, and earn money without compromising my studies.</p>
+                    <div className="testimonial-author"><div className="author-avatar">P</div><div><div className="author-name">Priya Sharma</div><div className="author-role">Student & Part-time Event Coordinator</div></div></div>
+                </div>
+                <div className="testimonial">
+                    <p className="testimonial-text">Finding reliable staff for our restaurant during festival seasons was always a nightmare until we discovered KrewsUp. Now we can scale our team up or down based on demand with qualified professionals.</p>
+                    <div className="testimonial-author"><div className="author-avatar">R</div><div><div className="author-name">Rajan Patel</div><div className="author-role">Restaurant Owner, Mumbai</div></div></div>
+                </div>
+            </div>
+        </section>
+    );
+};
+
+const FAQPage = () => {
+    const faqs = [
+        { q: 'How do I sign up as a gig worker?', a: 'Simply download our app, create an account, verify your identity, and complete your profile with skills and experience. Once approved, you can start applying for gigs immediately.' },
+        { q: 'What types of gigs are available on KrewsUp?', a: 'We offer a wide range of opportunities including event staffing, hospitality, retail, promotions, entertainment, technical support, and creative services. New categories are added regularly based on market demand.' },
+        { q: 'How quickly will I get paid after completing a gig?', a: 'We process all payments within 24 hours of gig completion and confirmation. Funds are directly transferred to your linked bank account or digital wallet, making the process fast and hassle-free.' },
+        { q: 'Is there a fee for using KrewsUp?', a: 'Creating a basic profile is free. We charge a small service fee (5-10% depending on the gig type) only when a gig is successfully completed. Hosts pay a listing fee based on the size and complexity of their requirements.' },
+        { q: 'How does KrewsUp ensure quality and reliability?', a: 'We have a comprehensive verification process including ID verification, background checks for certain roles, skills assessment, and a robust review system. Poor performance is monitored and addressed promptly to maintain platform quality.' },
+    ];
+    return (
+        <section className="page">
+            <div className="title-container"><h2 className="section-title">Frequently Asked Questions</h2></div>
+            <div className="faq">
+                {faqs.map(faq => <FaqItem key={faq.q} question={faq.q} answer={faq.a} />)}
+            </div>
+        </section>
+    );
+};
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const [activePage, setActivePage] = useState('home-page');
+    const [openModal, setOpenModal] = useState(null);
+    
+    useEffect(() => {
+        if (openModal) {
+            document.body.classList.add('modal-open');
+        } else {
+            document.body.classList.remove('modal-open');
+        }
+    }, [openModal]);
+
+    const handleNavigate = (pageId) => {
+        setActivePage(pageId);
+        window.scrollTo(0, 0);
+        const mobileNav = document.querySelector('.mobile-nav');
+        if (mobileNav) mobileNav.classList.remove('active');
+    };
+    
+    const handleToggleMobileNav = () => {
+        document.querySelector('.mobile-nav')?.classList.toggle('active');
+    };
+
+    const handleOpenModal = (modalId) => setOpenModal(modalId);
+    const handleCloseModal = () => setOpenModal(null);
+    
+    const modalData = useMemo(() => ({
+        host: { id: 'host-modal', title: 'Host an Event', subtitle: 'Find the perfect team for your next event with KrewsUp', features: [
+            {icon: '✓', text: 'Access to thousands of verified professionals'}, {icon: '✓', text: 'Customized staffing solutions for any event size'},
+            {icon: '✓', text: 'Real-time tracking and communication'}, {icon: '✓', text: 'Secure payment processing'}, {icon: '✓', text: 'Satisfaction guarantee or money back'}
+        ] },
+        gig: { id: 'gig-modal', title: 'Find a Gig', subtitle: 'Turn your skills into income with flexible opportunities', features: [
+            {icon: '✓', text: 'Flexible schedule - work when you want'}, {icon: '✓', text: 'Same-day payments directly to your account'},
+            {icon: '✓', text: 'Build your portfolio and professional network'}, {icon: '✓', text: 'Skill development opportunities and workshops'}, {icon: '✓', text: 'Basic insurance coverage for all gigs'}
+        ] },
+        about: { id: 'about-modal', title: 'About Us', subtitle: 'What is KrewsUp?', features: [
+            {text: 'KrewsUp is India\'s premier gig economy platform connecting skilled professionals with event organizers and businesses across the country.'},
+            {text: 'Our mission is to revolutionize the way people work and hire by providing a seamless, transparent, and efficient platform.'},
+            {text: 'Founded in 2025, we\'re committed to empowering talent and enabling opportunities nationwide.'}
+        ] },
+        privacy: { id: 'privacy-modal', title: 'Privacy Policy', subtitle: 'Your privacy matters to us', features: [
+            {text: 'KrewsUp collects only essential personal data necessary for gig matching and verification processes.'},
+            {text: 'Your information is protected with bank-grade encryption and never shared with third parties without consent.'},
+            {text: 'Users have full control over their data with options to update, export, or delete profiles at any time.'}
+        ] },
+        terms: { id: 'terms-modal', title: 'Terms & Conditions', subtitle: 'Our terms of service', features: [
+            {text: 'All users must be 18+ and provide valid government ID for verification.'},
+            {text: 'Gig payments are processed within 24 hours, subject to verification and dispute resolution policies.'},
+            {text: 'KrewsUp reserves the right to suspend accounts violating community guidelines or engaging in fraudulent activities.'}
+        ] },
+    }), []);
+
+    return (
+        <>
+            <style>{GlobalCSS}</style>
+            <GradientBackground />
+            <ParticleBackground />
+            <CustomCursor />
+            <RippleEffect />
+            
+            <Header onNavigate={handleNavigate} activePage={activePage} onToggleMobileNav={handleToggleMobileNav} />
+            
+            <main className="container">
+                {activePage === 'home-page' && <HomePage onOpenModal={handleOpenModal} />}
+                {activePage === 'why-us-page' && <WhyUsPage />}
+                {activePage === 'how-page' && <HowItWorksPage />}
+                {activePage === 'customers-page' && <CustomersPage />}
+                {activePage === 'faq-page' && <FAQPage />}
+            </main>
+
+            <Footer onOpenModal={handleOpenModal} />
+            
+            {Object.keys(modalData).map(key => (
+                 <Modal
+                    key={key}
+                    id={modalData[key].id}
+                    title={modalData[key].title}
+                    subtitle={modalData[key].subtitle}
+                    features={modalData[key].features}
+                    show={openModal === key}
+                    onClose={handleCloseModal}
+                />
+            ))}
+        </>
+    );
 }
 
 export default App;
