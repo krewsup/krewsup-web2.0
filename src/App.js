@@ -7,6 +7,7 @@ import kdaPhoto from './assets/kda.jpg';
 import rtdLogo from './assets/rtdlogo.jpg';
 import utLogo from './assets/utlogo.jpg';
 import kdaLogo from './assets/kdalogo.jpg';
+
 const GlobalCSS = `
     @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
     :root {
@@ -276,40 +277,11 @@ const GlobalCSS = `
         text-align: center;
         margin-bottom: 80px;
     }
-    .feature-grid, .customer-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-        gap: 50px;
-    }
-    .card {
-        background: rgba(30, 30, 30, 0.6);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        padding: 40px;
-        border-radius: 12px;
-        transition: all 0.4s ease-in-out;
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        opacity: 0;
-        transform: translateY(50px);
-    }
-    .card.visible {
-        opacity: 1;
-        transform: translateY(0);
-    }
-    .card:hover {
-        transform: translateY(-15px) scale(1.03);
-        background: rgba(40, 40, 40, 0.7);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-    }
     .card-icon {
         font-size: 40px;
         margin-bottom: 25px;
         display: inline-block;
         transition: transform 0.4s ease-in-out;
-    }
-    .card:hover .card-icon {
-        transform: scale(1.2) rotate(10deg);
     }
     .card-title {
         font-size: 24px;
@@ -477,54 +449,101 @@ const GlobalCSS = `
     .step:last-child::after {
         display: none;
     }
-    .testimonials {
-        margin: 80px 0;
+    .testimonials-section {
+        padding: 80px 0;
     }
-    .testimonial {
-        padding: 40px;
+    .testimonial-pair {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5%;
+        margin-bottom: 80px;
+        opacity: 0;
+        transition: opacity 0.8s ease-out;
+    }
+    .testimonial-pair.visible {
+        opacity: 1;
+    }
+    .testimonial-card-unique {
+        flex: 1;
+        max-width: 45%;
+        padding: 30px;
         border: 1px solid rgba(255, 255, 255, 0.1);
-        margin-bottom: 40px;
-        position: relative;
-        background: rgba(30, 30, 30, 0.6);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
         border-radius: 12px;
-        transition: all 0.3s ease-in-out;
+        background: rgba(30, 30, 30, 0.4);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
     }
-    .testimonial:hover {
-        transform: scale(1.02);
-        border-color: rgba(255, 255, 255, 0.2);
+    .testimonial-pair.visible .testimonial-card-unique {
+        transform: translateY(0) scale(1);
     }
-    .testimonial-text {
-        font-size: 20px;
-        line-height: 1.6;
+    .business-testimonial {
+        border-left: 4px solid var(--accent-color);
+        transform: translateY(40px) scale(0.95);
+    }
+    .krew-testimonial {
+        border-right: 4px solid var(--accent-color);
+        transform: translateY(40px) scale(0.95);
+    }
+    .testimonial-card-unique:hover {
+        transform: translateY(-10px) scale(1.03);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+        border-color: rgba(var(--accent-color-rgb), 0.3);
+    }
+    .testimonial-text-unique {
+        font-size: 16px;
+        line-height: 1.7;
         margin-bottom: 20px;
         font-style: italic;
         opacity: 0.9;
     }
-    .testimonial-author {
+    .testimonial-author-unique {
         display: flex;
         align-items: center;
     }
-    .author-avatar {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        background: var(--accent-color);
-        color: #000;
+    .author-avatar-unique {
+        width: 45px;
+        height: 45px;
+        border-radius: 8px;
         margin-right: 15px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-weight: 700;
+        overflow: hidden;
     }
-    .author-name {
-        font-weight: 600;
+    .text-avatar {
+        background: var(--accent-color);
+        color: #000;
+        font-weight: 700;
         font-size: 18px;
     }
-    .author-role {
+    .logo-avatar {
+        background: #fff;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    .logo-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+    .author-name-unique {
+        font-weight: 600;
+        font-size: 16px;
+    }
+    .author-role-unique {
         opacity: 0.7;
-        font-size: 14px;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .testimonial-category {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        opacity: 0.6;
+        margin-bottom: 15px;
     }
     .faq {
         margin: 60px 0;
@@ -969,6 +988,96 @@ const GlobalCSS = `
             left: 150%;
         }
     }
+
+    .card-stack-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 40px;
+        margin-top: -20px;
+    }
+    .card-stack {
+        position: relative;
+        width: 100%;
+        max-width: 480px;
+        height: 380px;
+    }
+    .stack-card {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        will-change: transform, opacity;
+        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
+        cursor: default;
+        background: rgba(30, 30, 30, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 40px;
+        border-radius: 12px;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    .stack-card.top {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+        z-index: 3;
+    }
+    .stack-card.next {
+        transform: translateY(-25px) scale(0.95);
+        opacity: 1;
+        z-index: 2;
+    }
+    .stack-card.third {
+        transform: translateY(-50px) scale(0.9);
+        opacity: 1;
+        z-index: 1;
+    }
+    .stack-card.hidden {
+        transform: translateY(-50px) scale(0.9);
+        opacity: 0;
+        z-index: 0;
+        pointer-events: none;
+    }
+    .exiting-right {
+        transform: translate(50vw, 30px) rotate(20deg) !important;
+        opacity: 0 !important;
+        z-index: 4;
+        transition: transform 0.6s cubic-bezier(0.6, -0.28, 0.735, 0.045), opacity 0.5s ease-out !important;
+    }
+    .exiting-left {
+        transform: translate(-50vw, 30px) rotate(-20deg) !important;
+        opacity: 0 !important;
+        z-index: 4;
+        transition: transform 0.6s cubic-bezier(0.6, -0.28, 0.735, 0.045), opacity 0.5s ease-out !important;
+    }
+    .card-stack-controls button {
+        padding: 12px 30px;
+        background: #fff;
+        color: #000;
+        border: 1px solid #fff;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-width: 200px;
+        text-align: center;
+    }
+    .card-stack-controls button:hover:not(:disabled) {
+        background: transparent;
+        color: #fff;
+        transform: scale(1.05);
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+    }
+    .card-stack-controls button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
     
     @media (max-width: 768px) {
         header {
@@ -1021,6 +1130,26 @@ const GlobalCSS = `
         }
         .waitlist-section {
             margin-bottom: 80px;
+        }
+        .testimonial-pair {
+            flex-direction: column !important;
+            gap: 30px;
+        }
+        .testimonial-card-unique {
+            max-width: 100%;
+        }
+        .card-stack {
+            height: 420px;
+            max-width: 90vw;
+        }
+        .stack-card {
+            padding: 30px 20px;
+        }
+        .stack-card.next {
+            transform: translateY(-20px) scale(0.95);
+        }
+        .stack-card.third {
+            transform: translateY(-40px) scale(0.9);
         }
     }
 `;
@@ -1329,6 +1458,76 @@ const FaqItem = ({ question, answer }) => {
     );
 };
 
+const TinderCardStack = ({ items, buttonText }) => {
+    const [cards, setCards] = useState([]);
+    const [isAnimating, setIsAnimating] = useState(false);
+    const [exitDirection, setExitDirection] = useState('right');
+
+    useEffect(() => {
+        const initialCards = items.map((item, index) => {
+            let status;
+            if (index === 0) status = 'top';
+            else if (index === 1) status = 'next';
+            else if (index === 2) status = 'third';
+            else status = 'hidden';
+            return { ...item, id: `${item.title}-${index}`, status };
+        });
+        setCards(initialCards);
+    }, [items]);
+
+    const handleNext = () => {
+        if (isAnimating || cards.length === 0) return;
+        setIsAnimating(true);
+
+        setCards(prev => {
+            const newCards = [...prev];
+            newCards[0].status = `exiting-${exitDirection}`;
+            return newCards;
+        });
+        
+        setExitDirection(prev => (prev === 'right' ? 'left' : 'right'));
+
+        setTimeout(() => {
+            setCards(prev => {
+                const newArray = prev.slice(1);
+                const exitedCard = prev[0];
+                if (exitedCard) {
+                    exitedCard.status = 'hidden';
+                    newArray.push(exitedCard);
+                    
+                    if (newArray[0]) newArray[0].status = 'top';
+                    if (newArray[1]) newArray[1].status = 'next';
+                    if (newArray[2]) newArray[2].status = 'third';
+                }
+                return newArray;
+            });
+            setIsAnimating(false);
+        }, 600);
+    };
+
+    return (
+        <div className="card-stack-wrapper">
+            <div className="card-stack">
+                {cards.map((item) => (
+                    <div
+                        key={item.id}
+                        className={`stack-card ${item.status}`}
+                    >
+                        <div className="card-icon">{item.icon}</div>
+                        <h3 className="card-title">{item.title}</h3>
+                        <p className="card-desc">{item.desc}</p>
+                    </div>
+                ))}
+            </div>
+            <div className="card-stack-controls">
+                <button onClick={handleNext} disabled={isAnimating}>
+                    {buttonText || 'Next'}
+                </button>
+            </div>
+        </div>
+    );
+};
+
 const FooterThreeAnimation = () => {
     const mountRef = useRef(null);
 
@@ -1427,81 +1626,112 @@ const Footer = ({ onOpenModal }) => {
   );
 };
 
-const HomePage = ({ onOpenModal }) => (
-    <section className="page">
-        <div className="hero">
-            <div className="hero-content">
-                <h1>Brew.<br />Your.<br /><span>Connections.</span></h1>
-                <p className="tagline">Bharat's Ultimate Gig Platform</p>
-                <p className="description">KrewsUp is a B2C platform that connects businesses with trusted, KYC-verified gig workers for events, launches, and more.<br/>From startups to large-scale organizers, we make it easy to find the right crew - ensuring smooth coordination, timely payments, and a hassle-free experience for all.
-</p>
-                <div className="buttons">
-                    <button className="btn" id="host-btn" onClick={() => onOpenModal('host')}>Host an Event</button>
-                    <button className="btn" id="gig-btn" onClick={() => onOpenModal('gig')}>Find a Gig</button>
-                </div>
-                <div className="app-buttons">
-                    <div className="app-btn">
-                        <div className="app-btn-icon">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 22 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.09997 22C7.78997 22.05 6.79997 20.68 5.95997 19.47C4.24997 17 2.93997 12.45 4.69997 9.39C5.56997 7.87 7.12997 6.91 8.81997 6.88C10.1 6.86 11.32 7.75 12.11 7.75C12.89 7.75 14.37 6.68 15.92 6.84C16.57 6.87 18.39 7.1 19.56 8.82C19.47 8.88 17.39 10.1 17.41 12.63C17.44 15.65 20.06 16.66 20.09 16.67C20.06 16.74 19.67 18.11 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.09 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z" fill="white"/>
-                            </svg>
-                        </div>
-                        <div className="app-btn-content">
-                            <span className="app-btn-label">Download on the</span>
-                            <span className="app-btn-name">App Store</span>
-                        </div>
-                        <div className="app-btn-tooltip">Stay tight! We're still under development</div>
+const HomePage = ({ onOpenModal }) => {
+    const testimonialPairs = [
+        {
+            business: { text: "With KrewsUp, we quickly connected with the right event crew - no calls, no delays. Just a smooth, tech-driven experience.", author: "Tanushri S N", role: "Founder - RollTheDice", logoUrl: rtdLogo },
+            krew: { text: "Explaining traditional Indian board games was a unique experience. The vibe was amazing, and KrewsUp made sure I was prepared and paid on time.", author: "Thanusha", role: "Crew at RollTheDice Event" }
+        },
+        {
+            business: { text: "For our Urbanaut event, the KrewsUp app made it effortless to book and manage event crews. From setup to on-ground support, everything was smooth, timely, and well-coordinated.", author: "Samyuktha Ranganathan", role: "Founder - Urbanaut", logoUrl: utLogo },
+            krew: { text: "Setting up the Urbanaut event gave me real hands-on experience. The KrewsUp app made the entire process smooth ,from applying to getting paid and kept it all professional..", author: "Harsha Vardhan", role: "Crew at Urbanaut Event" }
+        },
+        {
+            business: { text: "KrewsUp completely changed how we staff our events. In just a few clicks, we connect with reliable talent who are passionate and professional.", author: "Mehul Ramaswami", role: "Founder - Kathakonnect", logoUrl: kdaLogo },
+            krew: { text: "KathaKonnect was electrifying! I managed stage and artist coordination, and felt part of something big. The KrewsUp app made everything seamless - from applying to working on-ground..", author: "Kruthika S", role: "Crew at KathaKonnect Event" }
+        }
+    ];
+
+    return (
+        <section className="page">
+            <div className="hero">
+                <div className="hero-content">
+                    <h1>Brew.<br />Your.<br /><span>Connections.</span></h1>
+                    <p className="tagline">Bharat's Ultimate Gig Platform</p>
+                    <p className="description">KrewsUp is a B2C mobile platform connecting startups and event organizers with trusted, KYC-verified blue-collar gig workers for events. We simplify crew hiring for launches, activations, and large-scale events - ensuring professionalism, timely coordination, and a seamless experience.</p>
+                    <div className="buttons">
+                        <button className="btn" id="host-btn" onClick={() => onOpenModal('host')}>Host an Event</button>
+                        <button className="btn" id="gig-btn" onClick={() => onOpenModal('gig')}>Find a Gig</button>
                     </div>
-                    <div className="app-btn">
-                        <div className="app-btn-icon">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M3.60938 3.15234C3.29688 3.48047 3.125 3.99609 3.125 4.67969V19.3203C3.125 20.0039 3.29688 20.5195 3.60938 20.8477L3.70312 20.9414L13.1016 11.543V11.4414L3.70312 2.05859L3.60938 3.15234Z" fill="white"/>
-                                <path d="M17.168 15.6094L13.1016 11.543V11.4414L17.168 7.37499L17.2852 7.44921L22.0117 10.0547C23.4023 10.8555 23.4023 12.1289 22.0117 12.9297L17.2852 15.5352L17.168 15.6094Z" fill="white"/>
-                                <path d="M17.2852 15.5352L13.1016 11.5L3.60938 20.8477C4.0625 21.3281 4.78125 21.3867 5.5625 20.9297L17.2852 15.5352Z" fill="white"/>
-                                <path d="M17.2852 7.44921L5.5625 2.05468C4.78125 1.59765 4.0625 1.65625 3.60938 2.14062L13.1016 11.5L17.2852 7.44921Z" fill="white"/>
-                            </svg>
+                    <div className="app-buttons">
+                        <div className="app-btn">
+                            <div className="app-btn-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 22 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.09997 22C7.78997 22.05 6.79997 20.68 5.95997 19.47C4.24997 17 2.93997 12.45 4.69997 9.39C5.56997 7.87 7.12997 6.91 8.81997 6.88C10.1 6.86 11.32 7.75 12.11 7.75C12.89 7.75 14.37 6.68 15.92 6.84C16.57 6.87 18.39 7.1 19.56 8.82C19.47 8.88 17.39 10.1 17.41 12.63C17.44 15.65 20.06 16.66 20.09 16.67C20.06 16.74 19.67 18.11 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.09 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z" fill="white"/></svg>
+                            </div>
+                            <div className="app-btn-content">
+                                <span className="app-btn-label">Download on the</span>
+                                <span className="app-btn-name">App Store</span>
+                            </div>
+                            <div className="app-btn-tooltip">Stay tight! We're still under development</div>
                         </div>
-                        <div className="app-btn-content">
-                            <span className="app-btn-label">GET IT ON</span>
-                            <span className="app-btn-name">Google Play</span>
+                        <div className="app-btn">
+                            <div className="app-btn-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.60938 3.15234C3.29688 3.48047 3.125 3.99609 3.125 4.67969V19.3203C3.125 20.0039 3.29688 20.5195 3.60938 20.8477L3.70312 20.9414L13.1016 11.543V11.4414L3.70312 2.05859L3.60938 3.15234Z" fill="white"/><path d="M17.168 15.6094L13.1016 11.543V11.4414L17.168 7.37499L17.2852 7.44921L22.0117 10.0547C23.4023 10.8555 23.4023 12.1289 22.0117 12.9297L17.2852 15.5352L17.168 15.6094Z" fill="white"/><path d="M17.2852 15.5352L13.1016 11.5L3.60938 20.8477C4.0625 21.3281 4.78125 21.3867 5.5625 20.9297L17.2852 15.5352Z" fill="white"/><path d="M17.2852 7.44921L5.5625 2.05468C4.78125 1.59765 4.0625 1.65625 3.60938 2.14062L13.1016 11.5L17.2852 7.44921Z" fill="white"/></svg>
+                            </div>
+                            <div className="app-btn-content">
+                                <span className="app-btn-label">GET IT ON</span>
+                                <span className="app-btn-name">Google Play</span>
+                            </div>
+                            <div className="app-btn-tooltip">Coming soon! We're working hard to launch</div>
                         </div>
-                        <div className="app-btn-tooltip">Coming soon! We're working hard to launch</div>
                     </div>
                 </div>
+                <div className="growth-pattern">
+                  <div className="growth-icon rupee">₹</div>
+                  <div className="growth-icon growth">📈</div>
+                  <div className="growth-icon chart">📊</div>
+                  <div className="growth-icon network">🌐</div>
+                </div>
             </div>
-            <div className="growth-pattern">
-              <div className="growth-icon rupee">₹</div>
-              <div className="growth-icon growth">📈</div>
-              <div className="growth-icon chart">📊</div>
-              <div className="growth-icon network">🌐</div>
+            <div className="waitlist-section">
+              <h3 className="waitlist-title">The Shift Has Begun</h3>
+              <p className="waitlist-subtitle">KrewsUp is reshaping how crews connect.<br/>Get in early. Be part of the new era.</p>
+              <a href="https://docs.google.com/forms/d/e/1FAIpQLSf0AQJNcrFvLjr3FbYqqSPpjN6d9wlRLP2PIZzY0iGt6U3Htg/viewform?usp=header" target="_blank" rel="noopener noreferrer" className="waitlist-btn">
+                Join the Waitlist
+              </a>
             </div>
-        </div>
-        <div className="waitlist-section">
-          <h3 className="waitlist-title">The Shift Has Begun</h3>
-          <p className="waitlist-subtitle">KrewsUp is reimagining how crews connect.<br/>Get in early. Be part of the new era.</p>
-          <a href="https://docs.google.com/forms/d/e/1FAIpQLSf0AQJNcrFvLjr3FbYqqSPpjN6d9wlRLP2PIZzY0iGt6U3Htg/viewform?usp=header" target="_blank" rel="noopener noreferrer" className="waitlist-btn">
-            Join the Waitlist
-          </a>
-        </div>
-        <div className="title-container">
-            <h2 className="section-title">What Our Community Says</h2>
-        </div>
-        <div className="testimonials">
-            <div className="testimonial">
-                <p className="testimonial-text">KrewsUp made staffing effortless for us. We hired event krews to explain our traditional Indian board games and drive sales at our stall. The team was professional, well-prepared, and perfectly matched for our needs. It saved us time and made a real impact</p>
-                <div className="testimonial-author"><div className="author-avatar">T</div><div><div className="author-name">Tanushri S N</div><div className="author-role">Founder - RollTheDice, Bangalore</div></div></div>
-            </div>
-            <div className="testimonial">
-                <p className="testimonial-text">For our Urbanaut event, KrewsUp handled everything from setup to on-ground support seamlessly. The crew was punctual, efficient, and understood the flow perfectly. It took a huge load off our team.</p>
-                <div className="testimonial-author"><div className="author-avatar">S</div><div><div className="author-name">Samyuktha Ranganathan</div><div className="author-role">Founder - Urbanaut Technologies Pvt Ltd, Bangalore</div></div></div>
-            </div>
-            <div className="testimonial">
-                <p className="testimonial-text">KrewsUp completely changed how we staff our events. In just a few clicks, we connect with reliable talent who are passionate and professional. The same-day payments keep everyone happy and coming back for more gigs.</p>
-                <div className="testimonial-author"><div className="author-avatar">M</div><div><div className="author-name">Mehul Ramaswami</div><div className="author-role">Founder - Kathakonnect Dance Academy, Bangalore</div></div></div>
-            </div>
-        </div>
-    </section>
-);
+            <section className="testimonials-section">
+                <div className="title-container">
+                    <h2 className="section-title">Two Sides of Success</h2>
+                </div>
+                {testimonialPairs.map((pair, index) => (
+                    <AnimatedCard key={index} className="testimonial-pair">
+                        <div className="testimonial-card-unique business-testimonial">
+                            <h4 className="testimonial-category">The Organizer's View</h4>
+                            <p className="testimonial-text-unique">"{pair.business.text}"</p>
+                            <div className="testimonial-author-unique">
+                                <div className="author-avatar-unique logo-avatar">
+                                    <img 
+                                        src={pair.business.logoUrl} 
+                                        alt={`${pair.business.author} Logo`}
+                                        style={pair.business.logoUrl === utLogo ? { transform: 'scale(1.6)' } : {}}
+                                    />
+                                </div>
+                                <div>
+                                    <div className="author-name-unique">{pair.business.author}</div>
+                                    <div className="author-role-unique">{pair.business.role}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="testimonial-card-unique krew-testimonial">
+                            <h4 className="testimonial-category">The Krew's Experience</h4>
+                            <p className="testimonial-text-unique">"{pair.krew.text}"</p>
+                            <div className="testimonial-author-unique">
+                                <div className="author-avatar-unique text-avatar">
+                                    {pair.krew.author.charAt(0)}
+                                </div>
+                                <div>
+                                    <div className="author-name-unique">{pair.krew.author}</div>
+                                    <div className="author-role-unique">{pair.krew.role}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </AnimatedCard>
+                ))}
+            </section>
+        </section>
+    );
+};
 
 const WhyUsPage = () => {
     const features = [
@@ -1512,20 +1742,11 @@ const WhyUsPage = () => {
         { icon: '📱', title: 'Mobile-First Experience', desc: 'Our app-centric approach means you can manage your entire gig life from your smartphone. Real-time notifications, location services, and seamless communication.' },
         { icon: '📊', title: 'Performance Analytics', desc: 'Access detailed insights about your gigs, earnings, and ratings. Track your growth, identify improvement areas, and showcase your experience effectively.' },
         { icon: '🎯', title: 'Skill Development', desc: 'Enhance your professional skills through our curated workshops, mentorship programs, and performance feedback system to boost your career growth.' },
-        { icon: '🛡️', title: 'Insurance Coverage', desc: 'Every gig comes with basic insurance coverage for unforeseen circumstances, providing peace of mind for both hosts and talent.' },
     ];
     return (
         <section className="page">
             <div className="title-container"><h2 className="section-title">Why KrewsUp?</h2></div>
-            <div className="feature-grid">
-                {features.map(f => (
-                    <AnimatedCard key={f.title} className="card">
-                        <div className="card-icon">{f.icon}</div>
-                        <h3 className="card-title">{f.title}</h3>
-                        <p className="card-desc">{f.desc}</p>
-                    </AnimatedCard>
-                ))}
-            </div>
+            <TinderCardStack items={features} buttonText="Next Feature" />
         </section>
     );
 };
@@ -1597,29 +1818,7 @@ const CustomersPage = () => {
     return (
         <section className="page">
             <div className="title-container"><h2 className="section-title">Our Customers</h2></div>
-            <div className="customer-grid">
-                {customers.map(c => (
-                    <AnimatedCard key={c.title} className="card">
-                        <div className="card-icon">{c.icon}</div>
-                        <h3 className="card-title">{c.title}</h3>
-                        <p className="card-desc">{c.desc}</p>
-                    </AnimatedCard>
-                ))}
-            </div>
-             <div className="testimonials">
-                <div className="testimonial">
-                    <p className="testimonial-text">KathaKonnect was electrifying! I helped manage the stage and artist coordination, and it felt like I was part of something big. Thanks to KrewsUp, everything was well-communicated and super smooth. I’d love to do this again!</p>
-                    <div className="testimonial-author"><div className="author-avatar">K</div><div><div className="author-name">Kruthika S</div><div className="author-role">Crew at KathaKonnect Dance Event</div></div></div>
-                </div>
-                <div className="testimonial">
-                    <p className="testimonial-text">Explaining traditional Indian board games to customers was such a unique experience. The vibe was amazing, and the team energy was on point. KrewsUp made sure I was prepared and paid on time.</p>
-                    <div className="testimonial-author"><div className="author-avatar">T</div><div><div className="author-name">Thanusha</div><div className="author-role">Crew at RollTheDice Event</div></div></div>
-                </div>
-                <div className="testimonial">
-                    <p className="testimonial-text">Setting up the Urbanaut event gave me hands-on experience in managing a full-scale event. From assembling stalls to organizing spaces, it was intense but rewarding. KrewsUp made the whole gig experience effortless and professional.</p>
-                    <div className="testimonial-author"><div className="author-avatar">H</div><div><div className="author-name">Harsha Vardhan</div><div className="author-role">Crew at Urbanaut Event</div></div></div>
-                </div>
-            </div>
+            <TinderCardStack items={customers} buttonText="Next Customer" />
         </section>
     );
 };
