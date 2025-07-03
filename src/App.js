@@ -1,7 +1,12 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import * as THREE from 'three';
 import logo from './assets/logobabes.png';
-
+import rtdPhoto from './assets/rtd.jpg';
+import utPhoto from './assets/ut.jpg';
+import kdaPhoto from './assets/kda.jpg';
+import rtdLogo from './assets/rtdlogo.jpg';
+import utLogo from './assets/utlogo.jpg';
+import kdaLogo from './assets/kdalogo.jpg';
 const GlobalCSS = `
     @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
     :root {
@@ -10,6 +15,8 @@ const GlobalCSS = `
       --accent-color: #fff;
       --accent-color-rgb: 255, 255, 255;
       --bg-color: #050505;
+      --cta-color: #00A3FF;
+      --cta-color-rgb: 0, 163, 255;
     }
     * {
         margin: 0;
@@ -412,6 +419,13 @@ const GlobalCSS = `
         position: relative;
         z-index: 1;
     }
+    .footer-crafted-line {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 12px;
+        opacity: 0.5;
+        letter-spacing: 0.5px;
+    }
     .steps {
         margin: 60px 0;
     }
@@ -777,7 +791,185 @@ const GlobalCSS = `
         50% { transform: translateY(-30px) rotate(5deg); }
         100% { transform: translateY(0) rotate(0deg); }
     }
-
+    .partners-section {
+        overflow: hidden;
+    }
+    .partners-marquee-container {
+        width: 100vw;
+        position: relative;
+        left: 50%;
+        transform: translateX(-50%);
+        margin-top: 60px;
+        padding: 40px 0;
+    }
+    .partners-marquee-container::before,
+    .partners-marquee-container::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        width: 150px;
+        height: 100%;
+        z-index: 2;
+    }
+    .partners-marquee-container::before {
+        left: 0;
+        background: linear-gradient(to right, var(--bg-color), transparent);
+    }
+    .partners-marquee-container::after {
+        right: 0;
+        background: linear-gradient(to left, var(--bg-color), transparent);
+    }
+    .partners-marquee {
+        display: flex;
+        width: fit-content;
+        animation: scroll 15s linear infinite;
+    }
+    .partner-wrapper {
+        flex-shrink: 0;
+        margin: 0 40px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+    }
+    .partner-item {
+        width: 220px;
+        height: 300px;
+        position: relative;
+        cursor: none;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: #111;
+        transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+    .partner-wrapper:hover .partner-item {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    }
+    .partner-photo {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.8s ease;
+    }
+    .partner-wrapper:hover .partner-photo {
+        transform: scale(1.05);
+    }
+    .partner-logo {
+        position: relative;
+        width: 60px;
+        height: 60px;
+        object-fit: contain;
+        background: #000;
+        border-radius: 8px;
+        padding: 5px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .partner-name {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 20px 15px 15px;
+        font-size: 14px;
+        font-weight: 600;
+        text-align: left;
+        background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .partner-wrapper:hover .partner-name {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    .partners-marquee-container:hover .partners-marquee {
+        animation-play-state: paused;
+    }
+    @keyframes scroll {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+    }
+    .waitlist-section {
+        margin-top: 120px;
+        margin-bottom: 120px;
+        padding: 60px 40px;
+        background: rgba(15, 15, 15, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 16px;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        text-align: center;
+        box-shadow: 0 0 50px rgba(0,0,0,0.5);
+        position: relative;
+        overflow: hidden;
+    }
+    .waitlist-section > * {
+        position: relative;
+        z-index: 2;
+    }
+    .waitlist-section::before {
+        content: '';
+        position: absolute;
+        z-index: 1;
+        top: 0;
+        left: -150%;
+        width: 75%;
+        height: 100%;
+        background: linear-gradient(to right, transparent 0%, rgba(255, 255, 255, 0.15) 50%, transparent 100%);
+        transform: skewX(-25deg);
+        animation: waitlist-shine 4s linear infinite;
+    }
+    .waitlist-title {
+        font-size: 36px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: var(--primary-color);
+        text-shadow: 0 0 15px rgba(var(--accent-color-rgb), 0.3);
+    }
+    .waitlist-subtitle {
+        font-size: 18px;
+        color: var(--primary-color);
+        opacity: 0.9;
+        max-width: 600px;
+        margin: 20px auto 40px;
+    }
+    .waitlist-btn {
+        display: inline-block;
+        padding: 18px 40px;
+        background-image: linear-gradient(145deg, rgba(35, 35, 35, 0.9), rgba(15, 15, 15, 0.8));
+        color: var(--primary-color);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 700;
+        text-transform: uppercase;
+        text-decoration: none;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        transition: all 0.3s ease;
+    }
+    .waitlist-btn:hover {
+      transform: scale(1.05) translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 25px rgba(var(--accent-color-rgb), 0.3);
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+    
+    @keyframes waitlist-shine {
+        from {
+            left: -100%;
+        }
+        to {
+            left: 150%;
+        }
+    }
+    
     @media (max-width: 768px) {
         header {
             top: 0;
@@ -817,6 +1009,19 @@ const GlobalCSS = `
         .modal-content { padding: 30px; }
         .modal-title { font-size: 28px; }
         .buttons { flex-direction: column; }
+        .partner-wrapper {
+            margin: 0 15px;
+        }
+        .partner-item {
+            width: 180px;
+            height: 240px;
+        }
+        .waitlist-title {
+            font-size: 28px;
+        }
+        .waitlist-section {
+            margin-bottom: 80px;
+        }
     }
 `;
 
@@ -972,13 +1177,13 @@ const CustomCursor = () => {
         animate();
 
         const onMouseOver = (e) => {
-            if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON' || e.target.closest('a, button')) {
+            if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON' || e.target.closest('a, button, .partner-wrapper')) {
                 setIsHovering(true);
             }
         };
 
         const onMouseOut = (e) => {
-             if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON' || e.target.closest('a, button')) {
+             if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON' || e.target.closest('a, button, .partner-wrapper')) {
                 setIsHovering(false);
             }
         };
@@ -1033,8 +1238,8 @@ const RippleEffect = () => {
 };
 
 const Header = ({ onNavigate, activePage, onToggleMobileNav }) => {
-    const navItems = ['Home', 'Why Us', 'How It Works', 'Customers', 'FAQ'];
-    const pageIds = ['home-page', 'why-us-page', 'how-page', 'customers-page', 'faq-page'];
+    const navItems = ['Home', 'Why Us', 'How It Works', 'Our Partners', 'Customers', 'FAQ'];
+    const pageIds = ['home-page', 'why-us-page', 'how-page', 'partners-page', 'customers-page', 'faq-page'];
     
     const [logoSrc, setLogoSrc] = useState(logo);
 
@@ -1217,6 +1422,7 @@ const Footer = ({ onOpenModal }) => {
         </div>
       </div>
       <p className="copyright">© 2025 KrewsUp Technologies Private Limited.<br/> All Rights Reserved.</p>
+      <p className="footer-crafted-line">Engineered for the future of work in Bharat 🤍</p>
     </footer>
   );
 };
@@ -1227,7 +1433,8 @@ const HomePage = ({ onOpenModal }) => (
             <div className="hero-content">
                 <h1>Brew.<br />Your.<br /><span>Connections.</span></h1>
                 <p className="tagline">Bharat's Ultimate Gig Platform</p>
-                <p className="description">KrewsUp is revolutionizing the gig economy by creating a seamless bridge between talent and opportunity. We connect event hosts with skilled aspirants, ensuring fast payments, verified profiles, and limitless growth potential.</p>
+                <p className="description">KrewsUp is a B2C platform that connects businesses with trusted, KYC-verified gig workers for events, launches, and more.<br/>From startups to large-scale organizers, we make it easy to find the right crew - ensuring smooth coordination, timely payments, and a hassle-free experience for all.
+</p>
                 <div className="buttons">
                     <button className="btn" id="host-btn" onClick={() => onOpenModal('host')}>Host an Event</button>
                     <button className="btn" id="gig-btn" onClick={() => onOpenModal('gig')}>Find a Gig</button>
@@ -1269,22 +1476,28 @@ const HomePage = ({ onOpenModal }) => (
               <div className="growth-icon network">🌐</div>
             </div>
         </div>
+        <div className="waitlist-section">
+          <h3 className="waitlist-title">The Shift Has Begun</h3>
+          <p className="waitlist-subtitle">KrewsUp is reimagining how crews connect.<br/>Get in early. Be part of the new era.</p>
+          <a href="https://forms.gle/your-dummy-link-here" target="_blank" rel="noopener noreferrer" className="waitlist-btn">
+            Join the Waitlist
+          </a>
+        </div>
+        <div className="title-container">
+            <h2 className="section-title">What Our Community Says</h2>
+        </div>
         <div className="testimonials">
             <div className="testimonial">
+                <p className="testimonial-text">KrewsUp made staffing effortless for us. We hired event krews to explain our traditional Indian board games and drive sales at our stall. The team was professional, well-prepared, and perfectly matched for our needs. It saved us time and made a real impact</p>
+                <div className="testimonial-author"><div className="author-avatar">T</div><div><div className="author-name">Tanushri S N</div><div className="author-role">Founder - RollTheDice, Bangalore</div></div></div>
+            </div>
+            <div className="testimonial">
+                <p className="testimonial-text">For our Urbanaut event, KrewsUp handled everything from setup to on-ground support seamlessly. The crew was punctual, efficient, and understood the flow perfectly. It took a huge load off our team.</p>
+                <div className="testimonial-author"><div className="author-avatar">S</div><div><div className="author-name">Samyuktha Ranganathan</div><div className="author-role">Founder - Urbanaut Technologies Pvt Ltd, Bangalore</div></div></div>
+            </div>
+            <div className="testimonial">
                 <p className="testimonial-text">KrewsUp completely changed how we staff our events. In just a few clicks, we connect with reliable talent who are passionate and professional. The same-day payments keep everyone happy and coming back for more gigs.</p>
-                <div className="testimonial-author"><div className="author-avatar">A</div><div><div className="author-name">Arjun Mehta</div><div className="author-role">Event Director, BlinkEvents Pune</div></div></div>
-            </div>
-            <div className="testimonial">
-                <p className="testimonial-text">I love the flexibility KrewsUp offers. I can pick gigs that match my skills and schedule, and the quick payouts make it so much easier to manage my finances as a freelancer.</p>
-                <div className="testimonial-author"><div className="author-avatar">S</div><div><div className="author-name">Sneha Kapoor</div><div className="author-role">Freelance Photographer, Delhi</div></div></div>
-            </div>
-            <div className="testimonial">
-                <p className="testimonial-text">The verification process gave me confidence to hire through KrewsUp. Every technician we’ve worked with has been skilled and dependable, making our productions smoother than ever.</p>
-                <div className="testimonial-author"><div className="author-avatar">V</div><div><div className="author-name">Vikram Singh</div><div className="author-role">Producer, Mumbai Film Co.</div></div></div>
-            </div>
-            <div className="testimonial">
-                <p className="testimonial-text">KrewsUp’s platform is a lifesaver for small businesses like mine. I can quickly find staff for busy days, and the insurance coverage adds an extra layer of security.</p>
-                <div className="testimonial-author"><div className="author-avatar">N</div><div><div className="author-name">Neha Gupta</div><div className="author-role">Café Owner, Bangalore</div></div></div>
+                <div className="testimonial-author"><div className="author-avatar">M</div><div><div className="author-name">Mehul Ramaswami</div><div className="author-role">Founder, Kathakonnect Dance Academy, Bangalore</div></div></div>
             </div>
         </div>
     </section>
@@ -1338,6 +1551,37 @@ const HowItWorksPage = () => {
                         </div>
                     </AnimatedCard>
                 ))}
+            </div>
+        </section>
+    );
+};
+
+const PartnersPage = () => {
+    const partners = [
+        { name: 'RollTheDice', photoUrl: rtdPhoto, logoUrl: rtdLogo },
+        { name: 'Urbanaut Technologies', photoUrl: utPhoto, logoUrl: utLogo },
+        { name: 'Kathakonnect Dance Academy', photoUrl: kdaPhoto, logoUrl: kdaLogo },
+    ];
+
+    const duplicatedPartners = [...partners, ...partners, ...partners, ...partners];
+
+    return (
+        <section className="page partners-section">
+            <div className="title-container">
+                <h2 className="section-title">Our Partners</h2>
+            </div>
+            <div className="partners-marquee-container">
+                <div className="partners-marquee">
+                    {duplicatedPartners.map((partner, index) => (
+                         <div className="partner-wrapper" key={`${partner.name}-${index}`}>
+                            <img src={partner.logoUrl} alt={`${partner.name} Logo`} className="partner-logo" />
+                            <div className="partner-item">
+                                <img src={partner.photoUrl} alt={`${partner.name}`} className="partner-photo" />
+                                <div className="partner-name">{partner.name}</div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
             </div>
         </section>
     );
@@ -1460,6 +1704,7 @@ function App() {
                 {activePage === 'home-page' && <HomePage onOpenModal={handleOpenModal} />}
                 {activePage === 'why-us-page' && <WhyUsPage />}
                 {activePage === 'how-page' && <HowItWorksPage />}
+                {activePage === 'partners-page' && <PartnersPage />}
                 {activePage === 'customers-page' && <CustomersPage />}
                 {activePage === 'faq-page' && <FAQPage />}
             </main>
