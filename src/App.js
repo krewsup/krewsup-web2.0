@@ -225,7 +225,6 @@ const GlobalCSS = `
         max-width: 600px;
         margin: 0 auto 40px;
         animation-delay: 0.4s;
-        text-align: justify;
     }
     .hero-button-grid {
         display: grid;
@@ -1114,7 +1113,10 @@ const GlobalCSS = `
             line-height: 1.2;
         }
         .hero-content h1 span {
-            display: inline-block;
+            display: block;
+        }
+        .hero-content .description {
+            text-align: center;
         }
         .hero-content {
           padding: 20px;
