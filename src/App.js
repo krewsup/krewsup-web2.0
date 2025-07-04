@@ -169,6 +169,48 @@ const GlobalCSS = `
         text-align: center;
         overflow: hidden;
     }
+    .scroll-down-indicator {
+        position: absolute;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 40px;
+        height: 60px;
+        z-index: 5;
+        opacity: 1;
+        transition: opacity 0.5s ease;
+        cursor: pointer;
+    }
+    .scroll-down-indicator.hidden {
+        opacity: 0;
+        pointer-events: none;
+    }
+    .scroll-down-indicator span {
+        position: absolute;
+        top: 10px;
+        left: 50%;
+        width: 24px;
+        height: 24px;
+        margin-left: -12px;
+        border-left: 2px solid var(--accent-color);
+        border-bottom: 2px solid var(--accent-color);
+        transform: rotate(-45deg);
+        animation: scroll-down-animation 2s infinite;
+        box-sizing: border-box;
+    }
+    @keyframes scroll-down-animation {
+        0% {
+            transform: rotate(-45deg) translate(0, 0);
+            opacity: 0;
+        }
+        50% {
+            opacity: 1;
+        }
+        100% {
+            transform: rotate(-45deg) translate(-20px, -20px);
+            opacity: 0;
+        }
+    }
     #hero-canvas-container {
         position: absolute;
         top: 0;
@@ -1090,6 +1132,57 @@ const GlobalCSS = `
         opacity: 0.5;
         cursor: not-allowed;
     }
+    .page-scroll-indicator {
+      position: fixed;
+      bottom: 40px;
+      right: 40px;
+      transform: translateY(20px);
+      width: 50px;
+      height: 50px;
+      background: rgba(40, 40, 40, 0.5);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 50%;
+      z-index: 99;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.4s ease-in-out;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .page-scroll-indicator.visible {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: all;
+      transform: translateY(0);
+    }
+    .page-scroll-indicator:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 20px rgba(var(--accent-color-rgb), 0.3);
+      background: rgba(var(--accent-color-rgb), 0.1);
+    }
+    .page-scroll-indicator .arrow {
+      width: 12px;
+      height: 12px;
+      border-bottom: 2px solid var(--primary-color);
+      border-right: 2px solid var(--primary-color);
+      transform: translateY(-2px) rotate(45deg);
+      animation: page-scroll-bounce 2.5s infinite cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    @keyframes page-scroll-bounce {
+      0%, 100% {
+        opacity: 1;
+        transform: translateY(-2px) rotate(45deg);
+      }
+      50% {
+        opacity: 0.8;
+        transform: translateY(2px) rotate(45deg);
+      }
+    }
     @media (max-width: 768px) {
         header {
             top: 0;
@@ -1172,6 +1265,15 @@ const GlobalCSS = `
         }
         .stack-card.third {
             transform: translateY(-40px) scale(0.9);
+        }
+        .scroll-down-indicator {
+            bottom: 20px;
+        }
+        .page-scroll-indicator {
+            right: 20px;
+            bottom: 20px;
+            width: 45px;
+            height: 45px;
         }
     }
 `;
@@ -1780,6 +1882,28 @@ const HomePage = ({ onOpenModal }) => {
         }
     ];
 
+    const [showScrollIndicator, setShowScrollIndicator] = useState(true);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (window.scrollY > 50) {
+                setShowScrollIndicator(false);
+            } else {
+                setShowScrollIndicator(true);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    const handleScrollClick = () => {
+        const nextSection = document.querySelector('.waitlist-section');
+        if (nextSection) {
+            nextSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
     return (
         <section className="page">
             <div className="hero">
@@ -1812,6 +1936,12 @@ const HomePage = ({ onOpenModal }) => {
                             <div className="app-btn-tooltip">Coming soon! We're working hard to launch</div>
                         </div>
                     </div>
+                </div>
+                <div
+                    className={`scroll-down-indicator ${!showScrollIndicator ? 'hidden' : ''}`}
+                    onClick={handleScrollClick}
+                >
+                    <span></span>
                 </div>
             </div>
             <div className="waitlist-section">
@@ -1975,6 +2105,7 @@ const FAQPage = () => {
 function App() {
     const [activePage, setActivePage] = useState('home-page');
     const [openModal, setOpenModal] = useState(null);
+    const [showPageScrollIndicator, setShowPageScrollIndicator] = useState(false);
 
     useEffect(() => {
         if (openModal) {
@@ -1983,6 +2114,39 @@ function App() {
             document.body.classList.remove('modal-open');
         }
     }, [openModal]);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            const checkScroll = () => {
+                const scrollHeight = document.documentElement.scrollHeight;
+                const clientHeight = document.documentElement.clientHeight;
+                const scrollTop = document.documentElement.scrollTop;
+                
+                const isScrollable = scrollHeight > clientHeight;
+                const isAtBottom = scrollTop + clientHeight >= scrollHeight - 5;
+
+                setShowPageScrollIndicator(isScrollable && !isAtBottom);
+            };
+
+            checkScroll();
+            window.addEventListener('scroll', checkScroll, { passive: true });
+            window.addEventListener('resize', checkScroll);
+
+            return () => {
+                window.removeEventListener('scroll', checkScroll);
+                window.removeEventListener('resize', checkScroll);
+            };
+        }, 150);
+
+        return () => clearTimeout(timer);
+    }, [activePage]);
+
+    const handlePageScroll = () => {
+        window.scrollBy({
+            top: window.innerHeight * 0.7,
+            behavior: 'smooth'
+        });
+    };
 
     const handleNavigate = (pageId) => {
         setActivePage(pageId);
@@ -2056,6 +2220,13 @@ function App() {
                     onClose={handleCloseModal}
                 />
             ))}
+            
+            <div 
+                className={`page-scroll-indicator ${showPageScrollIndicator ? 'visible' : ''}`}
+                onClick={handlePageScroll}
+            >
+                <div className="arrow"></div>
+            </div>
         </>
     );
 }
