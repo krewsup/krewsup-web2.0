@@ -225,6 +225,7 @@ const GlobalCSS = `
         max-width: 600px;
         margin: 0 auto 40px;
         animation-delay: 0.4s;
+        text-align: justify;
     }
     .hero-button-grid {
         display: grid;
@@ -1110,7 +1111,6 @@ const GlobalCSS = `
             box-shadow: none;
         }
         .hero-content h1 {
-            word-break: break-word;
             line-height: 1.2;
         }
         .hero-content h1 span {
@@ -1783,7 +1783,7 @@ const HomePage = ({ onOpenModal }) => {
             <div className="hero">
                 <HeroThreeVisual />
                 <div className="hero-content">
-                    <h1>Brew  Your  <span>Connections.</span></h1>
+                    <h1>Brew Your <span>Connections.</span></h1>
                     <p className="tagline">Bharat's Ultimate Gig Platform</p>
                     <p className="description">KrewsUp is a B2C mobile platform connecting startups and event organizers with trusted, KYC-verified blue-collar gig workers for events. We simplify crew hiring for launches, activations, and large-scale events - ensuring professionalism, timely coordination, and a seamless experience.</p>
                     <div className="hero-button-grid">
