@@ -160,7 +160,6 @@ const GlobalCSS = `
         position: relative;
         z-index: 2;
     }
-
     .hero {
         min-height: calc(100vh - 250px);
         display: flex;
@@ -170,7 +169,6 @@ const GlobalCSS = `
         text-align: center;
         overflow: hidden;
     }
-
     #hero-canvas-container {
         position: absolute;
         top: 0;
@@ -179,7 +177,6 @@ const GlobalCSS = `
         height: 100%;
         z-index: 1;
     }
-
     .hero-content {
         position: relative;
         z-index: 2;
@@ -191,17 +188,14 @@ const GlobalCSS = `
         border-radius: 16px;
         max-width: 90%;
     }
-
     @keyframes fadeInHero {
       from { opacity: 0; transform: translateY(40px); }
       to { opacity: 1; transform: translateY(0); }
     }
-
-    .hero-content > * {
+    .hero-content > *:not(.hero-button-grid) {
         opacity: 0;
         animation: fadeInHero 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
     }
-
     .hero-content h1 {
         font-size: clamp(40px, 10vw, 120px);
         font-weight: 700;
@@ -211,13 +205,11 @@ const GlobalCSS = `
         text-shadow: 0 0 30px rgba(var(--accent-color-rgb), 0.3);
         letter-spacing: -0.02em;
     }
-
     .hero-content h1 span {
         border-bottom: 7px solid var(--accent-color);
         color: var(--accent-color);
         padding-bottom: 5px;
     }
-
     .hero-content .tagline {
         font-size: clamp(18px, 4vw, 28px);
         margin: 0 auto 40px;
@@ -226,7 +218,6 @@ const GlobalCSS = `
         font-weight: 500;
         animation-delay: 0.2s;
     }
-
     .hero-content .description {
         font-size: 18px;
         line-height: 1.7;
@@ -235,19 +226,18 @@ const GlobalCSS = `
         margin: 0 auto 40px;
         animation-delay: 0.4s;
     }
-
-    .buttons {
-        display: flex;
-        gap: 25px;
-        justify-content: center;
+    .hero-button-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        margin-top: 40px;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+        animation: fadeInHero 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
         animation-delay: 0.6s;
+        opacity: 0;
     }
-
-    .app-buttons {
-      justify-content: center;
-      animation-delay: 0.8s;
-    }
-
     .btn {
         padding: 15px 35px;
         border: 1px solid transparent;
@@ -260,6 +250,9 @@ const GlobalCSS = `
         position: relative;
         overflow: hidden;
         z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
     #host-btn {
       background: #fff;
@@ -282,6 +275,33 @@ const GlobalCSS = `
       color: #fff;
       transform: scale(1.05);
       box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+    }
+    .app-btn {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 15px 25px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease-in-out;
+        position: relative;
+        overflow: hidden;
+        justify-content: flex-start;
+    }
+    .hero-button-grid .btn,
+    .hero-button-grid .app-btn {
+        height: 68px;
+        width: 100%;
+        margin: 0;
+        box-sizing: border-box;
+    }
+    .hero-button-grid .btn {
+        padding: 15px 20px;
+    }
+    .hero-button-grid .app-btn {
+        padding: 0 25px;
     }
     .section-title {
         font-size: 48px;
@@ -663,24 +683,6 @@ const GlobalCSS = `
       background-color: rgba(255, 255, 255, 0.2);
       border-color: rgba(255, 255, 255, 0.5);
     }
-    .app-buttons {
-        display: flex;
-        gap: 25px;
-        margin-top: 40px;
-    }
-    .app-btn {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 15px 25px;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 8px;
-        cursor: pointer;
-        transition: all 0.3s ease-in-out;
-        position: relative;
-        overflow: hidden;
-    }
     .app-btn:hover {
         transform: translateY(-5px);
         box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
@@ -822,7 +824,6 @@ const GlobalCSS = `
         opacity: 0;
       }
     }
-
     .partners-section {
         overflow: hidden;
     }
@@ -992,7 +993,6 @@ const GlobalCSS = `
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 25px rgba(var(--accent-color-rgb), 0.3);
       border-color: rgba(255, 255, 255, 0.4);
     }
-
     @keyframes waitlist-shine {
         from {
             left: -100%;
@@ -1001,7 +1001,6 @@ const GlobalCSS = `
             left: 150%;
         }
     }
-
     .card-stack-wrapper {
         display: flex;
         flex-direction: column;
@@ -1091,7 +1090,6 @@ const GlobalCSS = `
         opacity: 0.5;
         cursor: not-allowed;
     }
-
     @media (max-width: 768px) {
         header {
             top: 0;
@@ -1115,16 +1113,16 @@ const GlobalCSS = `
             word-break: break-word;
             line-height: 1.2;
         }
+        .hero-content h1 span {
+            display: inline-block;
+        }
         .hero-content {
           padding: 20px;
         }
-        .buttons {
-          flex-direction: column;
-          align-items: center;
-        }
-        .app-buttons {
-          flex-direction: column;
-          align-items: center;
+        .hero-button-grid {
+            grid-template-columns: 1fr;
+            max-width: 90%;
+            gap: 15px;
         }
         .nav-links { display: none; }
         .mobile-menu-btn { display: block; position: static; }
@@ -1788,11 +1786,9 @@ const HomePage = ({ onOpenModal }) => {
                     <h1>Brew  Your  <span>Connections.</span></h1>
                     <p className="tagline">Bharat's Ultimate Gig Platform</p>
                     <p className="description">KrewsUp is a B2C mobile platform connecting startups and event organizers with trusted, KYC-verified blue-collar gig workers for events. We simplify crew hiring for launches, activations, and large-scale events - ensuring professionalism, timely coordination, and a seamless experience.</p>
-                    <div className="buttons">
+                    <div className="hero-button-grid">
                         <button className="btn" id="host-btn" onClick={() => onOpenModal('host')}>Host an Event</button>
                         <button className="btn" id="gig-btn" onClick={() => onOpenModal('gig')}>Find a Gig</button>
-                    </div>
-                    <div className="app-buttons">
                         <div className="app-btn">
                             <div className="app-btn-icon">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 22 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.09997 22C7.78997 22.05 6.79997 20.68 5.95997 19.47C4.24997 17 2.93997 12.45 4.69997 9.39C5.56997 7.87 7.12997 6.91 8.81997 6.88C10.1 6.86 11.32 7.75 12.11 7.75C12.89 7.75 14.37 6.68 15.92 6.84C16.57 6.87 18.39 7.1 19.56 8.82C19.47 8.88 17.39 10.1 17.41 12.63C17.44 15.65 20.06 16.66 20.09 16.67C20.06 16.74 19.67 18.11 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.09 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z" fill="white"/></svg>
