@@ -156,58 +156,98 @@ const GlobalCSS = `
         color: var(--accent-color);
     }
     .page {
-        min-height: 100vh;
         padding: 150px 0 100px;
         position: relative;
         z-index: 2;
     }
+
     .hero {
+        min-height: calc(100vh - 250px);
         display: flex;
         align-items: center;
+        justify-content: center;
+        position: relative;
+        text-align: center;
+        overflow: hidden;
+    }
+
+    #hero-canvas-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+    }
+
+    .hero-content {
         position: relative;
         z-index: 2;
+        padding: 40px;
+        background: rgba(5, 5, 5, 0.2);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        max-width: 90%;
     }
-    .hero-content {
-        max-width: 600px;
-        margin-right: auto;
+
+    @keyframes fadeInHero {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-    h1 {
-        font-size: 100px;
+
+    .hero-content > * {
+        opacity: 0;
+        animation: fadeInHero 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+
+    .hero-content h1 {
+        font-size: clamp(40px, 10vw, 120px);
         font-weight: 700;
-        line-height: 1;
+        line-height: 1.1;
         text-transform: uppercase;
-        transition: transform 0.5s ease, text-shadow 0.5s ease;
-        text-shadow: 0 0 20px rgba(var(--accent-color-rgb), 0.2);
+        margin-bottom: 30px;
+        text-shadow: 0 0 30px rgba(var(--accent-color-rgb), 0.3);
+        letter-spacing: -0.02em;
     }
-    h1:hover {
-        transform: scale(1.03);
-        text-shadow: 0 0 30px rgba(var(--accent-color-rgb), 0.5);
-    }
-    h1 span {
-        border-bottom: 5px solid var(--accent-color);
+
+    .hero-content h1 span {
+        border-bottom: 7px solid var(--accent-color);
         color: var(--accent-color);
+        padding-bottom: 5px;
     }
-    .tagline {
-        font-size: 28px;
-        margin: 20px 0 40px;
+
+    .hero-content .tagline {
+        font-size: clamp(18px, 4vw, 28px);
+        margin: 0 auto 40px;
+        max-width: 600px;
         opacity: 0.9;
-        transition: opacity 0.3s ease, letter-spacing 0.3s ease;
+        font-weight: 500;
+        animation-delay: 0.2s;
     }
-    .tagline:hover {
-        opacity: 1;
-        letter-spacing: 1px;
-    }
-    .description {
+
+    .hero-content .description {
         font-size: 18px;
-        line-height: 1.8;
+        line-height: 1.7;
         opacity: 0.8;
         max-width: 600px;
+        margin: 0 auto 40px;
+        animation-delay: 0.4s;
     }
+
     .buttons {
         display: flex;
         gap: 25px;
-        margin-top: 40px;
+        justify-content: center;
+        animation-delay: 0.6s;
     }
+
+    .app-buttons {
+      justify-content: center;
+      animation-delay: 0.8s;
+    }
+
     .btn {
         padding: 15px 35px;
         border: 1px solid transparent;
@@ -782,34 +822,7 @@ const GlobalCSS = `
         opacity: 0;
       }
     }
-    .growth-pattern {
-        position: absolute;
-        right: 50px;
-        top: 40%;
-        transform: translateY(-50%);
-        width: 350px;
-        height: 400px;
-        z-index: 3;
-    }
-    .growth-icon {
-        position: absolute;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 80px;
-        opacity: 0.9;
-        animation: float 4s ease-in-out infinite;
-        text-shadow: 0 0 25px currentColor, 0 0 10px rgba(255,255,255,0.4);
-    }
-    .growth-icon.rupee { top: 0; left: 150px; color: #fff; animation-delay: 0s; }
-    .growth-icon.growth { top: 150px; left: 50px; color: var(--accent-color); animation-delay: 1s; }
-    .growth-icon.chart { top: 300px; left: 200px; color: #fff; animation-delay: 2s; }
-    .growth-icon.network { top: 100px; left: 250px; color: #fff; animation-delay: 3s; }
-    @keyframes float {
-        0% { transform: translateY(0) rotate(0deg); }
-        50% { transform: translateY(-30px) rotate(5deg); }
-        100% { transform: translateY(0) rotate(0deg); }
-    }
+
     .partners-section {
         overflow: hidden;
     }
@@ -979,7 +992,7 @@ const GlobalCSS = `
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 25px rgba(var(--accent-color-rgb), 0.3);
       border-color: rgba(255, 255, 255, 0.4);
     }
-    
+
     @keyframes waitlist-shine {
         from {
             left: -100%;
@@ -1078,7 +1091,7 @@ const GlobalCSS = `
         opacity: 0.5;
         cursor: not-allowed;
     }
-    
+
     @media (max-width: 768px) {
         header {
             top: 0;
@@ -1098,12 +1111,24 @@ const GlobalCSS = `
             padding: 0;
             box-shadow: none;
         }
-        h1 { font-size: 40px; line-height: 1.1; word-break: break-word; max-width: 100%; }
-        .tagline { font-size: 22px; }
+        .hero-content h1 {
+            word-break: break-word;
+            line-height: 1.2;
+        }
+        .hero-content {
+          padding: 20px;
+        }
+        .buttons {
+          flex-direction: column;
+          align-items: center;
+        }
+        .app-buttons {
+          flex-direction: column;
+          align-items: center;
+        }
         .nav-links { display: none; }
         .mobile-menu-btn { display: block; position: static; }
         .mobile-nav.active { display: flex; }
-        .hero-content { max-width: 100%; padding: 0 10px; }
         .logo img { width: 120px; height: 50px; }
         .footer-container { text-align: center; }
         .footer-social { justify-content: center; }
@@ -1111,13 +1136,10 @@ const GlobalCSS = `
         .step { flex-direction: column; }
         .step-number { font-size: 80px; margin-right: 0; margin-bottom: 10px; }
         .step::after { display: none; }
-        .growth-pattern { display: none; }
         .cursor, .cursor-dot { display: none; }
         body { cursor: auto; }
-        .app-buttons { flex-direction: column; gap: 15px; }
         .modal-content { padding: 30px; }
         .modal-title { font-size: 28px; }
-        .buttons { flex-direction: column; }
         .partner-wrapper {
             margin: 0 15px;
         }
@@ -1285,8 +1307,8 @@ const CustomCursor = () => {
         };
 
         const animate = () => {
-            const lagFactor = 5; 
-            
+            const lagFactor = 5;
+
             if (cursorRef.current) {
                 cursorRef.current.style.top = `${mouseY.current}px`;
                 cursorRef.current.style.left = `${mouseX.current}px`;
@@ -1294,15 +1316,15 @@ const CustomCursor = () => {
 
             dotX.current += (mouseX.current - dotX.current) / lagFactor;
             dotY.current += (mouseY.current - dotY.current) / lagFactor;
-            
+
             if (dotRef.current) {
                 dotRef.current.style.top = `${dotY.current}px`;
                 dotRef.current.style.left = `${dotX.current}px`;
             }
-            
+
             requestRef.current = requestAnimationFrame(animate);
         };
-        
+
         animate();
 
         const onMouseOver = (e) => {
@@ -1369,7 +1391,7 @@ const RippleEffect = () => {
 const Header = ({ onNavigate, activePage, onToggleMobileNav }) => {
     const navItems = ['Home', 'Why Us', 'How It Works', 'Our Partners', 'Customers', 'FAQ'];
     const pageIds = ['home-page', 'why-us-page', 'how-page', 'partners-page', 'customers-page', 'faq-page'];
-    
+
     const [logoSrc, setLogoSrc] = useState(logo);
 
     return (
@@ -1484,7 +1506,7 @@ const TinderCardStack = ({ items, buttonText }) => {
             newCards[0].status = `exiting-${exitDirection}`;
             return newCards;
         });
-        
+
         setExitDirection(prev => (prev === 'right' ? 'left' : 'right'));
 
         setTimeout(() => {
@@ -1494,7 +1516,7 @@ const TinderCardStack = ({ items, buttonText }) => {
                 if (exitedCard) {
                     exitedCard.status = 'hidden';
                     newArray.push(exitedCard);
-                    
+
                     if (newArray[0]) newArray[0].status = 'top';
                     if (newArray[1]) newArray[1].status = 'next';
                     if (newArray[2]) newArray[2].status = 'third';
@@ -1541,7 +1563,7 @@ const FooterThreeAnimation = () => {
         renderer.setSize(mount.clientWidth, mount.clientHeight);
         mount.appendChild(renderer.domElement);
         camera.position.z = 35;
-    
+
         const vertices = [];
         const particleCount = 40;
         for (let i = 0; i < particleCount; i++) {
@@ -1556,7 +1578,7 @@ const FooterThreeAnimation = () => {
         const material = new THREE.PointsMaterial({ size: 0.8, color: 0xffffff, transparent: true, opacity: 0.25 });
         const particles = new THREE.Points(geometry, material);
         scene.add(particles);
-    
+
         let frameId;
         const animate = () => {
             frameId = requestAnimationFrame(animate);
@@ -1568,7 +1590,7 @@ const FooterThreeAnimation = () => {
             renderer.render(scene, camera);
         };
         animate();
-    
+
         const onResize = () => {
             if (!mount) return;
             camera.aspect = mount.clientWidth / mount.clientHeight;
@@ -1576,7 +1598,7 @@ const FooterThreeAnimation = () => {
             renderer.setSize(mount.clientWidth, mount.clientHeight);
         };
         window.addEventListener('resize', onResize);
-    
+
         return () => {
             window.removeEventListener('resize', onResize);
             cancelAnimationFrame(frameId);
@@ -1585,8 +1607,124 @@ const FooterThreeAnimation = () => {
             }
         };
     }, []);
-    
+
     return <div id="footer-three-container" ref={mountRef} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0 }} />;
+};
+
+const HeroThreeVisual = () => {
+    const mountRef = useRef(null);
+    const symbolsRef = useRef([]);
+
+    useEffect(() => {
+        const mount = mountRef.current;
+        if (!mount) return;
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, mount.clientWidth / mount.clientHeight, 0.1, 1000);
+        camera.position.z = 10;
+
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        renderer.setSize(mount.clientWidth, mount.clientHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        mount.appendChild(renderer.domElement);
+
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
+        const pointLight = new THREE.PointLight(0x00A3FF, 1.5, 100);
+        scene.add(pointLight);
+
+        const createSymbolSprite = (symbol, color = 'rgba(255, 255, 255, 0.7)') => {
+            const canvas = document.createElement('canvas');
+            canvas.width = 128;
+            canvas.height = 128;
+            const context = canvas.getContext('2d');
+            context.font = 'bold 96px Arial';
+            context.fillStyle = color;
+            context.textAlign = 'center';
+            context.textBaseline = 'middle';
+            context.fillText(symbol, canvas.width / 2, canvas.height / 2);
+
+            const texture = new THREE.CanvasTexture(canvas);
+            const material = new THREE.SpriteMaterial({ map: texture, transparent: true, opacity: 0.8 });
+            const sprite = new THREE.Sprite(material);
+            sprite.scale.set(1.5, 1.5, 1.5);
+            return sprite;
+        };
+
+        const symbolChars = ['₹', '📈', '🤝', '⭐'];
+        symbolsRef.current = [];
+        symbolChars.forEach(char => {
+            const symbol = createSymbolSprite(char);
+            symbol.position.set(
+                (Math.random() - 0.5) * 15,
+                (Math.random() - 0.5) * 10,
+                (Math.random() - 0.5) * 10
+            );
+
+            symbol.userData.velocity = new THREE.Vector3(
+                (Math.random() - 0.5) * 0.01,
+                (Math.random() - 0.5) * 0.01,
+                (Math.random() - 0.5) * 0.01
+            );
+            symbol.userData.rotationSpeed = (Math.random() - 0.5) * 0.01;
+
+            symbolsRef.current.push(symbol);
+            scene.add(symbol);
+        });
+
+        const mouse = new THREE.Vector2();
+        const onMouseMove = (event) => {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        };
+        window.addEventListener('mousemove', onMouseMove);
+
+        let frameId;
+        const bounds = { x: 10, y: 6, z: 8 };
+        const animate = () => {
+            frameId = requestAnimationFrame(animate);
+
+            symbolsRef.current.forEach(symbol => {
+                symbol.position.add(symbol.userData.velocity);
+                symbol.material.rotation += symbol.userData.rotationSpeed;
+
+                if (Math.abs(symbol.position.x) > bounds.x) symbol.userData.velocity.x *= -1;
+                if (Math.abs(symbol.position.y) > bounds.y) symbol.userData.velocity.y *= -1;
+                if (Math.abs(symbol.position.z) > bounds.z) symbol.userData.velocity.z *= -1;
+            });
+
+            pointLight.position.x = mouse.x * 5;
+            pointLight.position.y = mouse.y * 5;
+            pointLight.position.z = 5;
+
+            renderer.render(scene, camera);
+        };
+        animate();
+
+        const onResize = () => {
+            if (!mount) return;
+            camera.aspect = mount.clientWidth / mount.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(mount.clientWidth, mount.clientHeight);
+        };
+        window.addEventListener('resize', onResize);
+
+        return () => {
+            window.removeEventListener('mousemove', onMouseMove);
+            window.removeEventListener('resize', onResize);
+            cancelAnimationFrame(frameId);
+            symbolsRef.current.forEach(symbol => {
+                symbol.geometry?.dispose();
+                symbol.material?.map?.dispose();
+                symbol.material?.dispose();
+            });
+            if (mount.contains(renderer.domElement)) {
+                mount.removeChild(renderer.domElement);
+            }
+        };
+    }, []);
+
+    return <div ref={mountRef} id="hero-canvas-container" />;
 };
 
 const Footer = ({ onOpenModal }) => {
@@ -1645,8 +1783,9 @@ const HomePage = ({ onOpenModal }) => {
     return (
         <section className="page">
             <div className="hero">
+                <HeroThreeVisual />
                 <div className="hero-content">
-                    <h1>Brew.<br />Your.<br /><span>Connections.</span></h1>
+                    <h1>Brew  Your  <span>Connections.</span></h1>
                     <p className="tagline">Bharat's Ultimate Gig Platform</p>
                     <p className="description">KrewsUp is a B2C mobile platform connecting startups and event organizers with trusted, KYC-verified blue-collar gig workers for events. We simplify crew hiring for launches, activations, and large-scale events - ensuring professionalism, timely coordination, and a seamless experience.</p>
                     <div className="buttons">
@@ -1676,12 +1815,6 @@ const HomePage = ({ onOpenModal }) => {
                         </div>
                     </div>
                 </div>
-                <div className="growth-pattern">
-                  <div className="growth-icon rupee">₹</div>
-                  <div className="growth-icon growth">📈</div>
-                  <div className="growth-icon chart">📊</div>
-                  <div className="growth-icon network">🌐</div>
-                </div>
             </div>
             <div className="waitlist-section">
               <h3 className="waitlist-title">The Shift Has Begun</h3>
@@ -1701,8 +1834,8 @@ const HomePage = ({ onOpenModal }) => {
                             <p className="testimonial-text-unique">"{pair.business.text}"</p>
                             <div className="testimonial-author-unique">
                                 <div className="author-avatar-unique logo-avatar">
-                                    <img 
-                                        src={pair.business.logoUrl} 
+                                    <img
+                                        src={pair.business.logoUrl}
                                         alt={`${pair.business.author} Logo`}
                                         style={pair.business.logoUrl === utLogo ? { transform: 'scale(1.6)' } : {}}
                                     />
@@ -1844,7 +1977,7 @@ const FAQPage = () => {
 function App() {
     const [activePage, setActivePage] = useState('home-page');
     const [openModal, setOpenModal] = useState(null);
-    
+
     useEffect(() => {
         if (openModal) {
             document.body.classList.add('modal-open');
@@ -1859,14 +1992,14 @@ function App() {
         const mobileNav = document.querySelector('.mobile-nav');
         if (mobileNav) mobileNav.classList.remove('active');
     };
-    
+
     const handleToggleMobileNav = () => {
         document.querySelector('.mobile-nav')?.classList.toggle('active');
     };
 
     const handleOpenModal = (modalId) => setOpenModal(modalId);
     const handleCloseModal = () => setOpenModal(null);
-    
+
     const modalData = useMemo(() => ({
         host: { id: 'host-modal', title: 'Host an Event', subtitle: 'Find the perfect team for your next event with KrewsUp', features: [
             {icon: '✓', text: 'Access to thousands of verified professionals'}, {icon: '✓', text: 'Customized staffing solutions for any event size'},
@@ -1900,9 +2033,9 @@ function App() {
             <ParticleBackground />
             <CustomCursor />
             <RippleEffect />
-            
+
             <Header onNavigate={handleNavigate} activePage={activePage} onToggleMobileNav={handleToggleMobileNav} />
-            
+
             <main className="container">
                 {activePage === 'home-page' && <HomePage onOpenModal={handleOpenModal} />}
                 {activePage === 'why-us-page' && <WhyUsPage />}
@@ -1913,7 +2046,7 @@ function App() {
             </main>
 
             <Footer onOpenModal={handleOpenModal} />
-            
+
             {Object.keys(modalData).map(key => (
                  <Modal
                     key={key}
