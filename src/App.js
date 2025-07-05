@@ -7,6 +7,7 @@ import kdaPhoto from './assets/kda.jpg';
 import rtdLogo from './assets/rtdlogo.jpg';
 import utLogo from './assets/utlogo.jpg';
 import kdaLogo from './assets/kdalogo.jpg';
+<<<<<<< HEAD
 import fordceo from './assets/32.jpg';
 import wb from './assets/31.jpg';
 import dl from './assets/dl21.jpg';
@@ -24,6 +25,8 @@ import epmb from './assets/epmb.jpg';
 import gzmb from './assets/gzmb.jpg';
 import ssmb from './assets/ssmb.jpg';
 import atmb from './assets/atmb.jpg';
+=======
+>>>>>>> b51c78396d70f31268b613ef3cbb1e50281fb1ce
 
 const GlobalCSS = `
     @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
@@ -352,6 +355,7 @@ const GlobalCSS = `
       transform: scale(1.05);
       box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
     }
+<<<<<<< HEAD
     #gig-btn::before {
       content: '';
       position: absolute;
@@ -385,6 +389,8 @@ const GlobalCSS = `
         from { transform: rotate(0deg); }
         to { transform: rotate(360deg); }
     }
+=======
+>>>>>>> b51c78396d70f31268b613ef3cbb1e50281fb1ce
     .app-btn {
         display: flex;
         align-items: center;
@@ -1250,6 +1256,7 @@ const GlobalCSS = `
         transform: translateY(2px) rotate(45deg);
       }
     }
+<<<<<<< HEAD
     .gigscape-grid {
         display: grid;
         grid-template-columns: repeat(6, 1fr);
@@ -1369,6 +1376,8 @@ const GlobalCSS = `
         .gigscape-item-7 { grid-column: 1 / 2; grid-row: 5 / 6; }
         .gigscape-item-8 { grid-column: 2 / 3; grid-row: 5 / 6; }
     }
+=======
+>>>>>>> b51c78396d70f31268b613ef3cbb1e50281fb1ce
     @media (max-width: 768px) {
         header {
             top: 0;
@@ -1461,6 +1470,7 @@ const GlobalCSS = `
             width: 45px;
             height: 45px;
         }
+<<<<<<< HEAD
         .gigscape-grid {
             grid-template-columns: 1fr;
             grid-auto-rows: 350px;
@@ -1469,6 +1479,8 @@ const GlobalCSS = `
             grid-column: 1 / -1;
             grid-row: auto;
         }
+=======
+>>>>>>> b51c78396d70f31268b613ef3cbb1e50281fb1ce
     }
 `;
 
@@ -1685,8 +1697,13 @@ const RippleEffect = () => {
 };
 
 const Header = ({ onNavigate, activePage, onToggleMobileNav }) => {
+<<<<<<< HEAD
     const navItems = ['Home', 'Why Us', 'How It Works', 'Our Partners', 'Gigscape', 'Customers', 'FAQ'];
     const pageIds = ['home-page', 'why-us-page', 'how-page', 'partners-page', 'gigscape-page', 'customers-page', 'faq-page'];
+=======
+    const navItems = ['Home', 'Why Us', 'How It Works', 'Our Partners', 'Customers', 'FAQ'];
+    const pageIds = ['home-page', 'why-us-page', 'how-page', 'partners-page', 'customers-page', 'faq-page'];
+>>>>>>> b51c78396d70f31268b613ef3cbb1e50281fb1ce
 
     const [logoSrc, setLogoSrc] = useState(logo);
 
@@ -2063,6 +2080,7 @@ const Footer = ({ onOpenModal }) => {
 const HomePage = ({ onOpenModal }) => {
     const testimonialPairs = [
         {
+<<<<<<< HEAD
             business: { text: "KrewsUp helped us find the right crew instantly through the app. It made onboarding smooth and efficient", author: "Tanushri S N", role: "Founder - RollTheDice", logoUrl: rtdLogo },
             krew: { text: "I got to work on a unique event explaining traditional Indian games. KrewsUp made the process easy and exciting", author: "Thanusha", role: "Krew at RollTheDice Event" }
         },
@@ -2073,6 +2091,18 @@ const HomePage = ({ onOpenModal }) => {
         {
             business: { text: "KrewsUp gave us access to reliable, skilled crews and helpful insights that improved our event planning.", author: "Mehul Ramaswami", role: "Founder - Kathakonnect", logoUrl: kdaLogo },
             krew: { text: "KathaKonnect was thrilling to work at, and KrewsUp showed clear stats on my event count and performance.", author: "Kruthika S", role: "Krew at KathaKonnect Event" }
+=======
+            business: { text: "With KrewsUp, we quickly connected with the right event crew - no calls, no delays. Just a smooth, tech-driven experience.", author: "Tanushri S N", role: "Founder - RollTheDice", logoUrl: rtdLogo },
+            krew: { text: "Explaining traditional Indian board games was a unique experience. The vibe was amazing, and KrewsUp made sure I was prepared and paid on time.", author: "Thanusha", role: "Crew at RollTheDice Event" }
+        },
+        {
+            business: { text: "For our Urbanaut event, the KrewsUp app made it effortless to book and manage event crews. From setup to on-ground support, everything was smooth, timely, and well-coordinated.", author: "Samyuktha Ranganathan", role: "Founder - Urbanaut", logoUrl: utLogo },
+            krew: { text: "Setting up the Urbanaut event gave me real hands-on experience. The KrewsUp app made the entire process smooth ,from applying to getting paid and kept it all professional..", author: "Harsha Vardhan", role: "Crew at Urbanaut Event" }
+        },
+        {
+            business: { text: "KrewsUp completely changed how we staff our events. In just a few clicks, we connect with reliable talent who are passionate and professional.", author: "Mehul Ramaswami", role: "Founder - Kathakonnect", logoUrl: kdaLogo },
+            krew: { text: "KathaKonnect was electrifying! I managed stage and artist coordination, and felt part of something big. The KrewsUp app made everything seamless - from applying to working on-ground..", author: "Kruthika S", role: "Crew at KathaKonnect Event" }
+>>>>>>> b51c78396d70f31268b613ef3cbb1e50281fb1ce
         }
     ];
 
