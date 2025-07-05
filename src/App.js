@@ -47,7 +47,7 @@ const GlobalCSS = `
         background-color: var(--bg-color);
         overflow-x: hidden;
         min-height: 100vh;
-        cursor: none;
+        cursor: default;
     }
     body.modal-open {
         overflow: hidden;
@@ -121,7 +121,7 @@ const GlobalCSS = `
         position: relative;
         transition: color 0.3s ease, transform 0.3s ease;
         padding: 5px 0;
-        cursor: none;
+        cursor: pointer;
     }
     .nav-links a::after {
         content: '';
@@ -767,31 +767,6 @@ const GlobalCSS = `
         line-height: 1.6;
         opacity: 0.8;
     }
-    .cursor {
-        width: 25px;
-        height: 25px;
-        border: 2px solid #fff;
-        border-radius: 50%;
-        position: fixed;
-        pointer-events: none;
-        transform: translate(-50%, -50%);
-        z-index: 9999;
-        transition: width 0.2s ease, height 0.2s ease, border 0.2s ease, opacity 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
-    }
-    .cursor-dot {
-        width: 6px;
-        height: 6px;
-        background: #fff;
-        border-radius: 50%;
-        position: fixed;
-        pointer-events: none;
-        transform: translate(-50%, -50%);
-        z-index: 9999;
-    }
-    .cursor.grow {
-      background-color: rgba(255, 255, 255, 0.2);
-      border-color: rgba(255, 255, 255, 0.5);
-    }
     .app-btn:hover {
         transform: translateY(-5px);
         box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
@@ -978,7 +953,7 @@ const GlobalCSS = `
         width: 220px;
         height: 300px;
         position: relative;
-        cursor: none;
+        cursor: pointer;
         border-radius: 12px;
         overflow: hidden;
         border: 1px solid rgba(255, 255, 255, 0.1);
@@ -1415,8 +1390,6 @@ const GlobalCSS = `
         .step { flex-direction: column; }
         .step-number { font-size: 80px; margin-right: 0; margin-bottom: 10px; }
         .step::after { display: none; }
-        .cursor, .cursor-dot { display: none; }
-        body { cursor: auto; }
         .modal-content { padding: 30px; }
         .modal-title { font-size: 28px; }
         .partner-wrapper {
@@ -1583,76 +1556,6 @@ const GradientBackground = () => {
         }
     }, []);
     return <div className="gradient-bg"></div>;
-};
-
-const CustomCursor = () => {
-    const cursorRef = useRef(null);
-    const dotRef = useRef(null);
-    const [isHovering, setIsHovering] = useState(false);
-
-    const mouseX = useRef(window.innerWidth / 2);
-    const mouseY = useRef(window.innerHeight / 2);
-    const dotX = useRef(window.innerWidth / 2);
-    const dotY = useRef(window.innerHeight / 2);
-    const requestRef = useRef(null);
-
-    useEffect(() => {
-        const onMouseMove = (e) => {
-            mouseX.current = e.clientX;
-            mouseY.current = e.clientY;
-        };
-
-        const animate = () => {
-            const lagFactor = 5;
-
-            if (cursorRef.current) {
-                cursorRef.current.style.top = `${mouseY.current}px`;
-                cursorRef.current.style.left = `${mouseX.current}px`;
-            }
-
-            dotX.current += (mouseX.current - dotX.current) / lagFactor;
-            dotY.current += (mouseY.current - dotY.current) / lagFactor;
-
-            if (dotRef.current) {
-                dotRef.current.style.top = `${dotY.current}px`;
-                dotRef.current.style.left = `${dotX.current}px`;
-            }
-
-            requestRef.current = requestAnimationFrame(animate);
-        };
-
-        animate();
-
-        const onMouseOver = (e) => {
-            if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON' || e.target.closest('a, button, .partner-wrapper')) {
-                setIsHovering(true);
-            }
-        };
-
-        const onMouseOut = (e) => {
-             if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON' || e.target.closest('a, button, .partner-wrapper')) {
-                setIsHovering(false);
-            }
-        };
-
-        window.addEventListener('mousemove', onMouseMove);
-        document.addEventListener('mouseover', onMouseOver);
-        document.addEventListener('mouseout', onMouseOut);
-
-        return () => {
-            window.removeEventListener('mousemove', onMouseMove);
-            document.removeEventListener('mouseover', onMouseOver);
-            document.removeEventListener('mouseout', onMouseOut);
-            cancelAnimationFrame(requestRef.current);
-        };
-    }, []);
-
-    return (
-        <>
-            <div ref={cursorRef} className={`cursor ${isHovering ? 'grow' : ''}`}></div>
-            <div ref={dotRef} className="cursor-dot"></div>
-        </>
-    );
 };
 
 const RippleEffect = () => {
@@ -2482,7 +2385,6 @@ function App() {
             <style>{GlobalCSS}</style>
             <GradientBackground />
             <ParticleBackground />
-            <CustomCursor />
             <RippleEffect />
 
             <Header onNavigate={handleNavigate} activePage={activePage} onToggleMobileNav={handleToggleMobileNav} />
