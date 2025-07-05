@@ -7,6 +7,24 @@ import kdaPhoto from './assets/kda.jpg';
 import rtdLogo from './assets/rtdlogo.jpg';
 import utLogo from './assets/utlogo.jpg';
 import kdaLogo from './assets/kdalogo.jpg';
+import fordceo from './assets/32.jpg';
+import wb from './assets/31.jpg';
+import dl from './assets/dl21.jpg';
+import genz from './assets/genz.jpg';
+import lm from './assets/lm.jpg';
+import ir from './assets/ir.jpg';
+import ss from './assets/ss.jpg';
+import expo from './assets/expo.jpg';
+import bcj from './assets/bcj.jpg';
+import fmb from './assets/fmb.jpg';
+import wcmb from './assets/wcmb.jpg';
+import exmb from './assets/exmb.jpg';
+import samb from './assets/samb.jpg';
+import epmb from './assets/epmb.jpg';
+import gzmb from './assets/gzmb.jpg';
+import ssmb from './assets/ssmb.jpg';
+import atmb from './assets/atmb.jpg';
+
 const GlobalCSS = `
     @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
     :root {
@@ -155,57 +173,129 @@ const GlobalCSS = `
         color: var(--accent-color);
     }
     .page {
-        min-height: 100vh;
         padding: 150px 0 100px;
         position: relative;
         z-index: 2;
     }
     .hero {
+        min-height: calc(100vh - 250px);
         display: flex;
         align-items: center;
+        justify-content: center;
         position: relative;
-        z-index: 2;
+        text-align: center;
+        overflow: hidden;
+    }
+    .scroll-down-indicator {
+        position: absolute;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 40px;
+        height: 60px;
+        z-index: 5;
+        opacity: 1;
+        transition: opacity 0.5s ease;
+        cursor: pointer;
+    }
+    .scroll-down-indicator.hidden {
+        opacity: 0;
+        pointer-events: none;
+    }
+    .scroll-down-indicator span {
+        position: absolute;
+        top: 10px;
+        left: 50%;
+        width: 24px;
+        height: 24px;
+        margin-left: -12px;
+        border-left: 2px solid var(--accent-color);
+        border-bottom: 2px solid var(--accent-color);
+        transform: rotate(-45deg);
+        animation: scroll-down-animation 2s infinite;
+        box-sizing: border-box;
+    }
+    @keyframes scroll-down-animation {
+        0% {
+            transform: rotate(-45deg) translate(0, 0);
+            opacity: 0;
+        }
+        50% {
+            opacity: 1;
+        }
+        100% {
+            transform: rotate(-45deg) translate(-20px, -20px);
+            opacity: 0;
+        }
+    }
+    #hero-canvas-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
     }
     .hero-content {
-        max-width: 600px;
-        margin-right: auto;
+        position: relative;
+        z-index: 2;
+        padding: 40px;
+        background: rgba(5, 5, 5, 0.2);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        max-width: 90%;
     }
-    h1 {
-        font-size: 100px;
+    @keyframes fadeInHero {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .hero-content > *:not(.hero-button-grid) {
+        opacity: 0;
+        animation: fadeInHero 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+    .hero-content h1 {
+        font-size: clamp(40px, 10vw, 120px);
         font-weight: 700;
-        line-height: 1;
+        line-height: 1.1;
         text-transform: uppercase;
-        transition: transform 0.5s ease, text-shadow 0.5s ease;
-        text-shadow: 0 0 20px rgba(var(--accent-color-rgb), 0.2);
+        margin-bottom: 30px;
+        text-shadow: 0 0 30px rgba(var(--accent-color-rgb), 0.3);
+        letter-spacing: -0.02em;
     }
-    h1:hover {
-        transform: scale(1.03);
-        text-shadow: 0 0 30px rgba(var(--accent-color-rgb), 0.5);
-    }
-    h1 span {
-        border-bottom: 5px solid var(--accent-color);
+    .hero-content h1 span {
+        border-bottom: 7px solid var(--accent-color);
         color: var(--accent-color);
+        padding-bottom: 5px;
     }
-    .tagline {
-        font-size: 28px;
-        margin: 20px 0 40px;
+    .hero-content .tagline {
+        font-size: clamp(18px, 4vw, 28px);
+        margin: 0 auto 40px;
+        max-width: 600px;
         opacity: 0.9;
-        transition: opacity 0.3s ease, letter-spacing 0.3s ease;
+        font-weight: 500;
+        animation-delay: 0.2s;
     }
-    .tagline:hover {
-        opacity: 1;
-        letter-spacing: 1px;
-    }
-    .description {
+    .hero-content .description {
         font-size: 18px;
-        line-height: 1.8;
+        line-height: 1.7;
         opacity: 0.8;
         max-width: 600px;
+        margin: 0 auto 40px;
+        animation-delay: 0.4s;
     }
-    .buttons {
-        display: flex;
-        gap: 25px;
+    .hero-button-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
         margin-top: 40px;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+        animation: fadeInHero 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        animation-delay: 0.6s;
+        opacity: 0;
     }
     .btn {
         padding: 15px 35px;
@@ -219,11 +309,16 @@ const GlobalCSS = `
         position: relative;
         overflow: hidden;
         z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
     #host-btn {
       background: #fff;
       color: #000;
       border: 1px solid #fff;
+      position: relative;
+      overflow: hidden;
     }
     #host-btn:hover {
       background: transparent;
@@ -231,16 +326,91 @@ const GlobalCSS = `
       transform: scale(1.05);
       box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
     }
+    #host-btn::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 150px;
+        height: 150px;
+        background: radial-gradient(circle, transparent 40%, rgba(0, 0, 0, 0.08) 50%, rgba(0, 0, 0, 0.08) 55%, transparent 65%);
+        border-radius: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        animation: host-pulse 3s infinite cubic-bezier(0.2, 0.8, 0.2, 1);
+        pointer-events: none;
+    }
     #gig-btn {
       background: #fff;
       color: #000;
       border: 1px solid #fff;
+      position: relative;
+      overflow: hidden;
     }
     #gig-btn:hover {
       background: transparent;
       color: #fff;
       transform: scale(1.05);
       box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+    }
+    #gig-btn::before {
+      content: '';
+      position: absolute;
+      top: -75%;
+      left: -75%;
+      width: 250%;
+      height: 250%;
+      background: conic-gradient(
+        from 0deg,
+        transparent,
+        rgba(0, 0, 0, 0.08) 10%,
+        transparent 30%
+      );
+      animation: gig-scan 4s linear infinite;
+      pointer-events: none;
+    }
+    @keyframes host-pulse {
+        0% {
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 1;
+        }
+        80% {
+            opacity: 0.5;
+        }
+        100% {
+            transform: translate(-50%, -50%) scale(1.2);
+            opacity: 0;
+        }
+    }
+    @keyframes gig-scan {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    .app-btn {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 15px 25px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease-in-out;
+        position: relative;
+        overflow: hidden;
+        justify-content: flex-start;
+    }
+    .hero-button-grid .btn,
+    .hero-button-grid .app-btn {
+        height: 68px;
+        width: 100%;
+        margin: 0;
+        box-sizing: border-box;
+    }
+    .hero-button-grid .btn {
+        padding: 15px 20px;
+    }
+    .hero-button-grid .app-btn {
+        padding: 0 25px;
     }
     .section-title {
         font-size: 48px;
@@ -276,40 +446,11 @@ const GlobalCSS = `
         text-align: center;
         margin-bottom: 80px;
     }
-    .feature-grid, .customer-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-        gap: 50px;
-    }
-    .card {
-        background: rgba(30, 30, 30, 0.6);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        padding: 40px;
-        border-radius: 12px;
-        transition: all 0.4s ease-in-out;
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        opacity: 0;
-        transform: translateY(50px);
-    }
-    .card.visible {
-        opacity: 1;
-        transform: translateY(0);
-    }
-    .card:hover {
-        transform: translateY(-15px) scale(1.03);
-        background: rgba(40, 40, 40, 0.7);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-    }
     .card-icon {
         font-size: 40px;
         margin-bottom: 25px;
         display: inline-block;
         transition: transform 0.4s ease-in-out;
-    }
-    .card:hover .card-icon {
-        transform: scale(1.2) rotate(10deg);
     }
     .card-title {
         font-size: 24px;
@@ -477,54 +618,101 @@ const GlobalCSS = `
     .step:last-child::after {
         display: none;
     }
-    .testimonials {
-        margin: 80px 0;
+    .testimonials-section {
+        padding: 80px 0;
     }
-    .testimonial {
-        padding: 40px;
+    .testimonial-pair {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5%;
+        margin-bottom: 80px;
+        opacity: 0;
+        transition: opacity 0.8s ease-out;
+    }
+    .testimonial-pair.visible {
+        opacity: 1;
+    }
+    .testimonial-card-unique {
+        flex: 1;
+        max-width: 45%;
+        padding: 30px;
         border: 1px solid rgba(255, 255, 255, 0.1);
-        margin-bottom: 40px;
-        position: relative;
-        background: rgba(30, 30, 30, 0.6);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
         border-radius: 12px;
-        transition: all 0.3s ease-in-out;
+        background: rgba(30, 30, 30, 0.4);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
     }
-    .testimonial:hover {
-        transform: scale(1.02);
-        border-color: rgba(255, 255, 255, 0.2);
+    .testimonial-pair.visible .testimonial-card-unique {
+        transform: translateY(0) scale(1);
     }
-    .testimonial-text {
-        font-size: 20px;
-        line-height: 1.6;
+    .business-testimonial {
+        border-left: 4px solid var(--accent-color);
+        transform: translateY(40px) scale(0.95);
+    }
+    .krew-testimonial {
+        border-right: 4px solid var(--accent-color);
+        transform: translateY(40px) scale(0.95);
+    }
+    .testimonial-card-unique:hover {
+        transform: translateY(-10px) scale(1.03);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+        border-color: rgba(var(--accent-color-rgb), 0.3);
+    }
+    .testimonial-text-unique {
+        font-size: 16px;
+        line-height: 1.7;
         margin-bottom: 20px;
         font-style: italic;
         opacity: 0.9;
     }
-    .testimonial-author {
+    .testimonial-author-unique {
         display: flex;
         align-items: center;
     }
-    .author-avatar {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        background: var(--accent-color);
-        color: #000;
+    .author-avatar-unique {
+        width: 45px;
+        height: 45px;
+        border-radius: 8px;
         margin-right: 15px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-weight: 700;
+        overflow: hidden;
     }
-    .author-name {
-        font-weight: 600;
+    .text-avatar {
+        background: var(--accent-color);
+        color: #000;
+        font-weight: 700;
         font-size: 18px;
     }
-    .author-role {
+    .logo-avatar {
+        background: #fff;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    .logo-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+    .author-name-unique {
+        font-weight: 600;
+        font-size: 16px;
+    }
+    .author-role-unique {
         opacity: 0.7;
-        font-size: 14px;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .testimonial-category {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        opacity: 0.6;
+        margin-bottom: 15px;
     }
     .faq {
         margin: 60px 0;
@@ -603,24 +791,6 @@ const GlobalCSS = `
     .cursor.grow {
       background-color: rgba(255, 255, 255, 0.2);
       border-color: rgba(255, 255, 255, 0.5);
-    }
-    .app-buttons {
-        display: flex;
-        gap: 25px;
-        margin-top: 40px;
-    }
-    .app-btn {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 15px 25px;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 8px;
-        cursor: pointer;
-        transition: all 0.3s ease-in-out;
-        position: relative;
-        overflow: hidden;
     }
     .app-btn:hover {
         transform: translateY(-5px);
@@ -762,34 +932,6 @@ const GlobalCSS = `
         transform: scale(4);
         opacity: 0;
       }
-    }
-    .growth-pattern {
-        position: absolute;
-        right: 50px;
-        top: 40%;
-        transform: translateY(-50%);
-        width: 350px;
-        height: 400px;
-        z-index: 3;
-    }
-    .growth-icon {
-        position: absolute;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 80px;
-        opacity: 0.9;
-        animation: float 4s ease-in-out infinite;
-        text-shadow: 0 0 25px currentColor, 0 0 10px rgba(255,255,255,0.4);
-    }
-    .growth-icon.rupee { top: 0; left: 150px; color: #fff; animation-delay: 0s; }
-    .growth-icon.growth { top: 150px; left: 50px; color: var(--accent-color); animation-delay: 1s; }
-    .growth-icon.chart { top: 300px; left: 200px; color: #fff; animation-delay: 2s; }
-    .growth-icon.network { top: 100px; left: 250px; color: #fff; animation-delay: 3s; }
-    @keyframes float {
-        0% { transform: translateY(0) rotate(0deg); }
-        50% { transform: translateY(-30px) rotate(5deg); }
-        100% { transform: translateY(0) rotate(0deg); }
     }
     .partners-section {
         overflow: hidden;
@@ -960,7 +1102,6 @@ const GlobalCSS = `
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 25px rgba(var(--accent-color-rgb), 0.3);
       border-color: rgba(255, 255, 255, 0.4);
     }
-    
     @keyframes waitlist-shine {
         from {
             left: -100%;
@@ -969,7 +1110,265 @@ const GlobalCSS = `
             left: 150%;
         }
     }
+    .card-stack-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 40px;
+        margin-top: -20px;
+    }
+    .card-stack {
+        position: relative;
+        width: 100%;
+        max-width: 480px;
+        height: 380px;
+    }
+    .stack-card {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        will-change: transform, opacity;
+        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
+        cursor: default;
+        background: rgba(30, 30, 30, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 40px;
+        border-radius: 12px;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    .stack-card.top {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+        z-index: 3;
+    }
+    .stack-card.next {
+        transform: translateY(-25px) scale(0.95);
+        opacity: 1;
+        z-index: 2;
+    }
+    .stack-card.third {
+        transform: translateY(-50px) scale(0.9);
+        opacity: 1;
+        z-index: 1;
+    }
+    .stack-card.hidden {
+        transform: translateY(-50px) scale(0.9);
+        opacity: 0;
+        z-index: 0;
+        pointer-events: none;
+    }
+    .exiting-right {
+        transform: translate(50vw, 30px) rotate(20deg) !important;
+        opacity: 0 !important;
+        z-index: 4;
+        transition: transform 0.6s cubic-bezier(0.6, -0.28, 0.735, 0.045), opacity 0.5s ease-out !important;
+    }
+    .exiting-left {
+        transform: translate(-50vw, 30px) rotate(-20deg) !important;
+        opacity: 0 !important;
+        z-index: 4;
+        transition: transform 0.6s cubic-bezier(0.6, -0.28, 0.735, 0.045), opacity 0.5s ease-out !important;
+    }
+    .card-stack-controls button {
+        padding: 12px 30px;
+        background: #fff;
+        color: #000;
+        border: 1px solid #fff;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-width: 200px;
+        text-align: center;
+    }
+    .card-stack-controls button:hover:not(:disabled) {
+        background: transparent;
+        color: #fff;
+        transform: scale(1.05);
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+    }
+    .card-stack-controls button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    .page-scroll-indicator {
+      position: fixed;
+      bottom: 40px;
+      right: 40px;
+      transform: translateY(20px);
+      width: 50px;
+      height: 50px;
+      background: rgba(40, 40, 40, 0.5);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 50%;
+      z-index: 99;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.4s ease-in-out;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .page-scroll-indicator.visible {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: all;
+      transform: translateY(0);
+    }
+    .page-scroll-indicator:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 20px rgba(var(--accent-color-rgb), 0.3);
+      background: rgba(var(--accent-color-rgb), 0.1);
+    }
+    .page-scroll-indicator .arrow {
+      width: 12px;
+      height: 12px;
+      border-bottom: 2px solid var(--primary-color);
+      border-right: 2px solid var(--primary-color);
+      transform: translateY(-2px) rotate(45deg);
+      animation: page-scroll-bounce 2.5s infinite cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    @keyframes page-scroll-bounce {
+      0%, 100% {
+        opacity: 1;
+        transform: translateY(-2px) rotate(45deg);
+      }
+      50% {
+        opacity: 0.8;
+        transform: translateY(2px) rotate(45deg);
+      }
+    }
+    .gigscape-grid {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        grid-auto-rows: 220px;
+        gap: 20px;
+    }
+    .gigscape-card-wrapper {
+        opacity: 0;
+        transform: translateY(40px);
+        transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .gigscape-card-wrapper.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    .gigscape-card {
+        border-radius: 16px;
+        overflow: hidden;
+        position: relative;
+        height: 100%;
+        width: 100%;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s ease;
+        cursor: default;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .gigscape-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+    }
+    .gigscape-card-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 1;
+        transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .gigscape-card:hover .gigscape-card-bg {
+        transform: scale(1.05);
+    }
+    .gigscape-card::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 2;
+        background: linear-gradient(to top, rgba(5, 5, 5, 0.9) 15%, rgba(5, 5, 5, 0.6) 40%, transparent 70%);
+        transition: background 0.5s ease;
+    }
+    .gigscape-content {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 25px;
+        z-index: 3;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        height: 100%;
+    }
+    .gigscape-category {
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: var(--accent-color);
+        margin-bottom: 8px;
+        opacity: 0.8;
+    }
+    .gigscape-title {
+        font-size: 22px;
+        font-weight: 700;
+        line-height: 1.3;
+        margin-bottom: 12px;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.7);
+    }
+    .gigscape-desc {
+        font-size: 14px;
+        line-height: 1.6;
+        opacity: 0;
+        transform: translateY(10px);
+        transition: opacity 0.4s ease, transform 0.4s ease;
+        max-height: 0;
+        overflow: hidden;
+    }
+    .gigscape-card:hover .gigscape-desc {
+        opacity: 0.8;
+        transform: translateY(0);
+        max-height: 150px;
+    }
+    .gigscape-item-1 { grid-column: 1 / 4; grid-row: 1 / 3; }
+    .gigscape-item-2 { grid-column: 4 / 7; grid-row: 1 / 2; }
+    .gigscape-item-3 { grid-column: 4 / 6; grid-row: 2 / 3; }
+    .gigscape-item-4 { grid-column: 6 / 7; grid-row: 2 / 4; }
+    .gigscape-item-5 { grid-column: 1 / 3; grid-row: 3 / 4; }
+    .gigscape-item-6 { grid-column: 3 / 6; grid-row: 3 / 4; }
+    .gigscape-item-7 { grid-column: 1 / 4; grid-row: 4 / 5; }
+    .gigscape-item-8 { grid-column: 4 / 7; grid-row: 4 / 5; }
     
+    @media (max-width: 900px) {
+        .gigscape-grid {
+            grid-template-columns: repeat(2, 1fr);
+            grid-auto-rows: 280px;
+        }
+        .gigscape-item-1 { grid-column: 1 / 2; grid-row: 1 / 3; }
+        .gigscape-item-2 { grid-column: 2 / 3; grid-row: 1 / 2; }
+        .gigscape-item-3 { grid-column: 2 / 3; grid-row: 2 / 3; }
+        .gigscape-item-4 { grid-column: 1 / 2; grid-row: 3 / 4; }
+        .gigscape-item-5 { grid-column: 2 / 3; grid-row: 3 / 4; }
+        .gigscape-item-6 { grid-column: 1 / 3; grid-row: 4 / 5; }
+        .gigscape-item-7 { grid-column: 1 / 2; grid-row: 5 / 6; }
+        .gigscape-item-8 { grid-column: 2 / 3; grid-row: 5 / 6; }
+    }
     @media (max-width: 768px) {
         header {
             top: 0;
@@ -989,12 +1388,26 @@ const GlobalCSS = `
             padding: 0;
             box-shadow: none;
         }
-        h1 { font-size: 40px; line-height: 1.1; word-break: break-word; max-width: 100%; }
-        .tagline { font-size: 22px; }
+        .hero-content h1 {
+            line-height: 1.2;
+        }
+        .hero-content h1 span {
+            display: block;
+        }
+        .hero-content .description {
+            text-align: center;
+        }
+        .hero-content {
+          padding: 20px;
+        }
+        .hero-button-grid {
+            grid-template-columns: 1fr;
+            max-width: 90%;
+            gap: 15px;
+        }
         .nav-links { display: none; }
         .mobile-menu-btn { display: block; position: static; }
         .mobile-nav.active { display: flex; }
-        .hero-content { max-width: 100%; padding: 0 10px; }
         .logo img { width: 120px; height: 50px; }
         .footer-container { text-align: center; }
         .footer-social { justify-content: center; }
@@ -1002,13 +1415,10 @@ const GlobalCSS = `
         .step { flex-direction: column; }
         .step-number { font-size: 80px; margin-right: 0; margin-bottom: 10px; }
         .step::after { display: none; }
-        .growth-pattern { display: none; }
         .cursor, .cursor-dot { display: none; }
         body { cursor: auto; }
-        .app-buttons { flex-direction: column; gap: 15px; }
         .modal-content { padding: 30px; }
         .modal-title { font-size: 28px; }
-        .buttons { flex-direction: column; }
         .partner-wrapper {
             margin: 0 15px;
         }
@@ -1021,6 +1431,43 @@ const GlobalCSS = `
         }
         .waitlist-section {
             margin-bottom: 80px;
+        }
+        .testimonial-pair {
+            flex-direction: column !important;
+            gap: 30px;
+        }
+        .testimonial-card-unique {
+            max-width: 100%;
+        }
+        .card-stack {
+            height: 420px;
+            max-width: 90vw;
+        }
+        .stack-card {
+            padding: 30px 20px;
+        }
+        .stack-card.next {
+            transform: translateY(-20px) scale(0.95);
+        }
+        .stack-card.third {
+            transform: translateY(-40px) scale(0.9);
+        }
+        .scroll-down-indicator {
+            bottom: 20px;
+        }
+        .page-scroll-indicator {
+            right: 20px;
+            bottom: 20px;
+            width: 45px;
+            height: 45px;
+        }
+        .gigscape-grid {
+            grid-template-columns: 1fr;
+            grid-auto-rows: 350px;
+        }
+        .gigscape-item-1, .gigscape-item-2, .gigscape-item-3, .gigscape-item-4, .gigscape-item-5, .gigscape-item-6, .gigscape-item-7, .gigscape-item-8 {
+            grid-column: 1 / -1;
+            grid-row: auto;
         }
     }
 `;
@@ -1156,8 +1603,8 @@ const CustomCursor = () => {
         };
 
         const animate = () => {
-            const lagFactor = 5; 
-            
+            const lagFactor = 5;
+
             if (cursorRef.current) {
                 cursorRef.current.style.top = `${mouseY.current}px`;
                 cursorRef.current.style.left = `${mouseX.current}px`;
@@ -1165,15 +1612,15 @@ const CustomCursor = () => {
 
             dotX.current += (mouseX.current - dotX.current) / lagFactor;
             dotY.current += (mouseY.current - dotY.current) / lagFactor;
-            
+
             if (dotRef.current) {
                 dotRef.current.style.top = `${dotY.current}px`;
                 dotRef.current.style.left = `${dotX.current}px`;
             }
-            
+
             requestRef.current = requestAnimationFrame(animate);
         };
-        
+
         animate();
 
         const onMouseOver = (e) => {
@@ -1238,9 +1685,9 @@ const RippleEffect = () => {
 };
 
 const Header = ({ onNavigate, activePage, onToggleMobileNav }) => {
-    const navItems = ['Home', 'Why Us', 'How It Works', 'Our Partners', 'Customers', 'FAQ'];
-    const pageIds = ['home-page', 'why-us-page', 'how-page', 'partners-page', 'customers-page', 'faq-page'];
-    
+    const navItems = ['Home', 'Why Us', 'How It Works', 'Our Partners', 'Gigscape', 'Customers', 'FAQ'];
+    const pageIds = ['home-page', 'why-us-page', 'how-page', 'partners-page', 'gigscape-page', 'customers-page', 'faq-page'];
+
     const [logoSrc, setLogoSrc] = useState(logo);
 
     return (
@@ -1329,6 +1776,76 @@ const FaqItem = ({ question, answer }) => {
     );
 };
 
+const TinderCardStack = ({ items, buttonText }) => {
+    const [cards, setCards] = useState([]);
+    const [isAnimating, setIsAnimating] = useState(false);
+    const [exitDirection, setExitDirection] = useState('right');
+
+    useEffect(() => {
+        const initialCards = items.map((item, index) => {
+            let status;
+            if (index === 0) status = 'top';
+            else if (index === 1) status = 'next';
+            else if (index === 2) status = 'third';
+            else status = 'hidden';
+            return { ...item, id: `${item.title}-${index}`, status };
+        });
+        setCards(initialCards);
+    }, [items]);
+
+    const handleNext = () => {
+        if (isAnimating || cards.length === 0) return;
+        setIsAnimating(true);
+
+        setCards(prev => {
+            const newCards = [...prev];
+            newCards[0].status = `exiting-${exitDirection}`;
+            return newCards;
+        });
+
+        setExitDirection(prev => (prev === 'right' ? 'left' : 'right'));
+
+        setTimeout(() => {
+            setCards(prev => {
+                const newArray = prev.slice(1);
+                const exitedCard = prev[0];
+                if (exitedCard) {
+                    exitedCard.status = 'hidden';
+                    newArray.push(exitedCard);
+
+                    if (newArray[0]) newArray[0].status = 'top';
+                    if (newArray[1]) newArray[1].status = 'next';
+                    if (newArray[2]) newArray[2].status = 'third';
+                }
+                return newArray;
+            });
+            setIsAnimating(false);
+        }, 600);
+    };
+
+    return (
+        <div className="card-stack-wrapper">
+            <div className="card-stack">
+                {cards.map((item) => (
+                    <div
+                        key={item.id}
+                        className={`stack-card ${item.status}`}
+                    >
+                        <div className="card-icon">{item.icon}</div>
+                        <h3 className="card-title">{item.title}</h3>
+                        <p className="card-desc">{item.desc}</p>
+                    </div>
+                ))}
+            </div>
+            <div className="card-stack-controls">
+                <button onClick={handleNext} disabled={isAnimating}>
+                    {buttonText || 'Next'}
+                </button>
+            </div>
+        </div>
+    );
+};
+
 const FooterThreeAnimation = () => {
     const mountRef = useRef(null);
 
@@ -1342,7 +1859,7 @@ const FooterThreeAnimation = () => {
         renderer.setSize(mount.clientWidth, mount.clientHeight);
         mount.appendChild(renderer.domElement);
         camera.position.z = 35;
-    
+
         const vertices = [];
         const particleCount = 40;
         for (let i = 0; i < particleCount; i++) {
@@ -1357,7 +1874,7 @@ const FooterThreeAnimation = () => {
         const material = new THREE.PointsMaterial({ size: 0.8, color: 0xffffff, transparent: true, opacity: 0.25 });
         const particles = new THREE.Points(geometry, material);
         scene.add(particles);
-    
+
         let frameId;
         const animate = () => {
             frameId = requestAnimationFrame(animate);
@@ -1369,7 +1886,7 @@ const FooterThreeAnimation = () => {
             renderer.render(scene, camera);
         };
         animate();
-    
+
         const onResize = () => {
             if (!mount) return;
             camera.aspect = mount.clientWidth / mount.clientHeight;
@@ -1377,7 +1894,7 @@ const FooterThreeAnimation = () => {
             renderer.setSize(mount.clientWidth, mount.clientHeight);
         };
         window.addEventListener('resize', onResize);
-    
+
         return () => {
             window.removeEventListener('resize', onResize);
             cancelAnimationFrame(frameId);
@@ -1386,8 +1903,124 @@ const FooterThreeAnimation = () => {
             }
         };
     }, []);
-    
+
     return <div id="footer-three-container" ref={mountRef} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0 }} />;
+};
+
+const HeroThreeVisual = () => {
+    const mountRef = useRef(null);
+    const symbolsRef = useRef([]);
+
+    useEffect(() => {
+        const mount = mountRef.current;
+        if (!mount) return;
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, mount.clientWidth / mount.clientHeight, 0.1, 1000);
+        camera.position.z = 10;
+
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        renderer.setSize(mount.clientWidth, mount.clientHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        mount.appendChild(renderer.domElement);
+
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
+        const pointLight = new THREE.PointLight(0x00A3FF, 1.5, 100);
+        scene.add(pointLight);
+
+        const createSymbolSprite = (symbol, color = 'rgba(255, 255, 255, 0.7)') => {
+            const canvas = document.createElement('canvas');
+            canvas.width = 128;
+            canvas.height = 128;
+            const context = canvas.getContext('2d');
+            context.font = 'bold 96px Arial';
+            context.fillStyle = color;
+            context.textAlign = 'center';
+            context.textBaseline = 'middle';
+            context.fillText(symbol, canvas.width / 2, canvas.height / 2);
+
+            const texture = new THREE.CanvasTexture(canvas);
+            const material = new THREE.SpriteMaterial({ map: texture, transparent: true, opacity: 0.8 });
+            const sprite = new THREE.Sprite(material);
+            sprite.scale.set(1.5, 1.5, 1.5);
+            return sprite;
+        };
+
+        const symbolChars = ['₹', '📈', '🤝', '⭐'];
+        symbolsRef.current = [];
+        symbolChars.forEach(char => {
+            const symbol = createSymbolSprite(char);
+            symbol.position.set(
+                (Math.random() - 0.5) * 15,
+                (Math.random() - 0.5) * 10,
+                (Math.random() - 0.5) * 10
+            );
+
+            symbol.userData.velocity = new THREE.Vector3(
+                (Math.random() - 0.5) * 0.01,
+                (Math.random() - 0.5) * 0.01,
+                (Math.random() - 0.5) * 0.01
+            );
+            symbol.userData.rotationSpeed = (Math.random() - 0.5) * 0.01;
+
+            symbolsRef.current.push(symbol);
+            scene.add(symbol);
+        });
+
+        const mouse = new THREE.Vector2();
+        const onMouseMove = (event) => {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        };
+        window.addEventListener('mousemove', onMouseMove);
+
+        let frameId;
+        const bounds = { x: 10, y: 6, z: 8 };
+        const animate = () => {
+            frameId = requestAnimationFrame(animate);
+
+            symbolsRef.current.forEach(symbol => {
+                symbol.position.add(symbol.userData.velocity);
+                symbol.material.rotation += symbol.userData.rotationSpeed;
+
+                if (Math.abs(symbol.position.x) > bounds.x) symbol.userData.velocity.x *= -1;
+                if (Math.abs(symbol.position.y) > bounds.y) symbol.userData.velocity.y *= -1;
+                if (Math.abs(symbol.position.z) > bounds.z) symbol.userData.velocity.z *= -1;
+            });
+
+            pointLight.position.x = mouse.x * 5;
+            pointLight.position.y = mouse.y * 5;
+            pointLight.position.z = 5;
+
+            renderer.render(scene, camera);
+        };
+        animate();
+
+        const onResize = () => {
+            if (!mount) return;
+            camera.aspect = mount.clientWidth / mount.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(mount.clientWidth, mount.clientHeight);
+        };
+        window.addEventListener('resize', onResize);
+
+        return () => {
+            window.removeEventListener('mousemove', onMouseMove);
+            window.removeEventListener('resize', onResize);
+            cancelAnimationFrame(frameId);
+            symbolsRef.current.forEach(symbol => {
+                symbol.geometry?.dispose();
+                symbol.material?.map?.dispose();
+                symbol.material?.dispose();
+            });
+            if (mount.contains(renderer.domElement)) {
+                mount.removeChild(renderer.domElement);
+            }
+        };
+    }, []);
+
+    return <div ref={mountRef} id="hero-canvas-container" />;
 };
 
 const Footer = ({ onOpenModal }) => {
@@ -1427,105 +2060,148 @@ const Footer = ({ onOpenModal }) => {
   );
 };
 
-const HomePage = ({ onOpenModal }) => (
-    <section className="page">
-        <div className="hero">
-            <div className="hero-content">
-                <h1>Brew.<br />Your.<br /><span>Connections.</span></h1>
-                <p className="tagline">Bharat's Ultimate Gig Platform</p>
-                <p className="description">KrewsUp is a B2C platform that connects businesses with trusted, KYC-verified gig workers for events, launches, and more.<br/>From startups to large-scale organizers, we make it easy to find the right crew - ensuring smooth coordination, timely payments, and a hassle-free experience for all.
-</p>
-                <div className="buttons">
-                    <button className="btn" id="host-btn" onClick={() => onOpenModal('host')}>Host an Event</button>
-                    <button className="btn" id="gig-btn" onClick={() => onOpenModal('gig')}>Find a Gig</button>
-                </div>
-                <div className="app-buttons">
-                    <div className="app-btn">
-                        <div className="app-btn-icon">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 22 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.09997 22C7.78997 22.05 6.79997 20.68 5.95997 19.47C4.24997 17 2.93997 12.45 4.69997 9.39C5.56997 7.87 7.12997 6.91 8.81997 6.88C10.1 6.86 11.32 7.75 12.11 7.75C12.89 7.75 14.37 6.68 15.92 6.84C16.57 6.87 18.39 7.1 19.56 8.82C19.47 8.88 17.39 10.1 17.41 12.63C17.44 15.65 20.06 16.66 20.09 16.67C20.06 16.74 19.67 18.11 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.09 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z" fill="white"/>
-                            </svg>
+const HomePage = ({ onOpenModal }) => {
+    const testimonialPairs = [
+        {
+            business: { text: "KrewsUp helped us find the right crew instantly through the app. It made onboarding smooth and efficient", author: "Tanushri S N", role: "Founder - RollTheDice", logoUrl: rtdLogo },
+            krew: { text: "I got to work on a unique event explaining traditional Indian games. KrewsUp made the process easy and exciting", author: "Thanusha", role: "Krew at RollTheDice Event" }
+        },
+        {
+            business: { text: "KrewsUp ensured smooth crew bookings with timely payments and seamless coordination throughout our Urbanaut event", author: "Samyuktha Ranganathan", role: "Founder - Urbanaut", logoUrl: utLogo },
+            krew: { text: "Working at Urbanaut gave me great hands-on experience, and KrewsUp ensured quick, professional payments post-event.", author: "Harsha Vardhan", role: "Krew at Urbanaut Event" }
+        },
+        {
+            business: { text: "KrewsUp gave us access to reliable, skilled crews and helpful insights that improved our event planning.", author: "Mehul Ramaswami", role: "Founder - Kathakonnect", logoUrl: kdaLogo },
+            krew: { text: "KathaKonnect was thrilling to work at, and KrewsUp showed clear stats on my event count and performance.", author: "Kruthika S", role: "Krew at KathaKonnect Event" }
+        }
+    ];
+
+    const [showScrollIndicator, setShowScrollIndicator] = useState(true);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (window.scrollY > 50) {
+                setShowScrollIndicator(false);
+            } else {
+                setShowScrollIndicator(true);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    const handleScrollClick = () => {
+        const nextSection = document.querySelector('.waitlist-section');
+        if (nextSection) {
+            nextSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
+    return (
+        <section className="page">
+            <div className="hero">
+                <HeroThreeVisual />
+                <div className="hero-content">
+                    <h1>Brew Your <span>Connections.</span></h1>
+                    <p className="tagline">Bharat's Ultimate Gig Platform</p>
+                    <p className="description">KrewsUp is a B2C mobile platform connecting startups and event organizers with trusted, KYC-verified blue-collar gig workers for events. We simplify crew hiring for launches, activations, and large-scale events - ensuring professionalism, timely coordination, and a seamless experience.</p>
+                    <div className="hero-button-grid">
+                        <button className="btn" id="host-btn" onClick={() => onOpenModal('host')}>Host an Event</button>
+                        <button className="btn" id="gig-btn" onClick={() => onOpenModal('gig')}>Find a Gig</button>
+                        <div className="app-btn">
+                            <div className="app-btn-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 22 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.09997 22C7.78997 22.05 6.79997 20.68 5.95997 19.47C4.24997 17 2.93997 12.45 4.69997 9.39C5.56997 7.87 7.12997 6.91 8.81997 6.88C10.1 6.86 11.32 7.75 12.11 7.75C12.89 7.75 14.37 6.68 15.92 6.84C16.57 6.87 18.39 7.1 19.56 8.82C19.47 8.88 17.39 10.1 17.41 12.63C17.44 15.65 20.06 16.66 20.09 16.67C20.06 16.74 19.67 18.11 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.09 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z" fill="white"/></svg>
+                            </div>
+                            <div className="app-btn-content">
+                                <span className="app-btn-label">Download on the</span>
+                                <span className="app-btn-name">App Store</span>
+                            </div>
+                            <div className="app-btn-tooltip">Stay tight! We're still under development</div>
                         </div>
-                        <div className="app-btn-content">
-                            <span className="app-btn-label">Download on the</span>
-                            <span className="app-btn-name">App Store</span>
+                        <div className="app-btn">
+                            <div className="app-btn-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.60938 3.15234C3.29688 3.48047 3.125 3.99609 3.125 4.67969V19.3203C3.125 20.0039 3.29688 20.5195 3.60938 20.8477L3.70312 20.9414L13.1016 11.543V11.4414L3.70312 2.05859L3.60938 3.15234Z" fill="white"/><path d="M17.168 15.6094L13.1016 11.543V11.4414L17.168 7.37499L17.2852 7.44921L22.0117 10.0547C23.4023 10.8555 23.4023 12.1289 22.0117 12.9297L17.2852 15.5352L17.168 15.6094Z" fill="white"/><path d="M17.2852 15.5352L13.1016 11.5L3.60938 20.8477C4.0625 21.3281 4.78125 21.3867 5.5625 20.9297L17.2852 15.5352Z" fill="white"/><path d="M17.2852 7.44921L5.5625 2.05468C4.78125 1.59765 4.0625 1.65625 3.60938 2.14062L13.1016 11.5L17.2852 7.44921Z" fill="white"/></svg>
+                            </div>
+                            <div className="app-btn-content">
+                                <span className="app-btn-label">GET IT ON</span>
+                                <span className="app-btn-name">Google Play</span>
+                            </div>
+                            <div className="app-btn-tooltip">Coming soon! We're working hard to launch</div>
                         </div>
-                        <div className="app-btn-tooltip">Stay tight! We're still under development</div>
                     </div>
-                    <div className="app-btn">
-                        <div className="app-btn-icon">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M3.60938 3.15234C3.29688 3.48047 3.125 3.99609 3.125 4.67969V19.3203C3.125 20.0039 3.29688 20.5195 3.60938 20.8477L3.70312 20.9414L13.1016 11.543V11.4414L3.70312 2.05859L3.60938 3.15234Z" fill="white"/>
-                                <path d="M17.168 15.6094L13.1016 11.543V11.4414L17.168 7.37499L17.2852 7.44921L22.0117 10.0547C23.4023 10.8555 23.4023 12.1289 22.0117 12.9297L17.2852 15.5352L17.168 15.6094Z" fill="white"/>
-                                <path d="M17.2852 15.5352L13.1016 11.5L3.60938 20.8477C4.0625 21.3281 4.78125 21.3867 5.5625 20.9297L17.2852 15.5352Z" fill="white"/>
-                                <path d="M17.2852 7.44921L5.5625 2.05468C4.78125 1.59765 4.0625 1.65625 3.60938 2.14062L13.1016 11.5L17.2852 7.44921Z" fill="white"/>
-                            </svg>
-                        </div>
-                        <div className="app-btn-content">
-                            <span className="app-btn-label">GET IT ON</span>
-                            <span className="app-btn-name">Google Play</span>
-                        </div>
-                        <div className="app-btn-tooltip">Coming soon! We're working hard to launch</div>
-                    </div>
+                </div>
+                <div
+                    className={`scroll-down-indicator ${!showScrollIndicator ? 'hidden' : ''}`}
+                    onClick={handleScrollClick}
+                >
+                    <span></span>
                 </div>
             </div>
-            <div className="growth-pattern">
-              <div className="growth-icon rupee">₹</div>
-              <div className="growth-icon growth">📈</div>
-              <div className="growth-icon chart">📊</div>
-              <div className="growth-icon network">🌐</div>
+            <div className="waitlist-section">
+              <h3 className="waitlist-title">The Shift Has Begun</h3>
+              <p className="waitlist-subtitle">KrewsUp is reshaping how crews connect.<br/>Get in early. Be part of the new era.</p>
+              <a href="https://docs.google.com/forms/d/e/1FAIpQLSf0AQJNcrFvLjr3FbYqqSPpjN6d9wlRLP2PIZzY0iGt6U3Htg/viewform?usp=header" target="_blank" rel="noopener noreferrer" className="waitlist-btn">
+                Join the Waitlist
+              </a>
             </div>
-        </div>
-        <div className="waitlist-section">
-          <h3 className="waitlist-title">The Shift Has Begun</h3>
-          <p className="waitlist-subtitle">KrewsUp is reimagining how crews connect.<br/>Get in early. Be part of the new era.</p>
-          <a href="https://docs.google.com/forms/d/e/1FAIpQLSf0AQJNcrFvLjr3FbYqqSPpjN6d9wlRLP2PIZzY0iGt6U3Htg/viewform?usp=header" target="_blank" rel="noopener noreferrer" className="waitlist-btn">
-            Join the Waitlist
-          </a>
-        </div>
-        <div className="title-container">
-            <h2 className="section-title">What Our Community Says</h2>
-        </div>
-        <div className="testimonials">
-            <div className="testimonial">
-                <p className="testimonial-text">KrewsUp made staffing effortless for us. We hired event krews to explain our traditional Indian board games and drive sales at our stall. The team was professional, well-prepared, and perfectly matched for our needs. It saved us time and made a real impact</p>
-                <div className="testimonial-author"><div className="author-avatar">T</div><div><div className="author-name">Tanushri S N</div><div className="author-role">Founder - RollTheDice, Bangalore</div></div></div>
-            </div>
-            <div className="testimonial">
-                <p className="testimonial-text">For our Urbanaut event, KrewsUp handled everything from setup to on-ground support seamlessly. The crew was punctual, efficient, and understood the flow perfectly. It took a huge load off our team.</p>
-                <div className="testimonial-author"><div className="author-avatar">S</div><div><div className="author-name">Samyuktha Ranganathan</div><div className="author-role">Founder - Urbanaut Technologies Pvt Ltd, Bangalore</div></div></div>
-            </div>
-            <div className="testimonial">
-                <p className="testimonial-text">KrewsUp completely changed how we staff our events. In just a few clicks, we connect with reliable talent who are passionate and professional. The same-day payments keep everyone happy and coming back for more gigs.</p>
-                <div className="testimonial-author"><div className="author-avatar">M</div><div><div className="author-name">Mehul Ramaswami</div><div className="author-role">Founder - Kathakonnect Dance Academy, Bangalore</div></div></div>
-            </div>
-        </div>
-    </section>
-);
+            <section className="testimonials-section">
+                <div className="title-container">
+                    <h2 className="section-title">Two Sides of Success</h2>
+                </div>
+                {testimonialPairs.map((pair, index) => (
+                    <AnimatedCard key={index} className="testimonial-pair">
+                        <div className="testimonial-card-unique business-testimonial">
+                            <h4 className="testimonial-category">The Organizer's View</h4>
+                            <p className="testimonial-text-unique">"{pair.business.text}"</p>
+                            <div className="testimonial-author-unique">
+                                <div className="author-avatar-unique logo-avatar">
+                                    <img
+                                        src={pair.business.logoUrl}
+                                        alt={`${pair.business.author} Logo`}
+                                        style={pair.business.logoUrl === utLogo ? { transform: 'scale(1.6)' } : {}}
+                                    />
+                                </div>
+                                <div>
+                                    <div className="author-name-unique">{pair.business.author}</div>
+                                    <div className="author-role-unique">{pair.business.role}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="testimonial-card-unique krew-testimonial">
+                            <h4 className="testimonial-category">The Krew's Experience</h4>
+                            <p className="testimonial-text-unique">"{pair.krew.text}"</p>
+                            <div className="testimonial-author-unique">
+                                <div className="author-avatar-unique text-avatar">
+                                    {pair.krew.author.charAt(0)}
+                                </div>
+                                <div>
+                                    <div className="author-name-unique">{pair.krew.author}</div>
+                                    <div className="author-role-unique">{pair.krew.role}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </AnimatedCard>
+                ))}
+            </section>
+        </section>
+    );
+};
 
 const WhyUsPage = () => {
     const features = [
-        { icon: '⚡', title: 'Instant Gigs', desc: 'Find or post gigs in seconds. Our intelligent matching algorithm connects the right talent with the right opportunities based on skills, location, and availability.' },
+        { icon: '⚡', title: 'Instant Gigs', desc: 'Find & post gigs in seconds. Our intelligent matching algorithm connects the right talent with the right opportunities based on skills, location, and availability.' },
         { icon: '💸', title: 'Same-Day Payments', desc: 'Cash in your account within 24 hours of completing your gig. Our secure payment system ensures you get paid quickly with complete transparency.' },
         { icon: '🔒', title: 'Verified Profiles', desc: 'Our rigorous verification process ensures every user is authentic and trustworthy. ID verification, skills assessment, and review systems maintain quality standards.' },
         { icon: '🌐', title: 'Pan-India Network', desc: 'Active in 23 cities across India with plans to expand to 50+ by end of year. Find opportunities or talent anywhere in the country without geographical limitations.' },
         { icon: '📱', title: 'Mobile-First Experience', desc: 'Our app-centric approach means you can manage your entire gig life from your smartphone. Real-time notifications, location services, and seamless communication.' },
         { icon: '📊', title: 'Performance Analytics', desc: 'Access detailed insights about your gigs, earnings, and ratings. Track your growth, identify improvement areas, and showcase your experience effectively.' },
         { icon: '🎯', title: 'Skill Development', desc: 'Enhance your professional skills through our curated workshops, mentorship programs, and performance feedback system to boost your career growth.' },
-        { icon: '🛡️', title: 'Insurance Coverage', desc: 'Every gig comes with basic insurance coverage for unforeseen circumstances, providing peace of mind for both hosts and talent.' },
     ];
     return (
         <section className="page">
             <div className="title-container"><h2 className="section-title">Why KrewsUp?</h2></div>
-            <div className="feature-grid">
-                {features.map(f => (
-                    <AnimatedCard key={f.title} className="card">
-                        <div className="card-icon">{f.icon}</div>
-                        <h3 className="card-title">{f.title}</h3>
-                        <p className="card-desc">{f.desc}</p>
-                    </AnimatedCard>
-                ))}
-            </div>
+            <TinderCardStack items={features} buttonText="Next Feature" />
         </section>
     );
 };
@@ -1533,10 +2209,10 @@ const WhyUsPage = () => {
 const HowItWorksPage = () => {
     const steps = [
         { num: '01', title: 'Create Your Profile', desc: 'Sign up and build your detailed profile showcasing your skills, experience, and availability. Complete verification to access premium gigs and increase your trustworthiness.' },
-        { num: '02', title: 'Find or Post Gigs', desc: 'Browse available opportunities or create your own gig listings with detailed requirements, location, timing, and compensation. Our algorithm matches the right talent with the right gigs.' },
+        { num: '02', title: 'Find and Post Gigs', desc: 'Browse available opportunities or create your own gig listings with detailed requirements, location, timing, and compensation. Our algorithm matches the right talent with the right gigs.' },
         { num: '03', title: 'Connect and Confirm', desc: 'Direct communication with potential matches, discuss details, and confirm arrangements through our secure platform. Clear expectations and documentation protect both parties.' },
         { num: '04', title: 'Complete the Gig', desc: 'Show up, deliver exceptional service, and track your hours through our app\'s built-in time and location verification system. Get real-time feedback during the gig.' },
-        { num: '05', title: 'Get Paid & Review', desc: 'Receive payment within 24 hours of gig completion. Share your experience through our review system to help build the community\'s trust network and improve future matches.' },
+        { num: '05', title: 'Get Paid and Review', desc: 'Receive payment within 24 hours of gig completion. Share your experience through our review system to help build the community\'s trust network and improve future matches.' },
     ];
     return (
         <section className="page">
@@ -1587,6 +2263,101 @@ const PartnersPage = () => {
     );
 };
 
+const gigscapeArticles = [
+    {
+        category: "Rise of Blue-Collar",
+        title: "Blue-Collar Jobs Secure, White-Collar Roles at Risk",
+        desc: "Ford CEO announces that blue-collar workers are 'safe' while AI is expected to replace nearly 50% of white-collar positions.",
+        imageUrl: fordceo,
+        mobileImageUrl: fmb,
+        gridClass: 'gigscape-item-1'
+    },
+    {
+        category: "Macro Labor Trends",
+        title: "White‑Collar Workers Are Getting the Blues",
+        desc: "As the labor market slows, white-collar roles face stagnation, signaling a potential shift in employment dynamics and long-term job security.",
+        imageUrl: wb,
+        mobileImageUrl: wcmb,
+        gridClass: 'gigscape-item-2'
+    },
+    {
+        category: "Event Market Trends",
+        title: "Dynamic Growth of the Event Industry",
+        desc: "Published in early 2025, this report highlights the accelerating expansion of the global event industry.",
+        imageUrl: expo,
+        mobileImageUrl: exmb,
+        gridClass: 'gigscape-item-3'
+    },
+    {
+        category: "Labor Market Shifts",
+        title: "Blue-Collar Workers Now Scarcer Than White-Collar.",
+        desc: "In a reversal of long-standing labor trends, Companies face growing difficulty in hiring blue-collar workers.",
+        imageUrl: lm,
+        mobileImageUrl: samb,
+        gridClass: 'gigscape-item-4'
+    },
+    {
+        category: "The Event Industry",
+        title: "Industry Insights",
+        desc: "Event Industry Poised for Revenue Growth in 2025 Despite Workforce Challenges.",
+        imageUrl: ir,
+        mobileImageUrl: epmb,
+        gridClass: 'gigscape-item-5'
+    },
+    {
+        category: "Workforce Development",
+        title: "Gen Z Prefers Blue-Collar Jobs. Or Does It?",
+        desc: "Emerging data questions whether Gen Z is truly embracing blue-collar roles or simply exploring alternative career paths amidst rising education and cost concerns.",
+        imageUrl: genz,
+        mobileImageUrl: gzmb,
+        gridClass: 'gigscape-item-6'
+    },
+    {
+        category: "Global Workforce Trends",
+        title: "Staffing Industry Valued at $543 Billion in 2025, Fueled by Tech & Remote Work",
+        desc: "According to Gitnux, the global staffing industry has reached a valuation of $543 billion in 2025.",
+        imageUrl: ss,
+        mobileImageUrl: ssmb,
+        gridClass: 'gigscape-item-7'
+    },
+    {
+        category: "Krew Market - India",
+        title: "Addressing the Blue-Collar Job Market Challenges in India",
+        desc: "In this member-only article, Pankaj Kumar explores the pressing issues affecting India's blue-collar workforce.",
+        imageUrl: bcj,
+        mobileImageUrl: atmb,
+        gridClass: 'gigscape-item-8'
+    }
+];
+
+const GigscapePage = () => (
+    <section className="page gigscape-section">
+        <div className="title-container">
+            <h2 className="section-title">Gigscape</h2>
+        </div>
+        <div className="gigscape-grid">
+            {gigscapeArticles.map((article, index) => (
+                <AnimatedCard key={index} className={`gigscape-card-wrapper ${article.gridClass}`}>
+                    <div className="gigscape-card">
+                        <picture>
+                            <source media="(max-width: 768px)" srcSet={article.mobileImageUrl} />
+                            <img src={article.imageUrl} alt={article.title} className="gigscape-card-bg" />
+                        </picture>
+                        <div className="gigscape-content">
+                            <div>
+                                <span className="gigscape-category">{article.category}</span>
+                                <h3 className="gigscape-title">{article.title}</h3>
+                            </div>
+                            <p className="gigscape-desc">{article.desc}</p>
+                        </div>
+                    </div>
+                </AnimatedCard>
+            ))}
+        </div>
+    </section>
+);
+
+
 const CustomersPage = () => {
     const customers = [
         { icon: '🎭', title: 'Event Organizers', desc: 'From large corporate events to intimate gatherings, we provide reliable staff for all your needs including hosts, servers, technicians, and security personnel.' },
@@ -1597,29 +2368,7 @@ const CustomersPage = () => {
     return (
         <section className="page">
             <div className="title-container"><h2 className="section-title">Our Customers</h2></div>
-            <div className="customer-grid">
-                {customers.map(c => (
-                    <AnimatedCard key={c.title} className="card">
-                        <div className="card-icon">{c.icon}</div>
-                        <h3 className="card-title">{c.title}</h3>
-                        <p className="card-desc">{c.desc}</p>
-                    </AnimatedCard>
-                ))}
-            </div>
-             <div className="testimonials">
-                <div className="testimonial">
-                    <p className="testimonial-text">KathaKonnect was electrifying! I helped manage the stage and artist coordination, and it felt like I was part of something big. Thanks to KrewsUp, everything was well-communicated and super smooth. I’d love to do this again!</p>
-                    <div className="testimonial-author"><div className="author-avatar">K</div><div><div className="author-name">Kruthika S</div><div className="author-role">Crew at KathaKonnect Dance Event</div></div></div>
-                </div>
-                <div className="testimonial">
-                    <p className="testimonial-text">Explaining traditional Indian board games to customers was such a unique experience. The vibe was amazing, and the team energy was on point. KrewsUp made sure I was prepared and paid on time.</p>
-                    <div className="testimonial-author"><div className="author-avatar">T</div><div><div className="author-name">Thanusha</div><div className="author-role">Crew at RollTheDice Event</div></div></div>
-                </div>
-                <div className="testimonial">
-                    <p className="testimonial-text">Setting up the Urbanaut event gave me hands-on experience in managing a full-scale event. From assembling stalls to organizing spaces, it was intense but rewarding. KrewsUp made the whole gig experience effortless and professional.</p>
-                    <div className="testimonial-author"><div className="author-avatar">H</div><div><div className="author-name">Harsha Vardhan</div><div className="author-role">Crew at Urbanaut Event</div></div></div>
-                </div>
-            </div>
+            <TinderCardStack items={customers} buttonText="Next Customer" />
         </section>
     );
 };
@@ -1628,8 +2377,8 @@ const FAQPage = () => {
     const faqs = [
         { q: 'How do I sign up as a gig worker?', a: 'Simply download our app, create an account, verify your identity, and complete your profile with skills and experience. Once approved, you can start applying for gigs immediately.' },
         { q: 'What types of gigs are available on KrewsUp?', a: 'We offer a wide range of opportunities including event staffing, hospitality, retail, promotions, entertainment, technical support, and creative services. New categories are added regularly based on market demand.' },
-        { q: 'How quickly will I get paid after completing a gig?', a: 'We process all payments within 24 hours of gig completion and confirmation. Funds are directly transferred to your linked bank account or digital wallet, making the process fast and hassle-free.' },
-        { q: 'Is there a fee for using KrewsUp?', a: 'Creating a basic profile is free. We charge a small service fee (5-10% depending on the gig type) only when a gig is successfully completed. Hosts pay a listing fee based on the size and complexity of their requirements.' },
+        { q: 'How quickly will I get paid after completing a gig?', a: 'Payments are released as soon as the organizer confirms the gig completion, directly to your linked bank account or wallet' },
+        { q: 'Is there a fee for using KrewsUp?', a: 'Creating a profile is free. Organizers are charged a 13% service fee on total Krew billing. Krews work with zero fees.' },
         { q: 'How does KrewsUp ensure quality and reliability?', a: 'We have a comprehensive verification process including ID verification, background checks for certain roles, skills assessment, and a robust review system. Poor performance is monitored and addressed promptly to maintain platform quality.' },
     ];
     return (
@@ -1645,7 +2394,8 @@ const FAQPage = () => {
 function App() {
     const [activePage, setActivePage] = useState('home-page');
     const [openModal, setOpenModal] = useState(null);
-    
+    const [showPageScrollIndicator, setShowPageScrollIndicator] = useState(false);
+
     useEffect(() => {
         if (openModal) {
             document.body.classList.add('modal-open');
@@ -1654,20 +2404,53 @@ function App() {
         }
     }, [openModal]);
 
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            const checkScroll = () => {
+                const scrollHeight = document.documentElement.scrollHeight;
+                const clientHeight = document.documentElement.clientHeight;
+                const scrollTop = document.documentElement.scrollTop;
+                
+                const isScrollable = scrollHeight > clientHeight;
+                const isAtBottom = scrollTop + clientHeight >= scrollHeight - 5;
+
+                setShowPageScrollIndicator(isScrollable && !isAtBottom);
+            };
+
+            checkScroll();
+            window.addEventListener('scroll', checkScroll, { passive: true });
+            window.addEventListener('resize', checkScroll);
+
+            return () => {
+                window.removeEventListener('scroll', checkScroll);
+                window.removeEventListener('resize', checkScroll);
+            };
+        }, 150);
+
+        return () => clearTimeout(timer);
+    }, [activePage]);
+
+    const handlePageScroll = () => {
+        window.scrollBy({
+            top: window.innerHeight * 0.7,
+            behavior: 'smooth'
+        });
+    };
+
     const handleNavigate = (pageId) => {
         setActivePage(pageId);
         window.scrollTo(0, 0);
         const mobileNav = document.querySelector('.mobile-nav');
         if (mobileNav) mobileNav.classList.remove('active');
     };
-    
+
     const handleToggleMobileNav = () => {
         document.querySelector('.mobile-nav')?.classList.toggle('active');
     };
 
     const handleOpenModal = (modalId) => setOpenModal(modalId);
     const handleCloseModal = () => setOpenModal(null);
-    
+
     const modalData = useMemo(() => ({
         host: { id: 'host-modal', title: 'Host an Event', subtitle: 'Find the perfect team for your next event with KrewsUp', features: [
             {icon: '✓', text: 'Access to thousands of verified professionals'}, {icon: '✓', text: 'Customized staffing solutions for any event size'},
@@ -1701,20 +2484,21 @@ function App() {
             <ParticleBackground />
             <CustomCursor />
             <RippleEffect />
-            
+
             <Header onNavigate={handleNavigate} activePage={activePage} onToggleMobileNav={handleToggleMobileNav} />
-            
+
             <main className="container">
                 {activePage === 'home-page' && <HomePage onOpenModal={handleOpenModal} />}
                 {activePage === 'why-us-page' && <WhyUsPage />}
                 {activePage === 'how-page' && <HowItWorksPage />}
                 {activePage === 'partners-page' && <PartnersPage />}
+                {activePage === 'gigscape-page' && <GigscapePage />}
                 {activePage === 'customers-page' && <CustomersPage />}
                 {activePage === 'faq-page' && <FAQPage />}
             </main>
 
             <Footer onOpenModal={handleOpenModal} />
-            
+
             {Object.keys(modalData).map(key => (
                  <Modal
                     key={key}
@@ -1726,6 +2510,13 @@ function App() {
                     onClose={handleCloseModal}
                 />
             ))}
+            
+            <div 
+                className={`page-scroll-indicator ${showPageScrollIndicator ? 'visible' : ''}`}
+                onClick={handlePageScroll}
+            >
+                <div className="arrow"></div>
+            </div>
         </>
     );
 }
