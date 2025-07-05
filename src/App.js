@@ -2008,7 +2008,7 @@ const HomePage = ({ onOpenModal }) => {
                 <div className="hero-content">
                     <h1>Brew Your <span>Connections.</span></h1>
                     <p className="tagline">Bharat's Ultimate Gig Platform</p>
-                    <p className="description">KrewsUp is a B2C mobile platform connecting startups and event organizers with trusted, KYC-verified blue-collar gig workers for events. We simplify crew hiring for launches, activations, and large-scale events - ensuring professionalism, timely coordination, and a seamless experience.</p>
+                    <p className="description">KrewsUp is a B2C platform connecting companies and organizers with KYC-verified gig workers. It offers reliable crew support for events of all sizes.</p>
                     <div className="hero-button-grid">
                         <button className="btn" id="host-btn" onClick={() => onOpenModal('host')}>Host an Event</button>
                         <button className="btn" id="gig-btn" onClick={() => onOpenModal('gig')}>Find a Gig</button>
