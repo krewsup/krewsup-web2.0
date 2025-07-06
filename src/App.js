@@ -220,48 +220,6 @@ const GlobalCSS = `
         text-align: center;
         overflow: hidden;
     }
-    .scroll-down-indicator {
-        position: absolute;
-        bottom: 30px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 40px;
-        height: 60px;
-        z-index: 5;
-        opacity: 1;
-        transition: opacity 0.5s ease;
-        cursor: pointer;
-    }
-    .scroll-down-indicator.hidden {
-        opacity: 0;
-        pointer-events: none;
-    }
-    .scroll-down-indicator span {
-        position: absolute;
-        top: 10px;
-        left: 50%;
-        width: 24px;
-        height: 24px;
-        margin-left: -12px;
-        border-left: 2px solid var(--accent-color);
-        border-bottom: 2px solid var(--accent-color);
-        transform: rotate(-45deg);
-        animation: scroll-down-animation 2s infinite;
-        box-sizing: border-box;
-    }
-    @keyframes scroll-down-animation {
-        0% {
-            transform: rotate(-45deg) translate(0, 0);
-            opacity: 0;
-        }
-        50% {
-            opacity: 1;
-        }
-        100% {
-            transform: rotate(-45deg) translate(-20px, -20px);
-            opacity: 0;
-        }
-    }
     #hero-canvas-container {
         position: absolute;
         top: 0;
@@ -1050,12 +1008,90 @@ const GlobalCSS = `
         max-width: 600px;
         margin: 20px auto 40px;
     }
+    .cover-wrapper {
+        position: relative;
+        display: inline-block;
+        border-radius: 8px;
+        overflow: hidden;
+        -webkit-mask-image: -webkit-radial-gradient(white, black);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .cover-wrapper:hover {
+        transform: scale(1.05) translateY(-2px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 25px rgba(var(--accent-color-rgb), 0.3);
+    }
+    .cover-effects {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        border-radius: 8px;
+        background-image: linear-gradient(145deg, rgba(35, 35, 35, 0.9), rgba(15, 15, 15, 0.8));
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        transition: border-color 0.3s ease;
+    }
+    .cover-wrapper:hover .cover-effects {
+        border-color: rgba(255, 255, 255, 0.4);
+    }
+    .cover-stars {
+        position: absolute;
+        inset: 0;
+        background-image:
+            radial-gradient(1px 1px at 10% 20%, var(--primary-color), transparent),
+            radial-gradient(1px 1px at 80% 30%, var(--primary-color), transparent),
+            radial-gradient(1.5px 1.5px at 50% 60%, var(--primary-color), transparent),
+            radial-gradient(1px 1px at 30% 90%, var(--primary-color), transparent),
+            radial-gradient(1px 1px at 90% 80%, var(--primary-color), transparent);
+        background-size: 250px 250px;
+        opacity: 0;
+        animation: star-flow 25s linear infinite;
+        transition: opacity 0.5s ease;
+    }
+    @keyframes star-flow {
+        from { transform: translateY(0); }
+        to { transform: translateY(-250px); }
+    }
+    .cover-wrapper:hover .cover-stars {
+        opacity: 0.8;
+        animation-duration: 3s;
+    }
+    .particle-rush {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        border-radius: 8px;
+    }
+    .particle {
+        position: absolute;
+        left: -5px;
+        top: calc(var(--top-pos) * 1%);
+        width: 6px;
+        height: 1.5px;
+        background: var(--primary-color);
+        opacity: 0;
+    }
+    .cover-wrapper:hover .particle {
+        animation: particle-flow 0.6s ease-in forwards;
+        animation-delay: var(--delay);
+    }
+    @keyframes particle-flow {
+        0% {
+            transform: translateX(0);
+            opacity: 0.7;
+        }
+        100% {
+            transform: translateX(250px);
+            opacity: 0;
+        }
+    }
     .waitlist-btn {
         display: inline-block;
         padding: 18px 40px;
-        background-image: linear-gradient(145deg, rgba(35, 35, 35, 0.9), rgba(15, 15, 15, 0.8));
+        background: transparent;
         color: var(--primary-color);
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        border: 1px solid transparent;
         border-radius: 8px;
         font-size: 16px;
         font-weight: 700;
@@ -1063,16 +1099,13 @@ const GlobalCSS = `
         text-decoration: none;
         cursor: pointer;
         position: relative;
-        overflow: hidden;
-        backdrop-filter: blur(5px);
-        -webkit-backdrop-filter: blur(5px);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        transition: all 0.3s ease;
+        z-index: 2;
+        overflow: visible;
     }
     .waitlist-btn:hover {
-      transform: scale(1.05) translateY(-2px);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 25px rgba(var(--accent-color-rgb), 0.3);
-      border-color: rgba(255, 255, 255, 0.4);
+        transform: none;
+        box-shadow: none;
+        border-color: transparent;
     }
     @keyframes waitlist-shine {
         from {
@@ -1340,7 +1373,7 @@ const GlobalCSS = `
             backdrop-filter: none;
             border: none;
             border-radius: 0;
-            padding: 0;
+            padding: 0 10px;
             box-shadow: none;
         }
         .hero-content h1 {
@@ -1373,11 +1406,28 @@ const GlobalCSS = `
         .modal-content { padding: 30px; }
         .modal-title { font-size: 28px; }
         .partners-carousel-wrapper {
-            min-height: 450px;
+            perspective: none;
+            min-height: auto;
+            padding: 20px 0;
+            height: 50vh;
         }
         .partners-carousel {
-            width: 250px;
-            height: 333px;
+            transform: none !important;
+            width: 70vw;
+            height: 100%;
+            transform-style: flat;
+        }
+        .partners-carousel-card {
+            transform: scale(0.8) !important;
+            opacity: 0 !important;
+            filter: none !important;
+            visibility: hidden;
+            transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+        }
+        .partners-carousel-card.active-mobile {
+            transform: scale(1) !important;
+            opacity: 1 !important;
+            visibility: visible;
         }
         .waitlist-title {
             font-size: 28px;
@@ -1398,9 +1448,6 @@ const GlobalCSS = `
         }
         .card-content-3d {
             padding: 30px 20px;
-        }
-        .scroll-down-indicator {
-            bottom: 20px;
         }
         .page-scroll-indicator {
             right: 20px;
@@ -1735,7 +1782,6 @@ const AutoRotatingCardStack = ({ items }) => {
     );
 };
 
-
 const FooterThreeAnimation = () => {
     const mountRef = useRef(null);
 
@@ -1950,6 +1996,30 @@ const Footer = ({ onOpenModal }) => {
   );
 };
 
+const Cover = ({ children, className }) => {
+    const particleCount = 20;
+    return (
+        <div className={`cover-wrapper ${className || ''}`}>
+            <div className="cover-effects">
+                <div className="cover-stars"></div>
+                <div className="particle-rush">
+                    {Array.from({ length: particleCount }).map((_, i) => (
+                        <div
+                            className="particle"
+                            key={i}
+                            style={{
+                                '--top-pos': Math.random() * 100,
+                                '--delay': `${Math.random() * 0.5}s`,
+                            }}
+                        />
+                    ))}
+                </div>
+            </div>
+            {children}
+        </div>
+    );
+};
+
 const HomePage = ({ onOpenModal }) => {
     const testimonialPairs = [
         {
@@ -1965,28 +2035,6 @@ const HomePage = ({ onOpenModal }) => {
             krew: { text: "KathaKonnect was thrilling to work at, and KrewsUp showed clear stats on my event count and performance.", author: "Kruthika S", role: "Krew at KathaKonnect Event" }
         }
     ];
-
-    const [showScrollIndicator, setShowScrollIndicator] = useState(true);
-
-    useEffect(() => {
-        const handleScroll = () => {
-            if (window.scrollY > 50) {
-                setShowScrollIndicator(false);
-            } else {
-                setShowScrollIndicator(true);
-            }
-        };
-
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
-
-    const handleScrollClick = () => {
-        const nextSection = document.querySelector('.waitlist-section');
-        if (nextSection) {
-            nextSection.scrollIntoView({ behavior: 'smooth' });
-        }
-    };
 
     return (
         <section className="page">
@@ -2021,19 +2069,15 @@ const HomePage = ({ onOpenModal }) => {
                         </div>
                     </div>
                 </div>
-                <div
-                    className={`scroll-down-indicator ${!showScrollIndicator ? 'hidden' : ''}`}
-                    onClick={handleScrollClick}
-                >
-                    <span></span>
-                </div>
             </div>
             <div className="waitlist-section">
               <h3 className="waitlist-title">The Shift Has Begun</h3>
               <p className="waitlist-subtitle">KrewsUp is reshaping how crews connect.<br/>Get in early. Be part of the new era.</p>
-              <a href="https://docs.google.com/forms/d/e/1FAIpQLSf0AQJNcrFvLjr3FbYqqSPpjN6d9wlRLP2PIZzY0iGt6U3Htg/viewform?usp=header" target="_blank" rel="noopener noreferrer" className="waitlist-btn">
-                Join the Waitlist
-              </a>
+              <Cover>
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSf0AQJNcrFvLjr3FbYqqSPpjN6d9wlRLP2PIZzY0iGt6U3Htg/viewform?usp=header" target="_blank" rel="noopener noreferrer" className="waitlist-btn">
+                  Join the Waitlist
+                </a>
+              </Cover>
             </div>
             <section className="testimonials-section">
                 <div className="title-container">
@@ -2125,9 +2169,10 @@ const HowItWorksPage = () => {
 const PartnersCarousel = ({ partners }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const carouselRef = useRef(null);
-    const angle = 360 / partners.length;
+    const angle = partners.length > 0 ? 360 / partners.length : 0;
 
     useEffect(() => {
+        if (partners.length === 0) return;
         const interval = setInterval(() => {
             setCurrentIndex(prev => (prev + 1) % partners.length);
         }, 3000);
@@ -2155,7 +2200,7 @@ const PartnersCarousel = ({ partners }) => {
             <div className="partners-carousel" ref={carouselRef}>
                 {partners.map((partner, index) => (
                     <div 
-                        className="partners-carousel-card" 
+                        className={`partners-carousel-card ${index === currentIndex ? 'active-mobile' : ''}`} 
                         key={index} 
                         style={getCardStyle(index)}
                         onClick={() => setCurrentIndex(index)}
