@@ -81,7 +81,7 @@ const GlobalCSS = `
     }
     header {
         position: fixed;
-        top: 20px;
+        top: 30px;
         left: 0;
         width: 100%;
         z-index: 10;
@@ -97,7 +97,7 @@ const GlobalCSS = `
         -webkit-backdrop-filter: blur(12px);
         border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 99px;
-        padding: 8px 15px;
+        padding: 8px 30px;
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         transition: all 0.3s ease-in-out;
     }
@@ -111,35 +111,68 @@ const GlobalCSS = `
     }
     .nav-links {
         display: flex;
-        gap: 30px;
+        gap: 35px;
         margin-left: 25px;
+        align-items: center;
+        padding: 0 10px;
     }
-    .nav-links a {
-        text-decoration: none;
-        font-size: 14px;
-        text-transform: uppercase;
+    .nav-item-wrapper {
         position: relative;
-        transition: color 0.3s ease, transform 0.3s ease;
-        padding: 5px 0;
-        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
     }
-    .nav-links a::after {
+    .nav-item-wrapper:hover {
+        transform: translateY(-8px) scale(1.6);
+    }
+    .nav-icon {
+        display: block;
+        width: 28px;
+        height: 28px;
+        cursor: pointer;
+        position: relative;
+    }
+    .nav-icon svg {
+        width: 100%;
+        height: 100%;
+        fill: rgba(255, 255, 255, 0.7);
+        transition: fill 0.2s ease;
+    }
+    .nav-item-wrapper:hover .nav-icon svg {
+        fill: #fff;
+    }
+    .nav-icon.active::after {
         content: '';
         position: absolute;
-        width: 0;
-        height: 2px;
-        bottom: -2px;
+        bottom: -6px;
         left: 50%;
         transform: translateX(-50%);
-        background: var(--accent-color);
-        transition: width 0.4s ease-in-out;
+        width: 4px;
+        height: 4px;
+        background-color: var(--accent-color);
+        border-radius: 50%;
     }
-    .nav-links a:hover {
-        color: var(--accent-color);
-        transform: translateY(-2px);
+    .nav-tooltip {
+        position: absolute;
+        top: calc(100% + 12px);
+        background: rgba(10, 10, 10, 0.9);
+        color: #fff;
+        padding: 4px 10px;
+        border-radius: 5px;
+        font-size: 12px;
+        font-weight: 500;
+        white-space: nowrap;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-5px);
+        transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+        pointer-events: none;
     }
-    .nav-links a:hover::after {
-        width: 100%;
+    .nav-item-wrapper:hover .nav-tooltip {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
     }
     .mobile-menu-btn {
         display: none;
@@ -176,6 +209,7 @@ const GlobalCSS = `
         padding: 150px 0 100px;
         position: relative;
         z-index: 2;
+        transform: translateZ(0);
     }
     .hero {
         min-height: calc(100vh - 250px);
@@ -908,105 +942,68 @@ const GlobalCSS = `
         opacity: 0;
       }
     }
-    .partners-section {
-        overflow: hidden;
-    }
-    .partners-marquee-container {
-        width: 100vw;
-        position: relative;
-        left: 50%;
-        transform: translateX(-50%);
-        margin-top: 60px;
-        padding: 40px 0;
-    }
-    .partners-marquee-container::before,
-    .partners-marquee-container::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        width: 150px;
-        height: 100%;
-        z-index: 2;
-    }
-    .partners-marquee-container::before {
-        left: 0;
-        background: linear-gradient(to right, var(--bg-color), transparent);
-    }
-    .partners-marquee-container::after {
-        right: 0;
-        background: linear-gradient(to left, var(--bg-color), transparent);
-    }
-    .partners-marquee {
+    .partners-carousel-wrapper {
         display: flex;
-        width: fit-content;
-        animation: scroll 15s linear infinite;
-    }
-    .partner-wrapper {
-        flex-shrink: 0;
-        margin: 0 40px;
-        display: flex;
-        flex-direction: column;
+        justify-content: center;
         align-items: center;
-        gap: 20px;
-    }
-    .partner-item {
-        width: 220px;
-        height: 300px;
+        min-height: 550px;
+        perspective: 2000px;
         position: relative;
-        cursor: pointer;
-        border-radius: 12px;
+    }
+    .partners-carousel {
+        position: relative;
+        width: 300px;
+        height: 400px;
+        transform-style: preserve-3d;
+        transition: transform 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+    .partners-carousel-card {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 16px;
         overflow: hidden;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        background: #111;
-        transition: transform 0.4s ease, box-shadow 0.4s ease;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        background-color: #111;
+        cursor: pointer;
+        transition: all 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
+        transform-style: preserve-3d;
     }
-    .partner-wrapper:hover .partner-item {
-        transform: translateY(-10px);
-        box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    .partners-carousel-card:hover {
+        border-color: rgba(255, 255, 255, 0.3);
     }
-    .partner-photo {
+    .partners-carousel-card .partner-photo {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        transition: transform 0.8s ease;
+        transition: transform 0.6s ease;
     }
-    .partner-wrapper:hover .partner-photo {
+    .partners-carousel-card:hover .partner-photo {
         transform: scale(1.05);
     }
-    .partner-logo {
-        position: relative;
-        width: 60px;
-        height: 60px;
-        object-fit: contain;
-        background: #000;
-        border-radius: 8px;
-        padding: 5px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-    .partner-name {
+    .partners-carousel-card .partner-info-overlay {
         position: absolute;
         bottom: 0;
         left: 0;
         width: 100%;
-        padding: 20px 15px 15px;
-        font-size: 14px;
-        font-weight: 600;
-        text-align: left;
+        padding: 20px;
         background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
-        opacity: 0;
-        transform: translateY(20px);
-        transition: opacity 0.4s ease, transform 0.4s ease;
+        display: flex;
+        align-items: center;
+        gap: 15px;
     }
-    .partner-wrapper:hover .partner-name {
-        opacity: 1;
-        transform: translateY(0);
+    .partners-carousel-card .partner-logo {
+        width: 50px;
+        height: 50px;
+        object-fit: contain;
+        border-radius: 8px;
+        flex-shrink: 0;
+        background-color: #fff;
     }
-    .partners-marquee-container:hover .partners-marquee {
-        animation-play-state: paused;
-    }
-    @keyframes scroll {
-        0% { transform: translateX(0); }
-        100% { transform: translateX(-50%); }
+    .partners-carousel-card .partner-name {
+        font-size: 18px;
+        font-weight: 600;
+        color: #fff;
     }
     .waitlist-section {
         margin-top: 120px;
@@ -1085,94 +1082,77 @@ const GlobalCSS = `
             left: 150%;
         }
     }
-    .card-stack-wrapper {
+    .auto-rotating-card-stack-wrapper {
         display: flex;
-        flex-direction: column;
+        justify-content: center;
         align-items: center;
-        gap: 40px;
-        margin-top: -20px;
+        min-height: 500px;
+        perspective: 1500px;
     }
-    .card-stack {
+    .auto-rotating-card-stack {
         position: relative;
         width: 100%;
         max-width: 480px;
         height: 380px;
+        transform-style: preserve-3d;
     }
-    .stack-card {
+    .stack-card-auto {
         position: absolute;
         width: 100%;
         height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
         will-change: transform, opacity;
-        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
-        cursor: default;
-        background: rgba(30, 30, 30, 0.7);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        padding: 40px;
-        border-radius: 12px;
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1), opacity 1s ease;
+        backface-visibility: hidden;
     }
-    .stack-card.top {
-        transform: translateY(0) scale(1);
+    .card-content-3d {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: rgb(30, 30, 30);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      transform-style: preserve-3d;
+      transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .stack-card-auto.is-hovering .card-content-3d {
+        transition: transform 0.05s linear;
+    }
+    .stack-card-auto.card-active {
+        transform: translateY(0) translateZ(0) rotateX(0deg);
         opacity: 1;
+        z-index: 4;
+        pointer-events: auto;
+        cursor: grab;
+    }
+    .stack-card-auto.card-next {
+        transform: translateY(-40px) translateZ(-150px) rotateX(0deg);
+        opacity: 0.7;
         z-index: 3;
-    }
-    .stack-card.next {
-        transform: translateY(-25px) scale(0.95);
-        opacity: 1;
-        z-index: 2;
-    }
-    .stack-card.third {
-        transform: translateY(-50px) scale(0.9);
-        opacity: 1;
-        z-index: 1;
-    }
-    .stack-card.hidden {
-        transform: translateY(-50px) scale(0.9);
-        opacity: 0;
-        z-index: 0;
         pointer-events: none;
     }
-    .exiting-right {
-        transform: translate(50vw, 30px) rotate(20deg) !important;
-        opacity: 0 !important;
-        z-index: 4;
-        transition: transform 0.6s cubic-bezier(0.6, -0.28, 0.735, 0.045), opacity 0.5s ease-out !important;
+    .stack-card-auto.card-behind {
+        transform: translateY(-80px) translateZ(-300px) rotateX(0deg);
+        opacity: 0.3;
+        z-index: 2;
+        pointer-events: none;
     }
-    .exiting-left {
-        transform: translate(-50vw, 30px) rotate(-20deg) !important;
-        opacity: 0 !important;
-        z-index: 4;
-        transition: transform 0.6s cubic-bezier(0.6, -0.28, 0.735, 0.045), opacity 0.5s ease-out !important;
+    .stack-card-auto.card-exiting {
+        transform: translateY(200px) translateZ(-100px) rotateX(-15deg);
+        opacity: 0;
+        z-index: 5;
+        pointer-events: none;
     }
-    .card-stack-controls button {
-        padding: 12px 30px;
-        background: #fff;
-        color: #000;
-        border: 1px solid #fff;
-        border-radius: 8px;
-        font-size: 16px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        min-width: 200px;
-        text-align: center;
-    }
-    .card-stack-controls button:hover:not(:disabled) {
-        background: transparent;
-        color: #fff;
-        transform: scale(1.05);
-        box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
-    }
-    .card-stack-controls button:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
+    .stack-card-auto.card-hidden-auto {
+        transform: translateY(-120px) translateZ(-450px) rotateX(0deg);
+        opacity: 0;
+        z-index: 1;
+        pointer-events: none;
     }
     .page-scroll-indicator {
       position: fixed;
@@ -1392,12 +1372,12 @@ const GlobalCSS = `
         .step::after { display: none; }
         .modal-content { padding: 30px; }
         .modal-title { font-size: 28px; }
-        .partner-wrapper {
-            margin: 0 15px;
+        .partners-carousel-wrapper {
+            min-height: 450px;
         }
-        .partner-item {
-            width: 180px;
-            height: 240px;
+        .partners-carousel {
+            width: 250px;
+            height: 333px;
         }
         .waitlist-title {
             font-size: 28px;
@@ -1412,18 +1392,12 @@ const GlobalCSS = `
         .testimonial-card-unique {
             max-width: 100%;
         }
-        .card-stack {
+        .auto-rotating-card-stack {
             height: 420px;
             max-width: 90vw;
         }
-        .stack-card {
+        .card-content-3d {
             padding: 30px 20px;
-        }
-        .stack-card.next {
-            transform: translateY(-20px) scale(0.95);
-        }
-        .stack-card.third {
-            transform: translateY(-40px) scale(0.9);
         }
         .scroll-down-indicator {
             bottom: 20px;
@@ -1444,6 +1418,14 @@ const GlobalCSS = `
         }
     }
 `;
+
+const HomeIcon = () => <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z"/></svg>;
+const WhyUsIcon = () => <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-3.5-3.5 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>;
+const HowItWorksIcon = () => <svg viewBox="0 0 24 24"><path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/><path d="m19.43 12.98-.46-3.34-2.73-1.34.94-3.16-2.82-1.64-1.94 2.5-3.2-.4-1.2-3.03-3.41 1.25-.46 3.34 2.73 1.34-.94 3.16 2.82 1.64 1.94-2.5 3.2.4 1.2 3.03 3.41-1.25.46-3.34-2.73-1.34.94-3.16-2.82-1.64-1.94 2.5z"/></svg>;
+const PartnersIcon = () => <svg viewBox="0 0 24 24"><path d="M22.5 13.13c-.85 0-1.55.54-1.87 1.3L19.2 17H4.8l-1.43-2.57c-.32-.76-1.02-1.3-1.87-1.3C.67 13.13 0 13.8 0 14.67c0 .4.17.77.45 1.04l2.7 2.7c.39.39 1.02.39 1.41 0l.71-.71h11.48l.71.71c.39.39 1.02.39 1.41 0l2.7-2.7c.28-.27.45-.64.45-1.04 0-.87-.67-1.54-1.5-1.54zM8.5 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm7 0c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z"/></svg>;
+const GigscapeIcon = () => <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zM17.99 9.21c-.24-3.99-3.42-7.18-7.44-7.21.01 0 .01 0 0 0-3.99.03-7.2 3.23-7.21 7.21 0 0 0 .01 0 0 .03 3.99 3.23 7.2 7.21 7.21 3.99-.03 7.18-3.23 7.21-7.21 0 0 0-.01 0 0z"/></svg>;
+const CustomersIcon = () => <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>;
+const FAQIcon = () => <svg viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V4c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg>;
 
 const useIntersectionObserver = (options) => {
     const containerRef = useRef(null);
@@ -1588,36 +1570,40 @@ const RippleEffect = () => {
 };
 
 const Header = ({ onNavigate, activePage, onToggleMobileNav }) => {
-    const navItems = ['Home', 'Why Us', 'How It Works', 'Our Partners', 'Gigscape', 'Customers', 'FAQ'];
-    const pageIds = ['home-page', 'why-us-page', 'how-page', 'partners-page', 'gigscape-page', 'customers-page', 'faq-page'];
-
     const [logoSrc, setLogoSrc] = useState(logo);
+
+    const navLinks = [
+      { pageId: 'home-page', Icon: HomeIcon, tooltip: 'Home' },
+      { pageId: 'why-us-page', Icon: WhyUsIcon, tooltip: 'Why Us' },
+      { pageId: 'how-page', Icon: HowItWorksIcon, tooltip: 'How It Works' },
+      { pageId: 'partners-page', Icon: PartnersIcon, tooltip: 'Our Partners' },
+      { pageId: 'gigscape-page', Icon: GigscapeIcon, tooltip: 'Gigscape' },
+      { pageId: 'customers-page', Icon: CustomersIcon, tooltip: 'Customers' },
+      { pageId: 'faq-page', Icon: FAQIcon, tooltip: 'FAQ' },
+    ];
+    
+    const mobileNavItems = navLinks.map(link => link.tooltip);
+    const mobilePageIds = navLinks.map(link => link.pageId);
 
     return (
         <header>
             <nav>
                 <div className="logo">
-                    <img
-                        src={logoSrc}
-                        alt="KrewsUp Logo"
-                        onError={() => setLogoSrc('https://via.placeholder.com/150x60?text=KrewsUp')}
-                    />
+                    <img src={logoSrc} alt="KrewsUp Logo" onError={() => setLogoSrc('https://via.placeholder.com/150x60?text=KrewsUp')} />
                 </div>
                 <div className="nav-links">
-                    {navItems.map((item, index) => (
-                        <a
-                            key={item}
-                            href={`#${pageIds[index]}`}
-                            className={activePage === pageIds[index] ? 'active' : ''}
-                            onClick={(e) => { e.preventDefault(); onNavigate(pageIds[index]); }}
-                        >
-                            {item}
-                        </a>
+                    {navLinks.map((link) => (
+                        <div key={link.pageId} className="nav-item-wrapper" onClick={() => onNavigate(link.pageId)}>
+                            <a href={`#${link.pageId}`} className={`nav-icon ${activePage === link.pageId ? 'active' : ''}`} onClick={(e) => e.preventDefault()}>
+                                <link.Icon />
+                            </a>
+                            <span className="nav-tooltip">{link.tooltip}</span>
+                        </div>
                     ))}
                 </div>
                 <button className="mobile-menu-btn" onClick={onToggleMobileNav}>☰</button>
             </nav>
-            <MobileNav navItems={navItems} pageIds={pageIds} onNavigate={onNavigate} />
+            <MobileNav navItems={mobileNavItems} pageIds={mobilePageIds} onNavigate={onNavigate} />
         </header>
     );
 };
@@ -1626,11 +1612,7 @@ const MobileNav = ({ navItems, pageIds, onNavigate }) => {
     return (
         <div className="mobile-nav">
             {navItems.map((item, index) => (
-                <a
-                    key={item}
-                    href={`#${pageIds[index]}`}
-                    onClick={(e) => { e.preventDefault(); onNavigate(pageIds[index]); }}
-                >
+                <a key={item} href={`#${pageIds[index]}`} onClick={(e) => { e.preventDefault(); onNavigate(pageIds[index]); }}>
                     {item}
                 </a>
             ))}
@@ -1679,75 +1661,80 @@ const FaqItem = ({ question, answer }) => {
     );
 };
 
-const TinderCardStack = ({ items, buttonText }) => {
-    const [cards, setCards] = useState([]);
-    const [isAnimating, setIsAnimating] = useState(false);
-    const [exitDirection, setExitDirection] = useState('right');
+const AutoRotatingCardStack = ({ items }) => {
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const cardRefs = useRef([]);
+    cardRefs.current = items.map((_, i) => cardRefs.current[i] ?? React.createRef());
 
     useEffect(() => {
-        const initialCards = items.map((item, index) => {
-            let status;
-            if (index === 0) status = 'top';
-            else if (index === 1) status = 'next';
-            else if (index === 2) status = 'third';
-            else status = 'hidden';
-            return { ...item, id: `${item.title}-${index}`, status };
-        });
-        setCards(initialCards);
-    }, [items]);
+        const intervalId = setInterval(() => {
+            setCurrentIndex(prevIndex => (prevIndex + 1) % items.length);
+        }, 2500);
 
-    const handleNext = () => {
-        if (isAnimating || cards.length === 0) return;
-        setIsAnimating(true);
+        return () => clearInterval(intervalId);
+    }, [items.length]);
 
-        setCards(prev => {
-            const newCards = [...prev];
-            newCards[0].status = `exiting-${exitDirection}`;
-            return newCards;
-        });
+    const handleMouseMove = (e, index) => {
+        const cardNode = cardRefs.current[index]?.current;
+        if (!cardNode) return;
+        
+        cardNode.parentElement.classList.add('is-hovering');
 
-        setExitDirection(prev => (prev === 'right' ? 'left' : 'right'));
+        const { left, top, width, height } = cardNode.getBoundingClientRect();
+        const x = e.clientX - left;
+        const y = e.clientY - top;
+        const rotateY = -((x - width / 2) / (width / 2)) * 15;
+        const rotateX = ((y - height / 2) / (height / 2)) * 15;
+        
+        cardNode.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`;
+    };
 
-        setTimeout(() => {
-            setCards(prev => {
-                const newArray = prev.slice(1);
-                const exitedCard = prev[0];
-                if (exitedCard) {
-                    exitedCard.status = 'hidden';
-                    newArray.push(exitedCard);
-
-                    if (newArray[0]) newArray[0].status = 'top';
-                    if (newArray[1]) newArray[1].status = 'next';
-                    if (newArray[2]) newArray[2].status = 'third';
-                }
-                return newArray;
-            });
-            setIsAnimating(false);
-        }, 600);
+    const handleMouseLeave = (index) => {
+        const cardNode = cardRefs.current[index]?.current;
+        if (cardNode) {
+            cardNode.parentElement.classList.remove('is-hovering');
+            cardNode.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+        }
     };
 
     return (
-        <div className="card-stack-wrapper">
-            <div className="card-stack">
-                {cards.map((item) => (
-                    <div
-                        key={item.id}
-                        className={`stack-card ${item.status}`}
-                    >
-                        <div className="card-icon">{item.icon}</div>
-                        <h3 className="card-title">{item.title}</h3>
-                        <p className="card-desc">{item.desc}</p>
-                    </div>
-                ))}
-            </div>
-            <div className="card-stack-controls">
-                <button onClick={handleNext} disabled={isAnimating}>
-                    {buttonText || 'Next'}
-                </button>
+        <div className="auto-rotating-card-stack-wrapper">
+            <div className="auto-rotating-card-stack">
+                {items.map((item, index) => {
+                    const totalItems = items.length;
+                    let className = 'card-hidden-auto';
+                    const pos = (index - currentIndex + totalItems) % totalItems;
+                    
+                    switch (pos) {
+                        case 0: className = 'card-active'; break;
+                        case 1: className = 'card-next'; break;
+                        case 2: className = 'card-behind'; break;
+                        case totalItems - 1: className = 'card-exiting'; break;
+                        default: className = 'card-hidden-auto';
+                    }
+                    
+                    const isCardActive = pos === 0;
+
+                    return (
+                        <div
+                            key={index}
+                            className={`stack-card-auto ${className}`}
+                            onMouseMove={isCardActive ? (e) => handleMouseMove(e, index) : null}
+                            onMouseLeave={isCardActive ? () => handleMouseLeave(index) : null}
+                        >
+                            <div className="card-content-3d" ref={cardRefs.current[index]}>
+                                <div className="card-icon">{item.icon}</div>
+                                <h3 className="card-title">{item.title}</h3>
+                                <p className="card-desc">{item.desc}</p>
+                            </div>
+                        </div>
+                    );
+                })}
             </div>
         </div>
     );
 };
+
 
 const FooterThreeAnimation = () => {
     const mountRef = useRef(null);
@@ -2104,7 +2091,7 @@ const WhyUsPage = () => {
     return (
         <section className="page">
             <div className="title-container"><h2 className="section-title">Why KrewsUp?</h2></div>
-            <TinderCardStack items={features} buttonText="Next Feature" />
+            <AutoRotatingCardStack items={features} />
         </section>
     );
 };
@@ -2135,33 +2122,73 @@ const HowItWorksPage = () => {
     );
 };
 
+const PartnersCarousel = ({ partners }) => {
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const carouselRef = useRef(null);
+    const angle = 360 / partners.length;
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setCurrentIndex(prev => (prev + 1) % partners.length);
+        }, 3000);
+        return () => clearInterval(interval);
+    }, [partners.length]);
+
+    useEffect(() => {
+        if (carouselRef.current) {
+            carouselRef.current.style.transform = `rotateY(${-currentIndex * angle}deg)`;
+        }
+    }, [currentIndex, angle]);
+    
+    const getCardStyle = (index) => {
+        const rotationY = index * angle;
+        const translateZ = 350; 
+        return {
+            transform: `rotateY(${rotationY}deg) translateZ(${translateZ}px)`,
+            filter: index === currentIndex ? 'none' : 'brightness(0.5)',
+            opacity: index === currentIndex ? 1 : 0.7,
+        };
+    };
+
+    return (
+        <div className="partners-carousel-wrapper">
+            <div className="partners-carousel" ref={carouselRef}>
+                {partners.map((partner, index) => (
+                    <div 
+                        className="partners-carousel-card" 
+                        key={index} 
+                        style={getCardStyle(index)}
+                        onClick={() => setCurrentIndex(index)}
+                    >
+                        <img src={partner.photoUrl} alt={partner.name} className="partner-photo" />
+                        <div className="partner-info-overlay">
+                            <img src={partner.logoUrl} alt={`${partner.name} Logo`} className="partner-logo" />
+                            <div className="partner-name">{partner.name}</div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+};
+
+
 const PartnersPage = () => {
     const partners = [
         { name: 'RollTheDice', photoUrl: rtdPhoto, logoUrl: rtdLogo },
-        { name: 'Urbanaut Technologies', photoUrl: utPhoto, logoUrl: utLogo },
-        { name: 'Kathakonnect Dance Academy', photoUrl: kdaPhoto, logoUrl: kdaLogo },
+        { name: 'Urbanaut', photoUrl: utPhoto, logoUrl: utLogo },
+        { name: 'Kathakonnect', photoUrl: kdaPhoto, logoUrl: kdaLogo },
+        { name: 'RollTheDice', photoUrl: rtdPhoto, logoUrl: rtdLogo },
+        { name: 'Urbanaut', photoUrl: utPhoto, logoUrl: utLogo },
+        { name: 'Kathakonnect', photoUrl: kdaPhoto, logoUrl: kdaLogo },
     ];
-
-    const duplicatedPartners = [...partners, ...partners, ...partners, ...partners];
 
     return (
         <section className="page partners-section">
             <div className="title-container">
                 <h2 className="section-title">Our Partners</h2>
             </div>
-            <div className="partners-marquee-container">
-                <div className="partners-marquee">
-                    {duplicatedPartners.map((partner, index) => (
-                         <div className="partner-wrapper" key={`${partner.name}-${index}`}>
-                            <img src={partner.logoUrl} alt={`${partner.name} Logo`} className="partner-logo" />
-                            <div className="partner-item">
-                                <img src={partner.photoUrl} alt={`${partner.name}`} className="partner-photo" />
-                                <div className="partner-name">{partner.name}</div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
+            <PartnersCarousel partners={partners} />
         </section>
     );
 };
@@ -2260,7 +2287,6 @@ const GigscapePage = () => (
     </section>
 );
 
-
 const CustomersPage = () => {
     const customers = [
         { icon: '🎭', title: 'Event Organizers', desc: 'From large corporate events to intimate gatherings, we provide reliable staff for all your needs including hosts, servers, technicians, and security personnel.' },
@@ -2271,7 +2297,7 @@ const CustomersPage = () => {
     return (
         <section className="page">
             <div className="title-container"><h2 className="section-title">Our Customers</h2></div>
-            <TinderCardStack items={customers} buttonText="Next Customer" />
+            <AutoRotatingCardStack items={customers} />
         </section>
     );
 };
