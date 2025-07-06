@@ -256,10 +256,20 @@ const GlobalCSS = `
         text-shadow: 0 0 30px rgba(var(--accent-color-rgb), 0.3);
         letter-spacing: -0.02em;
     }
-    .hero-content h1 span {
-        border-bottom: 7px solid var(--accent-color);
+    .scramble-wrapper {
+        position: relative;
+        display: inline-block;
+    }
+    .scramble-placeholder {
+        visibility: hidden;
+    }
+    .scramble-animated {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
         color: var(--accent-color);
-        padding-bottom: 5px;
     }
     .hero-content .tagline {
         font-size: clamp(18px, 4vw, 28px);
@@ -1379,7 +1389,7 @@ const GlobalCSS = `
         .hero-content h1 {
             line-height: 1.2;
         }
-        .hero-content h1 span {
+        .hero-content h1 .scramble-wrapper {
             display: block;
         }
         .hero-content .description {
@@ -1705,6 +1715,63 @@ const FaqItem = ({ question, answer }) => {
                 <div className="faq-answer-content">{answer}</div>
             </div>
         </div>
+    );
+};
+
+let hasHeroAnimated = false;
+
+const ScrambledText = ({ text }) => {
+    const [displayText, setDisplayText] = useState(hasHeroAnimated ? text : '');
+    const intervalRef = useRef(null);
+    const originalText = text;
+    const chars = '!<>-_\\/[]{}—=+*^?#';
+
+    useEffect(() => {
+        if (hasHeroAnimated) {
+            setDisplayText(originalText);
+            return;
+        }
+
+        const startTimeout = setTimeout(() => {
+            let iteration = 0;
+            
+            clearInterval(intervalRef.current);
+
+            intervalRef.current = setInterval(() => {
+                setDisplayText(
+                    originalText
+                        .split('')
+                        .map((char, index) => {
+                            if (index < iteration) {
+                                return originalText[index];
+                            }
+                            if (char === ' ') return ' ';
+                            return chars[Math.floor(Math.random() * chars.length)];
+                        })
+                        .join('')
+                );
+    
+                if(iteration >= originalText.length){ 
+                    clearInterval(intervalRef.current);
+                    setDisplayText(originalText);
+                    hasHeroAnimated = true;
+                }
+                
+                iteration += 1 / 3;
+            }, 40);
+        }, 800);
+
+        return () => {
+            clearTimeout(startTimeout);
+            clearInterval(intervalRef.current);
+        };
+    }, [originalText]);
+
+    return (
+        <span className="scramble-wrapper">
+            <span className="scramble-placeholder" aria-hidden="true">{originalText}</span>
+            <span className="scramble-animated">{displayText}</span>
+        </span>
     );
 };
 
@@ -2041,7 +2108,7 @@ const HomePage = ({ onOpenModal }) => {
             <div className="hero">
                 <HeroThreeVisual />
                 <div className="hero-content">
-                    <h1>Brew Your <span>Connections</span></h1>
+                    <h1>Brew Your <ScrambledText text="Connections" /></h1>
                     <p className="tagline">Bharat's Ultimate Gig Platform</p>
                     <p className="description">KrewsUp is a B2C platform connecting companies and organizers with KYC-verified gig workers. It offers reliable crew support for events of all sizes.</p>
                     <div className="hero-button-grid">
