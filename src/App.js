@@ -846,6 +846,43 @@ const GlobalCSS = `
         opacity: 0;
         transform: translateY(-30px) scale(0.95);
         box-shadow: 0 0 50px rgba(var(--accent-color-rgb), 0.1);
+        max-height: 85vh;
+        display: flex;
+        flex-direction: column;
+    }
+    .modal-scrollable-content {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding: 10px 20px 10px 5px;
+        margin-top: 15px;
+        font-size: 14px;
+        line-height: 1.6;
+        color: rgba(255, 255, 255, 0.8);
+    }
+    .modal-scrollable-content::-webkit-scrollbar {
+        width: 6px;
+    }
+    .modal-scrollable-content::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+    }
+    .modal-scrollable-content::-webkit-scrollbar-thumb {
+        background-color: rgba(255, 255, 255, 0.3);
+        border-radius: 10px;
+    }
+    .modal-scrollable-content h4 {
+        font-size: 16px;
+        color: var(--accent-color);
+        margin: 20px 0 10px 0;
+        font-weight: 600;
+    }
+    .modal-scrollable-content p, 
+    .modal-scrollable-content li {
+        margin-bottom: 12px;
+    }
+    .modal-scrollable-content ul {
+        list-style-position: outside;
+        padding-left: 20px;
     }
     .modal.show .modal-content {
       opacity: 1;
@@ -1677,20 +1714,26 @@ const MobileNav = ({ navItems, pageIds, onNavigate }) => {
     );
 };
 
-const Modal = ({ id, title, subtitle, features, show, onClose }) => (
+const Modal = ({ id, title, subtitle, features, content, show, onClose }) => (
     <div id={id} className={`modal ${show ? 'show' : ''}`} onClick={onClose}>
         <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <span className="modal-close" onClick={onClose}>×</span>
             <h3 className="modal-title">{title}</h3>
             {subtitle && <p className="modal-subtitle">{subtitle}</p>}
-            <div className="feature-list">
-                {features.map((feature, index) => (
-                    <div key={index} className="feature-item">
-                        {feature.icon && <span className="feature-icon">{feature.icon}</span>}
-                        <span className="feature-text">{feature.text}</span>
+            {content ? (
+                content
+            ) : (
+                features && (
+                    <div className="feature-list">
+                        {features.map((feature, index) => (
+                            <div key={index} className="feature-item">
+                                {feature.icon && <span className="feature-icon">{feature.icon}</span>}
+                                <span className="feature-text">{feature.text}</span>
+                            </div>
+                        ))}
                     </div>
-                ))}
-            </div>
+                )
+            )}
         </div>
     </div>
 );
@@ -2033,7 +2076,7 @@ const Footer = ({ onOpenModal }) => {
       <div className="footer-container">
         <div className="footer-company">
           <h3>KrewsUp Tech Pvt Ltd</h3>
-          <p>Empowering India's gig economy with innovative solutions</p>
+          <p>Brew Your Connections.</p>
           <div className="footer-social">
             <a href="https://x.com/RaghavXKrewsUp?t=WSAwWeUH9sPIFO3Uz7Ck5g&s=09" className="twitter"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
             <a href="https://www.linkedin.com/in/raghav1548" className="linkedin"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.067 0-1.14.92-2.066 2.063-2.066 1.14 0 2.066.926 2.066 2.066 0 1.141-.926 2.067-2.066 2.067zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
@@ -2045,7 +2088,7 @@ const Footer = ({ onOpenModal }) => {
           <div className="footer-links">
             <a>raghav@krewsup.com</a>
             <a>+91-8296058467</a>
-            <a>G2-401, Shriram Shreyas Apartments, Kodigehalli, Telecomlayout, Vidyaranyapura, Bangalore-560097, Karnataka, India</a>
+            <a>G2-401, Shriram Shreyas Apartments, <br/>Bangalore-560097, Karnataka, India</a>
           </div>
         </div>
         <div className="footer-links-group">
@@ -2284,7 +2327,6 @@ const PartnersCarousel = ({ partners }) => {
     );
 };
 
-
 const PartnersPage = () => {
     const partners = [
         { name: 'RollTheDice', photoUrl: rtdPhoto, logoUrl: rtdLogo },
@@ -2501,21 +2543,148 @@ function App() {
             {icon: '✓', text: 'Flexible schedule - work when you want'}, {icon: '✓', text: 'Same-day payments directly to your account'},
             {icon: '✓', text: 'Build your portfolio and professional network'}, {icon: '✓', text: 'Skill development opportunities and workshops'}, {icon: '✓', text: 'Basic insurance coverage for all gigs'}
         ] },
-        about: { id: 'about-modal', title: 'About Us', subtitle: 'What is KrewsUp?', features: [
-            {text: 'KrewsUp is India\'s premier gig economy platform connecting skilled professionals with event organizers and businesses across the country.'},
-            {text: 'Our mission is to revolutionize the way people work and hire by providing a seamless, transparent, and efficient platform.'},
-            {text: 'Founded in 2025, we\'re committed to empowering talent and enabling opportunities nationwide.'}
-        ] },
-        privacy: { id: 'privacy-modal', title: 'Privacy Policy', subtitle: 'Your privacy matters to us', features: [
-            {text: 'KrewsUp collects only essential personal data necessary for gig matching and verification processes.'},
-            {text: 'Your information is protected with bank-grade encryption and never shared with third parties without consent.'},
-            {text: 'Users have full control over their data with options to update, export, or delete profiles at any time.'}
-        ] },
-        terms: { id: 'terms-modal', title: 'Terms & Conditions', subtitle: 'Our terms of service', features: [
-            {text: 'All users must be 18+ and provide valid government ID for verification.'},
-            {text: 'Gig payments are processed within 24 hours, subject to verification and dispute resolution policies.'},
-            {text: 'KrewsUp reserves the right to suspend accounts violating community guidelines or engaging in fraudulent activities.'}
-        ] },
+        about: { 
+            id: 'about-modal', 
+            title: 'About Us', 
+            subtitle: 'What is KrewsUp?', 
+            content: (
+                <div className="modal-scrollable-content">
+                    <p>KrewsUp is a digital B2C platform connecting companies, organizations, and event organizers with a pool of verified professionals. It serves as a one-stop solution for on-demand staffing needs in India.</p>
+                    <p>The platform’s mission is to create a seamless and transparent ecosystem. It uses rigorous KYC verification and a secure payment system to build trust and ensure efficiency for all users.</p>
+                    <p>Founded in 2024, KrewsUp is committed to empowering India's gig workforce. It provides businesses with reliable access to a skilled, on-demand talent pool.</p>
+                </div>
+            )
+        },
+        privacy: { 
+            id: 'privacy-modal', 
+            title: 'Privacy Policy', 
+            subtitle: 'Last Updated: May 23, 2025',
+            content: (
+                <div className="modal-scrollable-content">
+                    <p>KrewsUp Technologies Private Limited ("we," "us," or "our") operates the KrewsUp mobile application (the "Service"). This Privacy Policy outlines our practices regarding the collection, use, and disclosure of your personal data when you use our Service and the rights you have concerning that data.</p>
+                    
+                    <h4>1. Information We Collect</h4>
+                    <p>To provide and improve our Service, we collect information you provide to us, information collected automatically, and information from third parties.</p>
+                    <ul>
+                        <li><strong>Personal Information:</strong> We collect data you provide during registration and profile setup, including your full name, contact details (phone, email), profile photo, and location.</li>
+                        <li><strong>Verification Data (Event Staff):</strong> To ensure a secure platform, we require Event Staff to complete a KYC process, which includes providing government-issued identification documents.</li>
+                        <li><strong>Professional Information:</strong> We collect details about your professional qualifications, skills, work experience, portfolio, and ratings from past events.</li>
+                        <li><strong>Corporate Information (Event Organizers):</strong> We may collect company names, business details, and GST information for corporate accounts.</li>
+                        <li><strong>Payment Information:</strong> To process transactions, we collect bank account details, UPI IDs, and other necessary financial information through our secure payment gateway.</li>
+                        <li><strong>Usage and Device Data:</strong> We automatically collect information about how you interact with our app, your device type, IP address, and location data (with your consent) to enhance your experience.</li>
+                    </ul>
+
+                    <h4>2. How We Use Your Information</h4>
+                    <p>We use the collected data for several key purposes:</p>
+                    <ul>
+                        <li><strong>Service Delivery:</strong> To connect Event Organizers with Event Staff, manage bookings, facilitate communication, track attendance, and process payments.</li>
+                        <li><strong>Account Management:</strong> To create and secure your account, verify your identity (KYC), and provide customer support.</li>
+                        <li><strong>Platform Improvement:</strong> To analyze usage patterns, optimize our matching algorithms, and develop new features.</li>
+                        <li><strong>Communication:</strong> To send you transactional messages, service updates, and promotional offers (with your consent).</li>
+                        <li><strong>Safety and Legal Compliance:</strong> To prevent fraud, enforce our Terms, resolve disputes, and comply with legal obligations.</li>
+                    </ul>
+
+                    <h4>3. Data Sharing and Visibility</h4>
+                    <p>Your information is shared selectively to make the platform work effectively.</p>
+                    <ul>
+                        <li><strong>Between Users:</strong> Organizers can view staff profiles (name, skills, ratings, experience). Staff can view organizer profiles and event details. Precise locations are never shared.</li>
+                        <li><strong>With Third-Party Services:</strong> We share data with trusted partners for core functions, including payment processing (Razorpay), identity verification, cloud storage, and analytics (Firebase).</li>
+                        <li><strong>For Legal Reasons:</strong> We may share information with law enforcement or government authorities if required by law.</li>
+                        <li>We do not sell, rent, or lease your personal information to third parties for their marketing purposes without your explicit consent.</li>
+                    </ul>
+
+                    <h4>4. Security Measures</h4>
+                    <p>The security of your data is a top priority. We implement robust technical, operational, and physical safeguards, including end-to-end encryption, secure data storage, regular security audits, and multi-factor authentication. Our payment processing is PCI DSS compliant to protect your financial information.</p>
+
+                    <h4>5. Your Data Rights and Control</h4>
+                    <p>You have control over your personal information. You have the right to:</p>
+                    <ul>
+                        <li>Access, update, or correct your information through your account settings.</li>
+                        <li>Delete your account and associated data (subject to legal and regulatory retention requirements).</li>
+                        <li>Manage your privacy settings, including profile visibility and communication preferences.</li>
+                        <li>Withdraw consent for data processing at any time.</li>
+                    </ul>
+
+                    <h4>6. Children's Privacy</h4>
+                    <p>Our Service is not intended for individuals under the age of 18. We do not knowingly collect personal information from children. If we become aware that a child has provided us with personal data, we will take steps to delete it immediately.</p>
+
+                    <h4>7. Changes to This Privacy Policy</h4>
+                    <p>We may update this Privacy Policy from time to time. We will notify you of any significant changes by email, in-app notification, or by posting the new policy on this page. Your continued use of the Service after changes constitutes your acceptance of the new policy.</p>
+
+                    <h4>8. Contact Us</h4>
+                    <p>If you have any questions or concerns about this Privacy Policy or our data practices, please contact us:</p>
+                    <ul>
+                        <li><strong>Email:</strong> raghav@krewsup.com</li>
+                        <li><strong>Phone:</strong> +91 8296058467</li>
+                        <li><strong>Company:</strong> KrewsUp Technologies Private Limited, Karnataka, India</li>
+                    </ul>
+                </div>
+            )
+        },
+        terms: { 
+            id: 'terms-modal', 
+            title: 'Terms & Conditions', 
+            subtitle: 'Last Updated: January 25, 2025',
+            content: (
+                <div className="modal-scrollable-content">
+                    <p>Welcome to KrewsUp! These Terms and Conditions ("Terms") govern your use of the KrewsUp mobile application and services provided by KrewsUp Technologies Private Limited. By downloading, accessing, or using our app, you agree to be bound by these Terms.</p>
+                    
+                    <h4>1. Eligibility and User Accounts</h4>
+                    <p>To use KrewsUp, you must be at least 18 years of age and have the legal capacity to enter into binding contracts. You are responsible for providing accurate, current, and complete information during registration and for maintaining the security of your account, which is authenticated via Firebase OTP. You are responsible for all activities that occur under your account.</p>
+                    <ul>
+                        <li><strong>Eligible Users:</strong> The platform is for Event Organizers (companies, individuals, institutions) and Event Staff (verified professionals, freelancers, part-time workers).</li>
+                        <li><strong>Prohibited Users:</strong> Individuals under 18, previously banned users, or those engaged in illegal activities are prohibited.</li>
+                    </ul>
+
+                    <h4>2. Platform Rules and User Conduct</h4>
+                    <p>All users agree to conduct themselves professionally and respectfully. You are responsible for complying with all applicable local, state, and national laws.</p>
+                    <ul>
+                        <li><strong>General Conduct:</strong> Provide truthful information, maintain professionalism, communicate respectfully, and do not engage in discrimination or fraudulent activity.</li>
+                        <li><strong>Event Organizer Rules:</strong> Provide accurate event and compensation details, honor all confirmed bookings, ensure safe working conditions, and do not attempt to recruit staff outside the platform to avoid fees.</li>
+                        <li><strong>Event Staff Rules:</strong> Complete mandatory KYC verification, maintain an updated profile and availability, honor work commitments, perform duties professionally, and do not share personal contact information to circumvent the platform.</li>
+                    </ul>
+
+                    <h4>3. How KrewsUp Works</h4>
+                    <p>KrewsUp is a digital marketplace connecting Event Organizers with verified Event Staff. Our platform facilitates registration, job posting, staff selection, booking, in-app communication, and secure payments to ensure a seamless and reliable experience for both parties.</p>
+
+                    <h4>4. Payments, Commissions, and Fees</h4>
+                    <p>KrewsUp utilizes Razorpay as its primary payment gateway for all transactions, including UPI, digital wallets, cards, and net banking. By using our service, you agree to Razorpay's terms.</p>
+                    <ul>
+                        <li><strong>For Organizers:</strong> You are responsible for ensuring sufficient funds for confirmed bookings. Payments are collected securely through Razorpay's gateway.</li>
+                        <li><strong>For Staff:</strong> Payments for completed work are processed through Razorpay's payout system to your registered bank account or UPI ID within 24-48 hours of event confirmation.</li>
+                        <li><strong>Commission Structure:</strong> KrewsUp charges a 13% commission on all transactions. This fee is inclusive of GST, Razorpay gateway charges, and platform fees.</li>
+                        <li><strong>Disputes:</strong> Payment disputes must be reported within 7 days and will be resolved through KrewsUp support, with escalation to Razorpay if necessary.</li>
+                    </ul>
+
+                    <h4>5. Privacy and Third-Party Services</h4>
+                    <p>Your privacy is important. Our data collection and use practices are detailed in our Privacy Policy. We use trusted third-party services for core functionality, and by using KrewsUp, you also agree to their terms:</p>
+                    <ul>
+                        <li><strong>Firebase (Google):</strong> Used for secure OTP authentication, user management, and analytics.</li>
+                        <li><strong>Razorpay:</strong> Used for all payment processing, transaction management, and financial compliance.</li>
+                    </ul>
+
+                    <h4>6. Termination</h4>
+                    <p>You may terminate your account at any time through the app settings, provided all outstanding commitments are fulfilled. We may suspend or terminate your account immediately, without prior notice, for any violation of these Terms, including fraudulent activity, harassment, poor performance, non-payment, or attempts to circumvent the platform.</p>
+                    
+                    <h4>7. Limitation of Liability</h4>
+                    <p>In no event shall KrewsUp, nor its directors, employees, or affiliates, be liable for any indirect, incidental, special, or consequential damages, including loss of profits, data, or goodwill, resulting from your use of or inability to use the Service. KrewsUp is a marketplace and is not responsible for the actions of its users, the safety of event locations, or the performance of Event Staff or Organizers.</p>
+
+                    <h4>8. Governing Law</h4>
+                    <p>These Terms are governed by the laws of India. Any disputes arising from these Terms will be subject to the exclusive jurisdiction of the courts in Karnataka, India.</p>
+
+                    <h4>9. Changes to Terms</h4>
+                    <p>We reserve the right to modify or replace these Terms at any time. We will provide notice of significant changes via in-app notification or email. Your continued use of the Service after such changes constitutes your acceptance of the new Terms.</p>
+                    
+                    <h4>10. Contact Us</h4>
+                    <p>For any questions or concerns regarding these Terms, please contact us:</p>
+                    <ul>
+                        <li><strong>Email:</strong> raghav@krewsup.com</li>
+                        <li><strong>Phone:</strong> +91 8296058467</li>
+                        <li><strong>Company:</strong> KrewsUp Technologies Private Limited</li>
+                    </ul>
+                </div>
+            )
+        },
     }), []);
 
     return (
@@ -2546,6 +2715,7 @@ function App() {
                     title={modalData[key].title}
                     subtitle={modalData[key].subtitle}
                     features={modalData[key].features}
+                    content={modalData[key].content}
                     show={openModal === key}
                     onClose={handleCloseModal}
                 />
