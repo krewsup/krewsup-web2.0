@@ -2041,7 +2041,7 @@ const HomePage = ({ onOpenModal }) => {
             <div className="hero">
                 <HeroThreeVisual />
                 <div className="hero-content">
-                    <h1>Brew Your <span>Connections.</span></h1>
+                    <h1>Brew Your <span>Connections</span></h1>
                     <p className="tagline">Bharat's Ultimate Gig Platform</p>
                     <p className="description">KrewsUp is a B2C platform connecting companies and organizers with KYC-verified gig workers. It offers reliable crew support for events of all sizes.</p>
                     <div className="hero-button-grid">
@@ -2081,7 +2081,7 @@ const HomePage = ({ onOpenModal }) => {
             </div>
             <section className="testimonials-section">
                 <div className="title-container">
-                    <h2 className="section-title">Two Sides of Success</h2>
+                    <h2 className="section-title">Dual Impact</h2>
                 </div>
                 {testimonialPairs.map((pair, index) => (
                     <AnimatedCard key={index} className="testimonial-pair">
