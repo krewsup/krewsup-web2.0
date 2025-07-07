@@ -453,6 +453,9 @@ const GlobalCSS = `
     .customers-section .title-container {
         margin-bottom: 0;
     }
+    .gigscape-section .title-container {
+        margin-bottom: 40px;
+    }
     .card-icon {
         font-size: 40px;
         margin-bottom: 25px;
@@ -1461,11 +1464,11 @@ const GlobalCSS = `
             perspective: none;
             min-height: auto;
             padding: 20px 0;
-            height: 50vh;
+            height: 60vh;
         }
         .partners-carousel {
             transform: none !important;
-            width: 70vw;
+            width: 55vw;
             height: 100%;
             transform-style: flat;
         }
