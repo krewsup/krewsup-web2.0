@@ -47,7 +47,7 @@ const GlobalCSS = `
         background-color: var(--bg-color);
         overflow-x: hidden;
         min-height: 100vh;
-        cursor: none;
+        cursor: default;
     }
     body.modal-open {
         overflow: hidden;
@@ -81,7 +81,7 @@ const GlobalCSS = `
     }
     header {
         position: fixed;
-        top: 20px;
+        top: 30px;
         left: 0;
         width: 100%;
         z-index: 10;
@@ -97,7 +97,7 @@ const GlobalCSS = `
         -webkit-backdrop-filter: blur(12px);
         border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 99px;
-        padding: 8px 15px;
+        padding: 8px 30px;
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         transition: all 0.3s ease-in-out;
     }
@@ -111,35 +111,68 @@ const GlobalCSS = `
     }
     .nav-links {
         display: flex;
-        gap: 30px;
+        gap: 35px;
         margin-left: 25px;
+        align-items: center;
+        padding: 0 10px;
     }
-    .nav-links a {
-        text-decoration: none;
-        font-size: 14px;
-        text-transform: uppercase;
+    .nav-item-wrapper {
         position: relative;
-        transition: color 0.3s ease, transform 0.3s ease;
-        padding: 5px 0;
-        cursor: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
     }
-    .nav-links a::after {
+    .nav-item-wrapper:hover {
+        transform: translateY(-8px) scale(1.6);
+    }
+    .nav-icon {
+        display: block;
+        width: 28px;
+        height: 28px;
+        cursor: pointer;
+        position: relative;
+    }
+    .nav-icon svg {
+        width: 100%;
+        height: 100%;
+        fill: rgba(255, 255, 255, 0.7);
+        transition: fill 0.2s ease;
+    }
+    .nav-item-wrapper:hover .nav-icon svg {
+        fill: #fff;
+    }
+    .nav-icon.active::after {
         content: '';
         position: absolute;
-        width: 0;
-        height: 2px;
-        bottom: -2px;
+        bottom: -6px;
         left: 50%;
         transform: translateX(-50%);
-        background: var(--accent-color);
-        transition: width 0.4s ease-in-out;
+        width: 4px;
+        height: 4px;
+        background-color: var(--accent-color);
+        border-radius: 50%;
     }
-    .nav-links a:hover {
-        color: var(--accent-color);
-        transform: translateY(-2px);
+    .nav-tooltip {
+        position: absolute;
+        top: calc(100% + 12px);
+        background: rgba(10, 10, 10, 0.9);
+        color: #fff;
+        padding: 4px 10px;
+        border-radius: 5px;
+        font-size: 12px;
+        font-weight: 500;
+        white-space: nowrap;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-5px);
+        transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+        pointer-events: none;
     }
-    .nav-links a:hover::after {
-        width: 100%;
+    .nav-item-wrapper:hover .nav-tooltip {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
     }
     .mobile-menu-btn {
         display: none;
@@ -176,6 +209,7 @@ const GlobalCSS = `
         padding: 150px 0 100px;
         position: relative;
         z-index: 2;
+        transform: translateZ(0);
     }
     .hero {
         min-height: calc(100vh - 250px);
@@ -185,48 +219,6 @@ const GlobalCSS = `
         position: relative;
         text-align: center;
         overflow: hidden;
-    }
-    .scroll-down-indicator {
-        position: absolute;
-        bottom: 30px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 40px;
-        height: 60px;
-        z-index: 5;
-        opacity: 1;
-        transition: opacity 0.5s ease;
-        cursor: pointer;
-    }
-    .scroll-down-indicator.hidden {
-        opacity: 0;
-        pointer-events: none;
-    }
-    .scroll-down-indicator span {
-        position: absolute;
-        top: 10px;
-        left: 50%;
-        width: 24px;
-        height: 24px;
-        margin-left: -12px;
-        border-left: 2px solid var(--accent-color);
-        border-bottom: 2px solid var(--accent-color);
-        transform: rotate(-45deg);
-        animation: scroll-down-animation 2s infinite;
-        box-sizing: border-box;
-    }
-    @keyframes scroll-down-animation {
-        0% {
-            transform: rotate(-45deg) translate(0, 0);
-            opacity: 0;
-        }
-        50% {
-            opacity: 1;
-        }
-        100% {
-            transform: rotate(-45deg) translate(-20px, -20px);
-            opacity: 0;
-        }
     }
     #hero-canvas-container {
         position: absolute;
@@ -264,10 +256,20 @@ const GlobalCSS = `
         text-shadow: 0 0 30px rgba(var(--accent-color-rgb), 0.3);
         letter-spacing: -0.02em;
     }
-    .hero-content h1 span {
-        border-bottom: 7px solid var(--accent-color);
+    .scramble-wrapper {
+        position: relative;
+        display: inline-block;
+    }
+    .scramble-placeholder {
+        visibility: hidden;
+    }
+    .scramble-animated {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
         color: var(--accent-color);
-        padding-bottom: 5px;
     }
     .hero-content .tagline {
         font-size: clamp(18px, 4vw, 28px);
@@ -416,7 +418,7 @@ const GlobalCSS = `
         font-size: 48px;
         font-weight: 700;
         text-align: center;
-        margin-bottom: 80px;
+        margin-bottom: 20px;
         text-transform: uppercase;
         transition: letter-spacing 0.3s ease, text-shadow 0.3s ease;
         position: relative;
@@ -445,6 +447,14 @@ const GlobalCSS = `
     .title-container {
         text-align: center;
         margin-bottom: 80px;
+    }
+    .why-us-section .title-container,
+    .partners-section .title-container,
+    .customers-section .title-container {
+        margin-bottom: 0;
+    }
+    .gigscape-section .title-container {
+        margin-bottom: 40px;
     }
     .card-icon {
         font-size: 40px;
@@ -767,31 +777,6 @@ const GlobalCSS = `
         line-height: 1.6;
         opacity: 0.8;
     }
-    .cursor {
-        width: 25px;
-        height: 25px;
-        border: 2px solid #fff;
-        border-radius: 50%;
-        position: fixed;
-        pointer-events: none;
-        transform: translate(-50%, -50%);
-        z-index: 9999;
-        transition: width 0.2s ease, height 0.2s ease, border 0.2s ease, opacity 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
-    }
-    .cursor-dot {
-        width: 6px;
-        height: 6px;
-        background: #fff;
-        border-radius: 50%;
-        position: fixed;
-        pointer-events: none;
-        transform: translate(-50%, -50%);
-        z-index: 9999;
-    }
-    .cursor.grow {
-      background-color: rgba(255, 255, 255, 0.2);
-      border-color: rgba(255, 255, 255, 0.5);
-    }
     .app-btn:hover {
         transform: translateY(-5px);
         box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
@@ -869,6 +854,43 @@ const GlobalCSS = `
         opacity: 0;
         transform: translateY(-30px) scale(0.95);
         box-shadow: 0 0 50px rgba(var(--accent-color-rgb), 0.1);
+        max-height: 85vh;
+        display: flex;
+        flex-direction: column;
+    }
+    .modal-scrollable-content {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding: 10px 20px 10px 5px;
+        margin-top: 15px;
+        font-size: 14px;
+        line-height: 1.6;
+        color: rgba(255, 255, 255, 0.8);
+    }
+    .modal-scrollable-content::-webkit-scrollbar {
+        width: 6px;
+    }
+    .modal-scrollable-content::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+    }
+    .modal-scrollable-content::-webkit-scrollbar-thumb {
+        background-color: rgba(255, 255, 255, 0.3);
+        border-radius: 10px;
+    }
+    .modal-scrollable-content h4 {
+        font-size: 16px;
+        color: var(--accent-color);
+        margin: 20px 0 10px 0;
+        font-weight: 600;
+    }
+    .modal-scrollable-content p, 
+    .modal-scrollable-content li {
+        margin-bottom: 12px;
+    }
+    .modal-scrollable-content ul {
+        list-style-position: outside;
+        padding-left: 20px;
     }
     .modal.show .modal-content {
       opacity: 1;
@@ -933,105 +955,68 @@ const GlobalCSS = `
         opacity: 0;
       }
     }
-    .partners-section {
-        overflow: hidden;
-    }
-    .partners-marquee-container {
-        width: 100vw;
-        position: relative;
-        left: 50%;
-        transform: translateX(-50%);
-        margin-top: 60px;
-        padding: 40px 0;
-    }
-    .partners-marquee-container::before,
-    .partners-marquee-container::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        width: 150px;
-        height: 100%;
-        z-index: 2;
-    }
-    .partners-marquee-container::before {
-        left: 0;
-        background: linear-gradient(to right, var(--bg-color), transparent);
-    }
-    .partners-marquee-container::after {
-        right: 0;
-        background: linear-gradient(to left, var(--bg-color), transparent);
-    }
-    .partners-marquee {
+    .partners-carousel-wrapper {
         display: flex;
-        width: fit-content;
-        animation: scroll 15s linear infinite;
-    }
-    .partner-wrapper {
-        flex-shrink: 0;
-        margin: 0 40px;
-        display: flex;
-        flex-direction: column;
+        justify-content: center;
         align-items: center;
-        gap: 20px;
-    }
-    .partner-item {
-        width: 220px;
-        height: 300px;
+        min-height: 550px;
+        perspective: 2000px;
         position: relative;
-        cursor: none;
-        border-radius: 12px;
+    }
+    .partners-carousel {
+        position: relative;
+        width: 300px;
+        height: 400px;
+        transform-style: preserve-3d;
+        transition: transform 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+    .partners-carousel-card {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 16px;
         overflow: hidden;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        background: #111;
-        transition: transform 0.4s ease, box-shadow 0.4s ease;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        background-color: #111;
+        cursor: pointer;
+        transition: all 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
+        transform-style: preserve-3d;
     }
-    .partner-wrapper:hover .partner-item {
-        transform: translateY(-10px);
-        box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    .partners-carousel-card:hover {
+        border-color: rgba(255, 255, 255, 0.3);
     }
-    .partner-photo {
+    .partners-carousel-card .partner-photo {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        transition: transform 0.8s ease;
+        transition: transform 0.6s ease;
     }
-    .partner-wrapper:hover .partner-photo {
+    .partners-carousel-card:hover .partner-photo {
         transform: scale(1.05);
     }
-    .partner-logo {
-        position: relative;
-        width: 60px;
-        height: 60px;
-        object-fit: contain;
-        background: #000;
-        border-radius: 8px;
-        padding: 5px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-    .partner-name {
+    .partners-carousel-card .partner-info-overlay {
         position: absolute;
         bottom: 0;
         left: 0;
         width: 100%;
-        padding: 20px 15px 15px;
-        font-size: 14px;
-        font-weight: 600;
-        text-align: left;
+        padding: 20px;
         background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
-        opacity: 0;
-        transform: translateY(20px);
-        transition: opacity 0.4s ease, transform 0.4s ease;
+        display: flex;
+        align-items: center;
+        gap: 15px;
     }
-    .partner-wrapper:hover .partner-name {
-        opacity: 1;
-        transform: translateY(0);
+    .partners-carousel-card .partner-logo {
+        width: 50px;
+        height: 50px;
+        object-fit: contain;
+        border-radius: 8px;
+        flex-shrink: 0;
+        background-color: #fff;
     }
-    .partners-marquee-container:hover .partners-marquee {
-        animation-play-state: paused;
-    }
-    @keyframes scroll {
-        0% { transform: translateX(0); }
-        100% { transform: translateX(-50%); }
+    .partners-carousel-card .partner-name {
+        font-size: 18px;
+        font-weight: 600;
+        color: #fff;
     }
     .waitlist-section {
         margin-top: 120px;
@@ -1078,12 +1063,90 @@ const GlobalCSS = `
         max-width: 600px;
         margin: 20px auto 40px;
     }
+    .cover-wrapper {
+        position: relative;
+        display: inline-block;
+        border-radius: 8px;
+        overflow: hidden;
+        -webkit-mask-image: -webkit-radial-gradient(white, black);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .cover-wrapper:hover {
+        transform: scale(1.05) translateY(-2px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 25px rgba(var(--accent-color-rgb), 0.3);
+    }
+    .cover-effects {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        border-radius: 8px;
+        background-image: linear-gradient(145deg, rgba(35, 35, 35, 0.9), rgba(15, 15, 15, 0.8));
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        transition: border-color 0.3s ease;
+    }
+    .cover-wrapper:hover .cover-effects {
+        border-color: rgba(255, 255, 255, 0.4);
+    }
+    .cover-stars {
+        position: absolute;
+        inset: 0;
+        background-image:
+            radial-gradient(1px 1px at 10% 20%, var(--primary-color), transparent),
+            radial-gradient(1px 1px at 80% 30%, var(--primary-color), transparent),
+            radial-gradient(1.5px 1.5px at 50% 60%, var(--primary-color), transparent),
+            radial-gradient(1px 1px at 30% 90%, var(--primary-color), transparent),
+            radial-gradient(1px 1px at 90% 80%, var(--primary-color), transparent);
+        background-size: 250px 250px;
+        opacity: 0;
+        animation: star-flow 25s linear infinite;
+        transition: opacity 0.5s ease;
+    }
+    @keyframes star-flow {
+        from { transform: translateY(0); }
+        to { transform: translateY(-250px); }
+    }
+    .cover-wrapper:hover .cover-stars {
+        opacity: 0.8;
+        animation-duration: 3s;
+    }
+    .particle-rush {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        border-radius: 8px;
+    }
+    .particle {
+        position: absolute;
+        left: -5px;
+        top: calc(var(--top-pos) * 1%);
+        width: 6px;
+        height: 1.5px;
+        background: var(--primary-color);
+        opacity: 0;
+    }
+    .cover-wrapper:hover .particle {
+        animation: particle-flow 0.6s ease-in forwards;
+        animation-delay: var(--delay);
+    }
+    @keyframes particle-flow {
+        0% {
+            transform: translateX(0);
+            opacity: 0.7;
+        }
+        100% {
+            transform: translateX(250px);
+            opacity: 0;
+        }
+    }
     .waitlist-btn {
         display: inline-block;
         padding: 18px 40px;
-        background-image: linear-gradient(145deg, rgba(35, 35, 35, 0.9), rgba(15, 15, 15, 0.8));
+        background: transparent;
         color: var(--primary-color);
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        border: 1px solid transparent;
         border-radius: 8px;
         font-size: 16px;
         font-weight: 700;
@@ -1091,16 +1154,13 @@ const GlobalCSS = `
         text-decoration: none;
         cursor: pointer;
         position: relative;
-        overflow: hidden;
-        backdrop-filter: blur(5px);
-        -webkit-backdrop-filter: blur(5px);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        transition: all 0.3s ease;
+        z-index: 2;
+        overflow: visible;
     }
     .waitlist-btn:hover {
-      transform: scale(1.05) translateY(-2px);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 25px rgba(var(--accent-color-rgb), 0.3);
-      border-color: rgba(255, 255, 255, 0.4);
+        transform: none;
+        box-shadow: none;
+        border-color: transparent;
     }
     @keyframes waitlist-shine {
         from {
@@ -1110,94 +1170,77 @@ const GlobalCSS = `
             left: 150%;
         }
     }
-    .card-stack-wrapper {
+    .auto-rotating-card-stack-wrapper {
         display: flex;
-        flex-direction: column;
+        justify-content: center;
         align-items: center;
-        gap: 40px;
-        margin-top: -20px;
+        min-height: 500px;
+        perspective: 1500px;
     }
-    .card-stack {
+    .auto-rotating-card-stack {
         position: relative;
         width: 100%;
         max-width: 480px;
         height: 380px;
+        transform-style: preserve-3d;
     }
-    .stack-card {
+    .stack-card-auto {
         position: absolute;
         width: 100%;
         height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
         will-change: transform, opacity;
-        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
-        cursor: default;
-        background: rgba(30, 30, 30, 0.7);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        padding: 40px;
-        border-radius: 12px;
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1), opacity 1s ease;
+        backface-visibility: hidden;
     }
-    .stack-card.top {
-        transform: translateY(0) scale(1);
+    .card-content-3d {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: rgb(30, 30, 30);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      transform-style: preserve-3d;
+      transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .stack-card-auto.is-hovering .card-content-3d {
+        transition: transform 0.05s linear;
+    }
+    .stack-card-auto.card-active {
+        transform: translateY(0) translateZ(0) rotateX(0deg);
         opacity: 1;
+        z-index: 4;
+        pointer-events: auto;
+        cursor: grab;
+    }
+    .stack-card-auto.card-next {
+        transform: translateY(-40px) translateZ(-150px) rotateX(0deg);
+        opacity: 0.7;
         z-index: 3;
-    }
-    .stack-card.next {
-        transform: translateY(-25px) scale(0.95);
-        opacity: 1;
-        z-index: 2;
-    }
-    .stack-card.third {
-        transform: translateY(-50px) scale(0.9);
-        opacity: 1;
-        z-index: 1;
-    }
-    .stack-card.hidden {
-        transform: translateY(-50px) scale(0.9);
-        opacity: 0;
-        z-index: 0;
         pointer-events: none;
     }
-    .exiting-right {
-        transform: translate(50vw, 30px) rotate(20deg) !important;
-        opacity: 0 !important;
-        z-index: 4;
-        transition: transform 0.6s cubic-bezier(0.6, -0.28, 0.735, 0.045), opacity 0.5s ease-out !important;
+    .stack-card-auto.card-behind {
+        transform: translateY(-80px) translateZ(-300px) rotateX(0deg);
+        opacity: 0.3;
+        z-index: 2;
+        pointer-events: none;
     }
-    .exiting-left {
-        transform: translate(-50vw, 30px) rotate(-20deg) !important;
-        opacity: 0 !important;
-        z-index: 4;
-        transition: transform 0.6s cubic-bezier(0.6, -0.28, 0.735, 0.045), opacity 0.5s ease-out !important;
+    .stack-card-auto.card-exiting {
+        transform: translateY(200px) translateZ(-100px) rotateX(-15deg);
+        opacity: 0;
+        z-index: 5;
+        pointer-events: none;
     }
-    .card-stack-controls button {
-        padding: 12px 30px;
-        background: #fff;
-        color: #000;
-        border: 1px solid #fff;
-        border-radius: 8px;
-        font-size: 16px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        min-width: 200px;
-        text-align: center;
-    }
-    .card-stack-controls button:hover:not(:disabled) {
-        background: transparent;
-        color: #fff;
-        transform: scale(1.05);
-        box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
-    }
-    .card-stack-controls button:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
+    .stack-card-auto.card-hidden-auto {
+        transform: translateY(-120px) translateZ(-450px) rotateX(0deg);
+        opacity: 0;
+        z-index: 1;
+        pointer-events: none;
     }
     .page-scroll-indicator {
       position: fixed;
@@ -1385,13 +1428,13 @@ const GlobalCSS = `
             backdrop-filter: none;
             border: none;
             border-radius: 0;
-            padding: 0;
+            padding: 0 10px;
             box-shadow: none;
         }
         .hero-content h1 {
             line-height: 1.2;
         }
-        .hero-content h1 span {
+        .hero-content h1 .scramble-wrapper {
             display: block;
         }
         .hero-content .description {
@@ -1415,16 +1458,31 @@ const GlobalCSS = `
         .step { flex-direction: column; }
         .step-number { font-size: 80px; margin-right: 0; margin-bottom: 10px; }
         .step::after { display: none; }
-        .cursor, .cursor-dot { display: none; }
-        body { cursor: auto; }
         .modal-content { padding: 30px; }
         .modal-title { font-size: 28px; }
-        .partner-wrapper {
-            margin: 0 15px;
+        .partners-carousel-wrapper {
+            perspective: none;
+            min-height: auto;
+            padding: 20px 0;
+            height: 60vh;
         }
-        .partner-item {
-            width: 180px;
-            height: 240px;
+        .partners-carousel {
+            transform: none !important;
+            width: 55vw;
+            height: 100%;
+            transform-style: flat;
+        }
+        .partners-carousel-card {
+            transform: scale(0.8) !important;
+            opacity: 0 !important;
+            filter: none !important;
+            visibility: hidden;
+            transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+        }
+        .partners-carousel-card.active-mobile {
+            transform: scale(1) !important;
+            opacity: 1 !important;
+            visibility: visible;
         }
         .waitlist-title {
             font-size: 28px;
@@ -1439,21 +1497,12 @@ const GlobalCSS = `
         .testimonial-card-unique {
             max-width: 100%;
         }
-        .card-stack {
+        .auto-rotating-card-stack {
             height: 420px;
             max-width: 90vw;
         }
-        .stack-card {
+        .card-content-3d {
             padding: 30px 20px;
-        }
-        .stack-card.next {
-            transform: translateY(-20px) scale(0.95);
-        }
-        .stack-card.third {
-            transform: translateY(-40px) scale(0.9);
-        }
-        .scroll-down-indicator {
-            bottom: 20px;
         }
         .page-scroll-indicator {
             right: 20px;
@@ -1471,6 +1520,14 @@ const GlobalCSS = `
         }
     }
 `;
+
+const HomeIcon = () => <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z"/></svg>;
+const WhyUsIcon = () => <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-3.5-3.5 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>;
+const HowItWorksIcon = () => <svg viewBox="0 0 24 24"><path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/><path d="m19.43 12.98-.46-3.34-2.73-1.34.94-3.16-2.82-1.64-1.94 2.5-3.2-.4-1.2-3.03-3.41 1.25-.46 3.34 2.73 1.34-.94 3.16 2.82 1.64 1.94-2.5 3.2.4 1.2 3.03 3.41-1.25.46-3.34-2.73-1.34.94-3.16-2.82-1.64-1.94 2.5z"/></svg>;
+const PartnersIcon = () => <svg viewBox="0 0 24 24"><path d="M22.5 13.13c-.85 0-1.55.54-1.87 1.3L19.2 17H4.8l-1.43-2.57c-.32-.76-1.02-1.3-1.87-1.3C.67 13.13 0 13.8 0 14.67c0 .4.17.77.45 1.04l2.7 2.7c.39.39 1.02.39 1.41 0l.71-.71h11.48l.71.71c.39.39 1.02.39 1.41 0l2.7-2.7c.28-.27.45-.64.45-1.04 0-.87-.67-1.54-1.5-1.54zM8.5 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm7 0c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z"/></svg>;
+const GigscapeIcon = () => <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zM17.99 9.21c-.24-3.99-3.42-7.18-7.44-7.21.01 0 .01 0 0 0-3.99.03-7.2 3.23-7.21 7.21 0 0 0 .01 0 0 .03 3.99 3.23 7.2 7.21 7.21 3.99-.03 7.18-3.23 7.21-7.21 0 0 0-.01 0 0z"/></svg>;
+const CustomersIcon = () => <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>;
+const FAQIcon = () => <svg viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V4c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg>;
 
 const useIntersectionObserver = (options) => {
     const containerRef = useRef(null);
@@ -1585,76 +1642,6 @@ const GradientBackground = () => {
     return <div className="gradient-bg"></div>;
 };
 
-const CustomCursor = () => {
-    const cursorRef = useRef(null);
-    const dotRef = useRef(null);
-    const [isHovering, setIsHovering] = useState(false);
-
-    const mouseX = useRef(window.innerWidth / 2);
-    const mouseY = useRef(window.innerHeight / 2);
-    const dotX = useRef(window.innerWidth / 2);
-    const dotY = useRef(window.innerHeight / 2);
-    const requestRef = useRef(null);
-
-    useEffect(() => {
-        const onMouseMove = (e) => {
-            mouseX.current = e.clientX;
-            mouseY.current = e.clientY;
-        };
-
-        const animate = () => {
-            const lagFactor = 5;
-
-            if (cursorRef.current) {
-                cursorRef.current.style.top = `${mouseY.current}px`;
-                cursorRef.current.style.left = `${mouseX.current}px`;
-            }
-
-            dotX.current += (mouseX.current - dotX.current) / lagFactor;
-            dotY.current += (mouseY.current - dotY.current) / lagFactor;
-
-            if (dotRef.current) {
-                dotRef.current.style.top = `${dotY.current}px`;
-                dotRef.current.style.left = `${dotX.current}px`;
-            }
-
-            requestRef.current = requestAnimationFrame(animate);
-        };
-
-        animate();
-
-        const onMouseOver = (e) => {
-            if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON' || e.target.closest('a, button, .partner-wrapper')) {
-                setIsHovering(true);
-            }
-        };
-
-        const onMouseOut = (e) => {
-             if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON' || e.target.closest('a, button, .partner-wrapper')) {
-                setIsHovering(false);
-            }
-        };
-
-        window.addEventListener('mousemove', onMouseMove);
-        document.addEventListener('mouseover', onMouseOver);
-        document.addEventListener('mouseout', onMouseOut);
-
-        return () => {
-            window.removeEventListener('mousemove', onMouseMove);
-            document.removeEventListener('mouseover', onMouseOver);
-            document.removeEventListener('mouseout', onMouseOut);
-            cancelAnimationFrame(requestRef.current);
-        };
-    }, []);
-
-    return (
-        <>
-            <div ref={cursorRef} className={`cursor ${isHovering ? 'grow' : ''}`}></div>
-            <div ref={dotRef} className="cursor-dot"></div>
-        </>
-    );
-};
-
 const RippleEffect = () => {
     const [ripples, setRipples] = useState([]);
 
@@ -1685,36 +1672,40 @@ const RippleEffect = () => {
 };
 
 const Header = ({ onNavigate, activePage, onToggleMobileNav }) => {
-    const navItems = ['Home', 'Why Us', 'How It Works', 'Our Partners', 'Gigscape', 'Customers', 'FAQ'];
-    const pageIds = ['home-page', 'why-us-page', 'how-page', 'partners-page', 'gigscape-page', 'customers-page', 'faq-page'];
-
     const [logoSrc, setLogoSrc] = useState(logo);
+
+    const navLinks = [
+      { pageId: 'home-page', Icon: HomeIcon, tooltip: 'Home' },
+      { pageId: 'why-us-page', Icon: WhyUsIcon, tooltip: 'Why Us' },
+      { pageId: 'how-page', Icon: HowItWorksIcon, tooltip: 'How It Works' },
+      { pageId: 'partners-page', Icon: PartnersIcon, tooltip: 'Our Partners' },
+      { pageId: 'gigscape-page', Icon: GigscapeIcon, tooltip: 'Gigscape' },
+      { pageId: 'customers-page', Icon: CustomersIcon, tooltip: 'Customers' },
+      { pageId: 'faq-page', Icon: FAQIcon, tooltip: 'FAQ' },
+    ];
+    
+    const mobileNavItems = navLinks.map(link => link.tooltip);
+    const mobilePageIds = navLinks.map(link => link.pageId);
 
     return (
         <header>
             <nav>
                 <div className="logo">
-                    <img
-                        src={logoSrc}
-                        alt="KrewsUp Logo"
-                        onError={() => setLogoSrc('https://via.placeholder.com/150x60?text=KrewsUp')}
-                    />
+                    <img src={logoSrc} alt="KrewsUp Logo" onError={() => setLogoSrc('https://via.placeholder.com/150x60?text=KrewsUp')} />
                 </div>
                 <div className="nav-links">
-                    {navItems.map((item, index) => (
-                        <a
-                            key={item}
-                            href={`#${pageIds[index]}`}
-                            className={activePage === pageIds[index] ? 'active' : ''}
-                            onClick={(e) => { e.preventDefault(); onNavigate(pageIds[index]); }}
-                        >
-                            {item}
-                        </a>
+                    {navLinks.map((link) => (
+                        <div key={link.pageId} className="nav-item-wrapper" onClick={() => onNavigate(link.pageId)}>
+                            <a href={`#${link.pageId}`} className={`nav-icon ${activePage === link.pageId ? 'active' : ''}`} onClick={(e) => e.preventDefault()}>
+                                <link.Icon />
+                            </a>
+                            <span className="nav-tooltip">{link.tooltip}</span>
+                        </div>
                     ))}
                 </div>
                 <button className="mobile-menu-btn" onClick={onToggleMobileNav}>☰</button>
             </nav>
-            <MobileNav navItems={navItems} pageIds={pageIds} onNavigate={onNavigate} />
+            <MobileNav navItems={mobileNavItems} pageIds={mobilePageIds} onNavigate={onNavigate} />
         </header>
     );
 };
@@ -1723,11 +1714,7 @@ const MobileNav = ({ navItems, pageIds, onNavigate }) => {
     return (
         <div className="mobile-nav">
             {navItems.map((item, index) => (
-                <a
-                    key={item}
-                    href={`#${pageIds[index]}`}
-                    onClick={(e) => { e.preventDefault(); onNavigate(pageIds[index]); }}
-                >
+                <a key={item} href={`#${pageIds[index]}`} onClick={(e) => { e.preventDefault(); onNavigate(pageIds[index]); }}>
                     {item}
                 </a>
             ))}
@@ -1735,20 +1722,26 @@ const MobileNav = ({ navItems, pageIds, onNavigate }) => {
     );
 };
 
-const Modal = ({ id, title, subtitle, features, show, onClose }) => (
+const Modal = ({ id, title, subtitle, features, content, show, onClose }) => (
     <div id={id} className={`modal ${show ? 'show' : ''}`} onClick={onClose}>
         <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <span className="modal-close" onClick={onClose}>×</span>
             <h3 className="modal-title">{title}</h3>
             {subtitle && <p className="modal-subtitle">{subtitle}</p>}
-            <div className="feature-list">
-                {features.map((feature, index) => (
-                    <div key={index} className="feature-item">
-                        {feature.icon && <span className="feature-icon">{feature.icon}</span>}
-                        <span className="feature-text">{feature.text}</span>
+            {content ? (
+                content
+            ) : (
+                features && (
+                    <div className="feature-list">
+                        {features.map((feature, index) => (
+                            <div key={index} className="feature-item">
+                                {feature.icon && <span className="feature-icon">{feature.icon}</span>}
+                                <span className="feature-text">{feature.text}</span>
+                            </div>
+                        ))}
                     </div>
-                ))}
-            </div>
+                )
+            )}
         </div>
     </div>
 );
@@ -1776,71 +1769,132 @@ const FaqItem = ({ question, answer }) => {
     );
 };
 
-const TinderCardStack = ({ items, buttonText }) => {
-    const [cards, setCards] = useState([]);
-    const [isAnimating, setIsAnimating] = useState(false);
-    const [exitDirection, setExitDirection] = useState('right');
+let hasHeroAnimated = false;
+
+const ScrambledText = ({ text }) => {
+    const [displayText, setDisplayText] = useState(hasHeroAnimated ? text : '');
+    const intervalRef = useRef(null);
+    const originalText = text;
+    const chars = '!<>-_\\/[]{}—=+*^?#';
 
     useEffect(() => {
-        const initialCards = items.map((item, index) => {
-            let status;
-            if (index === 0) status = 'top';
-            else if (index === 1) status = 'next';
-            else if (index === 2) status = 'third';
-            else status = 'hidden';
-            return { ...item, id: `${item.title}-${index}`, status };
-        });
-        setCards(initialCards);
-    }, [items]);
+        if (hasHeroAnimated) {
+            setDisplayText(originalText);
+            return;
+        }
 
-    const handleNext = () => {
-        if (isAnimating || cards.length === 0) return;
-        setIsAnimating(true);
+        const startTimeout = setTimeout(() => {
+            let iteration = 0;
+            
+            clearInterval(intervalRef.current);
 
-        setCards(prev => {
-            const newCards = [...prev];
-            newCards[0].status = `exiting-${exitDirection}`;
-            return newCards;
-        });
-
-        setExitDirection(prev => (prev === 'right' ? 'left' : 'right'));
-
-        setTimeout(() => {
-            setCards(prev => {
-                const newArray = prev.slice(1);
-                const exitedCard = prev[0];
-                if (exitedCard) {
-                    exitedCard.status = 'hidden';
-                    newArray.push(exitedCard);
-
-                    if (newArray[0]) newArray[0].status = 'top';
-                    if (newArray[1]) newArray[1].status = 'next';
-                    if (newArray[2]) newArray[2].status = 'third';
+            intervalRef.current = setInterval(() => {
+                setDisplayText(
+                    originalText
+                        .split('')
+                        .map((char, index) => {
+                            if (index < iteration) {
+                                return originalText[index];
+                            }
+                            if (char === ' ') return ' ';
+                            return chars[Math.floor(Math.random() * chars.length)];
+                        })
+                        .join('')
+                );
+    
+                if(iteration >= originalText.length){ 
+                    clearInterval(intervalRef.current);
+                    setDisplayText(originalText);
+                    hasHeroAnimated = true;
                 }
-                return newArray;
-            });
-            setIsAnimating(false);
-        }, 600);
+                
+                iteration += 1 / 3;
+            }, 40);
+        }, 800);
+
+        return () => {
+            clearTimeout(startTimeout);
+            clearInterval(intervalRef.current);
+        };
+    }, [originalText]);
+
+    return (
+        <span className="scramble-wrapper">
+            <span className="scramble-placeholder" aria-hidden="true">{originalText}</span>
+            <span className="scramble-animated">{displayText}</span>
+        </span>
+    );
+};
+
+const AutoRotatingCardStack = ({ items }) => {
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const cardRefs = useRef([]);
+    cardRefs.current = items.map((_, i) => cardRefs.current[i] ?? React.createRef());
+
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            setCurrentIndex(prevIndex => (prevIndex + 1) % items.length);
+        }, 2500);
+
+        return () => clearInterval(intervalId);
+    }, [items.length]);
+
+    const handleMouseMove = (e, index) => {
+        const cardNode = cardRefs.current[index]?.current;
+        if (!cardNode) return;
+        
+        cardNode.parentElement.classList.add('is-hovering');
+
+        const { left, top, width, height } = cardNode.getBoundingClientRect();
+        const x = e.clientX - left;
+        const y = e.clientY - top;
+        const rotateY = -((x - width / 2) / (width / 2)) * 15;
+        const rotateX = ((y - height / 2) / (height / 2)) * 15;
+        
+        cardNode.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`;
+    };
+
+    const handleMouseLeave = (index) => {
+        const cardNode = cardRefs.current[index]?.current;
+        if (cardNode) {
+            cardNode.parentElement.classList.remove('is-hovering');
+            cardNode.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+        }
     };
 
     return (
-        <div className="card-stack-wrapper">
-            <div className="card-stack">
-                {cards.map((item) => (
-                    <div
-                        key={item.id}
-                        className={`stack-card ${item.status}`}
-                    >
-                        <div className="card-icon">{item.icon}</div>
-                        <h3 className="card-title">{item.title}</h3>
-                        <p className="card-desc">{item.desc}</p>
-                    </div>
-                ))}
-            </div>
-            <div className="card-stack-controls">
-                <button onClick={handleNext} disabled={isAnimating}>
-                    {buttonText || 'Next'}
-                </button>
+        <div className="auto-rotating-card-stack-wrapper">
+            <div className="auto-rotating-card-stack">
+                {items.map((item, index) => {
+                    const totalItems = items.length;
+                    let className = 'card-hidden-auto';
+                    const pos = (index - currentIndex + totalItems) % totalItems;
+                    
+                    switch (pos) {
+                        case 0: className = 'card-active'; break;
+                        case 1: className = 'card-next'; break;
+                        case 2: className = 'card-behind'; break;
+                        case totalItems - 1: className = 'card-exiting'; break;
+                        default: className = 'card-hidden-auto';
+                    }
+                    
+                    const isCardActive = pos === 0;
+
+                    return (
+                        <div
+                            key={index}
+                            className={`stack-card-auto ${className}`}
+                            onMouseMove={isCardActive ? (e) => handleMouseMove(e, index) : null}
+                            onMouseLeave={isCardActive ? () => handleMouseLeave(index) : null}
+                        >
+                            <div className="card-content-3d" ref={cardRefs.current[index]}>
+                                <div className="card-icon">{item.icon}</div>
+                                <h3 className="card-title">{item.title}</h3>
+                                <p className="card-desc">{item.desc}</p>
+                            </div>
+                        </div>
+                    );
+                })}
             </div>
         </div>
     );
@@ -2030,7 +2084,7 @@ const Footer = ({ onOpenModal }) => {
       <div className="footer-container">
         <div className="footer-company">
           <h3>KrewsUp Tech Pvt Ltd</h3>
-          <p>Empowering India's gig economy with innovative solutions</p>
+          <p>Brew Your Connections.</p>
           <div className="footer-social">
             <a href="https://x.com/RaghavXKrewsUp?t=WSAwWeUH9sPIFO3Uz7Ck5g&s=09" className="twitter"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
             <a href="https://www.linkedin.com/in/raghav1548" className="linkedin"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.067 0-1.14.92-2.066 2.063-2.066 1.14 0 2.066.926 2.066 2.066 0 1.141-.926 2.067-2.066 2.067zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
@@ -2042,7 +2096,7 @@ const Footer = ({ onOpenModal }) => {
           <div className="footer-links">
             <a>raghav@krewsup.com</a>
             <a>+91-8296058467</a>
-            <a>G2-401, Shriram Shreyas Apartments, Kodigehalli, Telecomlayout, Vidyaranyapura, Bangalore-560097, Karnataka, India</a>
+            <a>G2-401, Shriram Shreyas Apartments, <br/>Bangalore-560097, Karnataka, India</a>
           </div>
         </div>
         <div className="footer-links-group">
@@ -2058,6 +2112,30 @@ const Footer = ({ onOpenModal }) => {
       <p className="footer-crafted-line">Engineered for the future of work in Bharat 🤍</p>
     </footer>
   );
+};
+
+const Cover = ({ children, className }) => {
+    const particleCount = 20;
+    return (
+        <div className={`cover-wrapper ${className || ''}`}>
+            <div className="cover-effects">
+                <div className="cover-stars"></div>
+                <div className="particle-rush">
+                    {Array.from({ length: particleCount }).map((_, i) => (
+                        <div
+                            className="particle"
+                            key={i}
+                            style={{
+                                '--top-pos': Math.random() * 100,
+                                '--delay': `${Math.random() * 0.5}s`,
+                            }}
+                        />
+                    ))}
+                </div>
+            </div>
+            {children}
+        </div>
+    );
 };
 
 const HomePage = ({ onOpenModal }) => {
@@ -2076,36 +2154,14 @@ const HomePage = ({ onOpenModal }) => {
         }
     ];
 
-    const [showScrollIndicator, setShowScrollIndicator] = useState(true);
-
-    useEffect(() => {
-        const handleScroll = () => {
-            if (window.scrollY > 50) {
-                setShowScrollIndicator(false);
-            } else {
-                setShowScrollIndicator(true);
-            }
-        };
-
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
-
-    const handleScrollClick = () => {
-        const nextSection = document.querySelector('.waitlist-section');
-        if (nextSection) {
-            nextSection.scrollIntoView({ behavior: 'smooth' });
-        }
-    };
-
     return (
         <section className="page">
             <div className="hero">
                 <HeroThreeVisual />
                 <div className="hero-content">
-                    <h1>Brew Your <span>Connections.</span></h1>
+                    <h1>Brew Your <ScrambledText text="Connections" /></h1>
                     <p className="tagline">Bharat's Ultimate Gig Platform</p>
-                    <p className="description">KrewsUp is a B2C mobile platform connecting startups and event organizers with trusted, KYC-verified blue-collar gig workers for events. We simplify crew hiring for launches, activations, and large-scale events - ensuring professionalism, timely coordination, and a seamless experience.</p>
+                    <p className="description">KrewsUp is a B2C platform connecting companies and organizers with KYC-verified gig workers. It offers reliable crew support for events of all sizes.</p>
                     <div className="hero-button-grid">
                         <button className="btn" id="host-btn" onClick={() => onOpenModal('host')}>Host an Event</button>
                         <button className="btn" id="gig-btn" onClick={() => onOpenModal('gig')}>Find a Gig</button>
@@ -2131,23 +2187,19 @@ const HomePage = ({ onOpenModal }) => {
                         </div>
                     </div>
                 </div>
-                <div
-                    className={`scroll-down-indicator ${!showScrollIndicator ? 'hidden' : ''}`}
-                    onClick={handleScrollClick}
-                >
-                    <span></span>
-                </div>
             </div>
             <div className="waitlist-section">
               <h3 className="waitlist-title">The Shift Has Begun</h3>
               <p className="waitlist-subtitle">KrewsUp is reshaping how crews connect.<br/>Get in early. Be part of the new era.</p>
-              <a href="https://docs.google.com/forms/d/e/1FAIpQLSf0AQJNcrFvLjr3FbYqqSPpjN6d9wlRLP2PIZzY0iGt6U3Htg/viewform?usp=header" target="_blank" rel="noopener noreferrer" className="waitlist-btn">
-                Join the Waitlist
-              </a>
+              <Cover>
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSf0AQJNcrFvLjr3FbYqqSPpjN6d9wlRLP2PIZzY0iGt6U3Htg/viewform?usp=header" target="_blank" rel="noopener noreferrer" className="waitlist-btn">
+                  Join the Waitlist
+                </a>
+              </Cover>
             </div>
             <section className="testimonials-section">
                 <div className="title-container">
-                    <h2 className="section-title">Two Sides of Success</h2>
+                    <h2 className="section-title">Win - Win</h2>
                 </div>
                 {testimonialPairs.map((pair, index) => (
                     <AnimatedCard key={index} className="testimonial-pair">
@@ -2199,9 +2251,9 @@ const WhyUsPage = () => {
         { icon: '🎯', title: 'Skill Development', desc: 'Enhance your professional skills through our curated workshops, mentorship programs, and performance feedback system to boost your career growth.' },
     ];
     return (
-        <section className="page">
+        <section className="page why-us-section">
             <div className="title-container"><h2 className="section-title">Why KrewsUp?</h2></div>
-            <TinderCardStack items={features} buttonText="Next Feature" />
+            <AutoRotatingCardStack items={features} />
         </section>
     );
 };
@@ -2212,7 +2264,7 @@ const HowItWorksPage = () => {
         { num: '02', title: 'Find and Post Gigs', desc: 'Browse available opportunities or create your own gig listings with detailed requirements, location, timing, and compensation. Our algorithm matches the right talent with the right gigs.' },
         { num: '03', title: 'Connect and Confirm', desc: 'Direct communication with potential matches, discuss details, and confirm arrangements through our secure platform. Clear expectations and documentation protect both parties.' },
         { num: '04', title: 'Complete the Gig', desc: 'Show up, deliver exceptional service, and track your hours through our app\'s built-in time and location verification system. Get real-time feedback during the gig.' },
-        { num: '05', title: 'Get Paid and Review', desc: 'Receive payment within 24 hours of gig completion. Share your experience through our review system to help build the community\'s trust network and improve future matches.' },
+        { num: '05', title: 'Get Paid & Review', desc: 'Receive payment within 24 hours of gig completion. Share your experience through our review system to help build the community\'s trust network and improve future matches.' },
     ];
     return (
         <section className="page">
@@ -2232,33 +2284,73 @@ const HowItWorksPage = () => {
     );
 };
 
+const PartnersCarousel = ({ partners }) => {
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const carouselRef = useRef(null);
+    const angle = partners.length > 0 ? 360 / partners.length : 0;
+
+    useEffect(() => {
+        if (partners.length === 0) return;
+        const interval = setInterval(() => {
+            setCurrentIndex(prev => (prev + 1) % partners.length);
+        }, 3000);
+        return () => clearInterval(interval);
+    }, [partners.length]);
+
+    useEffect(() => {
+        if (carouselRef.current) {
+            carouselRef.current.style.transform = `rotateY(${-currentIndex * angle}deg)`;
+        }
+    }, [currentIndex, angle]);
+    
+    const getCardStyle = (index) => {
+        const rotationY = index * angle;
+        const translateZ = 350; 
+        return {
+            transform: `rotateY(${rotationY}deg) translateZ(${translateZ}px)`,
+            filter: index === currentIndex ? 'none' : 'brightness(0.5)',
+            opacity: index === currentIndex ? 1 : 0.7,
+        };
+    };
+
+    return (
+        <div className="partners-carousel-wrapper">
+            <div className="partners-carousel" ref={carouselRef}>
+                {partners.map((partner, index) => (
+                    <div 
+                        className={`partners-carousel-card ${index === currentIndex ? 'active-mobile' : ''}`} 
+                        key={index} 
+                        style={getCardStyle(index)}
+                        onClick={() => setCurrentIndex(index)}
+                    >
+                        <img src={partner.photoUrl} alt={partner.name} className="partner-photo" />
+                        <div className="partner-info-overlay">
+                            <img src={partner.logoUrl} alt={`${partner.name} Logo`} className="partner-logo" />
+                            <div className="partner-name">{partner.name}</div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+};
+
 const PartnersPage = () => {
     const partners = [
         { name: 'RollTheDice', photoUrl: rtdPhoto, logoUrl: rtdLogo },
-        { name: 'Urbanaut Technologies', photoUrl: utPhoto, logoUrl: utLogo },
-        { name: 'Kathakonnect Dance Academy', photoUrl: kdaPhoto, logoUrl: kdaLogo },
+        { name: 'Urbanaut', photoUrl: utPhoto, logoUrl: utLogo },
+        { name: 'Kathakonnect', photoUrl: kdaPhoto, logoUrl: kdaLogo },
+        { name: 'RollTheDice', photoUrl: rtdPhoto, logoUrl: rtdLogo },
+        { name: 'Urbanaut', photoUrl: utPhoto, logoUrl: utLogo },
+        { name: 'Kathakonnect', photoUrl: kdaPhoto, logoUrl: kdaLogo },
     ];
-
-    const duplicatedPartners = [...partners, ...partners, ...partners, ...partners];
 
     return (
         <section className="page partners-section">
             <div className="title-container">
                 <h2 className="section-title">Our Partners</h2>
             </div>
-            <div className="partners-marquee-container">
-                <div className="partners-marquee">
-                    {duplicatedPartners.map((partner, index) => (
-                         <div className="partner-wrapper" key={`${partner.name}-${index}`}>
-                            <img src={partner.logoUrl} alt={`${partner.name} Logo`} className="partner-logo" />
-                            <div className="partner-item">
-                                <img src={partner.photoUrl} alt={`${partner.name}`} className="partner-photo" />
-                                <div className="partner-name">{partner.name}</div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
+            <PartnersCarousel partners={partners} />
         </section>
     );
 };
@@ -2357,7 +2449,6 @@ const GigscapePage = () => (
     </section>
 );
 
-
 const CustomersPage = () => {
     const customers = [
         { icon: '🎭', title: 'Event Organizers', desc: 'From large corporate events to intimate gatherings, we provide reliable staff for all your needs including hosts, servers, technicians, and security personnel.' },
@@ -2366,9 +2457,9 @@ const CustomersPage = () => {
         { icon: '🎓', title: 'Skilled Professionals', desc: 'Find flexible work opportunities that fit your schedule, showcase your talents, and expand your professional network while earning competitive wages.' },
     ];
     return (
-        <section className="page">
+        <section className="page customers-section">
             <div className="title-container"><h2 className="section-title">Our Customers</h2></div>
-            <TinderCardStack items={customers} buttonText="Next Customer" />
+            <AutoRotatingCardStack items={customers} />
         </section>
     );
 };
@@ -2460,21 +2551,148 @@ function App() {
             {icon: '✓', text: 'Flexible schedule - work when you want'}, {icon: '✓', text: 'Same-day payments directly to your account'},
             {icon: '✓', text: 'Build your portfolio and professional network'}, {icon: '✓', text: 'Skill development opportunities and workshops'}, {icon: '✓', text: 'Basic insurance coverage for all gigs'}
         ] },
-        about: { id: 'about-modal', title: 'About Us', subtitle: 'What is KrewsUp?', features: [
-            {text: 'KrewsUp is India\'s premier gig economy platform connecting skilled professionals with event organizers and businesses across the country.'},
-            {text: 'Our mission is to revolutionize the way people work and hire by providing a seamless, transparent, and efficient platform.'},
-            {text: 'Founded in 2025, we\'re committed to empowering talent and enabling opportunities nationwide.'}
-        ] },
-        privacy: { id: 'privacy-modal', title: 'Privacy Policy', subtitle: 'Your privacy matters to us', features: [
-            {text: 'KrewsUp collects only essential personal data necessary for gig matching and verification processes.'},
-            {text: 'Your information is protected with bank-grade encryption and never shared with third parties without consent.'},
-            {text: 'Users have full control over their data with options to update, export, or delete profiles at any time.'}
-        ] },
-        terms: { id: 'terms-modal', title: 'Terms & Conditions', subtitle: 'Our terms of service', features: [
-            {text: 'All users must be 18+ and provide valid government ID for verification.'},
-            {text: 'Gig payments are processed within 24 hours, subject to verification and dispute resolution policies.'},
-            {text: 'KrewsUp reserves the right to suspend accounts violating community guidelines or engaging in fraudulent activities.'}
-        ] },
+        about: { 
+            id: 'about-modal', 
+            title: 'About Us', 
+            subtitle: 'What is KrewsUp?', 
+            content: (
+                <div className="modal-scrollable-content">
+                    <p>KrewsUp is a digital B2C platform connecting companies, organizations, and event organizers with a pool of verified professionals. It serves as a one-stop solution for on-demand staffing needs in India.</p>
+                    <p>The platform’s mission is to create a seamless and transparent ecosystem. It uses rigorous KYC verification and a secure payment system to build trust and ensure efficiency for all users.</p>
+                    <p>Founded in 2024, KrewsUp is committed to empowering India's gig workforce. It provides businesses with reliable access to a skilled, on-demand talent pool.</p>
+                </div>
+            )
+        },
+        privacy: { 
+            id: 'privacy-modal', 
+            title: 'Privacy Policy', 
+            subtitle: 'Last Updated: May 23, 2025',
+            content: (
+                <div className="modal-scrollable-content">
+                    <p>KrewsUp Technologies Private Limited ("we," "us," or "our") operates the KrewsUp mobile application (the "Service"). This Privacy Policy outlines our practices regarding the collection, use, and disclosure of your personal data when you use our Service and the rights you have concerning that data.</p>
+                    
+                    <h4>1. Information We Collect</h4>
+                    <p>To provide and improve our Service, we collect information you provide to us, information collected automatically, and information from third parties.</p>
+                    <ul>
+                        <li><strong>Personal Information:</strong> We collect data you provide during registration and profile setup, including your full name, contact details (phone, email), profile photo, and location.</li>
+                        <li><strong>Verification Data (Event Staff):</strong> To ensure a secure platform, we require Event Staff to complete a KYC process, which includes providing government-issued identification documents.</li>
+                        <li><strong>Professional Information:</strong> We collect details about your professional qualifications, skills, work experience, portfolio, and ratings from past events.</li>
+                        <li><strong>Corporate Information (Event Organizers):</strong> We may collect company names, business details, and GST information for corporate accounts.</li>
+                        <li><strong>Payment Information:</strong> To process transactions, we collect bank account details, UPI IDs, and other necessary financial information through our secure payment gateway.</li>
+                        <li><strong>Usage and Device Data:</strong> We automatically collect information about how you interact with our app, your device type, IP address, and location data (with your consent) to enhance your experience.</li>
+                    </ul>
+
+                    <h4>2. How We Use Your Information</h4>
+                    <p>We use the collected data for several key purposes:</p>
+                    <ul>
+                        <li><strong>Service Delivery:</strong> To connect Event Organizers with Event Staff, manage bookings, facilitate communication, track attendance, and process payments.</li>
+                        <li><strong>Account Management:</strong> To create and secure your account, verify your identity (KYC), and provide customer support.</li>
+                        <li><strong>Platform Improvement:</strong> To analyze usage patterns, optimize our matching algorithms, and develop new features.</li>
+                        <li><strong>Communication:</strong> To send you transactional messages, service updates, and promotional offers (with your consent).</li>
+                        <li><strong>Safety and Legal Compliance:</strong> To prevent fraud, enforce our Terms, resolve disputes, and comply with legal obligations.</li>
+                    </ul>
+
+                    <h4>3. Data Sharing and Visibility</h4>
+                    <p>Your information is shared selectively to make the platform work effectively.</p>
+                    <ul>
+                        <li><strong>Between Users:</strong> Organizers can view staff profiles (name, skills, ratings, experience). Staff can view organizer profiles and event details. Precise locations are never shared.</li>
+                        <li><strong>With Third-Party Services:</strong> We share data with trusted partners for core functions, including payment processing (Razorpay), identity verification, cloud storage, and analytics (Firebase).</li>
+                        <li><strong>For Legal Reasons:</strong> We may share information with law enforcement or government authorities if required by law.</li>
+                        <li>We do not sell, rent, or lease your personal information to third parties for their marketing purposes without your explicit consent.</li>
+                    </ul>
+
+                    <h4>4. Security Measures</h4>
+                    <p>The security of your data is a top priority. We implement robust technical, operational, and physical safeguards, including end-to-end encryption, secure data storage, regular security audits, and multi-factor authentication. Our payment processing is PCI DSS compliant to protect your financial information.</p>
+
+                    <h4>5. Your Data Rights and Control</h4>
+                    <p>You have control over your personal information. You have the right to:</p>
+                    <ul>
+                        <li>Access, update, or correct your information through your account settings.</li>
+                        <li>Delete your account and associated data (subject to legal and regulatory retention requirements).</li>
+                        <li>Manage your privacy settings, including profile visibility and communication preferences.</li>
+                        <li>Withdraw consent for data processing at any time.</li>
+                    </ul>
+
+                    <h4>6. Children's Privacy</h4>
+                    <p>Our Service is not intended for individuals under the age of 18. We do not knowingly collect personal information from children. If we become aware that a child has provided us with personal data, we will take steps to delete it immediately.</p>
+
+                    <h4>7. Changes to This Privacy Policy</h4>
+                    <p>We may update this Privacy Policy from time to time. We will notify you of any significant changes by email, in-app notification, or by posting the new policy on this page. Your continued use of the Service after changes constitutes your acceptance of the new policy.</p>
+
+                    <h4>8. Contact Us</h4>
+                    <p>If you have any questions or concerns about this Privacy Policy or our data practices, please contact us:</p>
+                    <ul>
+                        <li><strong>Email:</strong> raghav@krewsup.com</li>
+                        <li><strong>Phone:</strong> +91 8296058467</li>
+                        <li><strong>Company:</strong> KrewsUp Technologies Private Limited, Karnataka, India</li>
+                    </ul>
+                </div>
+            )
+        },
+        terms: { 
+            id: 'terms-modal', 
+            title: 'Terms & Conditions', 
+            subtitle: 'Last Updated: January 25, 2025',
+            content: (
+                <div className="modal-scrollable-content">
+                    <p>Welcome to KrewsUp! These Terms and Conditions ("Terms") govern your use of the KrewsUp mobile application and services provided by KrewsUp Technologies Private Limited. By downloading, accessing, or using our app, you agree to be bound by these Terms.</p>
+                    
+                    <h4>1. Eligibility and User Accounts</h4>
+                    <p>To use KrewsUp, you must be at least 18 years of age and have the legal capacity to enter into binding contracts. You are responsible for providing accurate, current, and complete information during registration and for maintaining the security of your account, which is authenticated via Firebase OTP. You are responsible for all activities that occur under your account.</p>
+                    <ul>
+                        <li><strong>Eligible Users:</strong> The platform is for Event Organizers (companies, individuals, institutions) and Event Staff (verified professionals, freelancers, part-time workers).</li>
+                        <li><strong>Prohibited Users:</strong> Individuals under 18, previously banned users, or those engaged in illegal activities are prohibited.</li>
+                    </ul>
+
+                    <h4>2. Platform Rules and User Conduct</h4>
+                    <p>All users agree to conduct themselves professionally and respectfully. You are responsible for complying with all applicable local, state, and national laws.</p>
+                    <ul>
+                        <li><strong>General Conduct:</strong> Provide truthful information, maintain professionalism, communicate respectfully, and do not engage in discrimination or fraudulent activity.</li>
+                        <li><strong>Event Organizer Rules:</strong> Provide accurate event and compensation details, honor all confirmed bookings, ensure safe working conditions, and do not attempt to recruit staff outside the platform to avoid fees.</li>
+                        <li><strong>Event Staff Rules:</strong> Complete mandatory KYC verification, maintain an updated profile and availability, honor work commitments, perform duties professionally, and do not share personal contact information to circumvent the platform.</li>
+                    </ul>
+
+                    <h4>3. How KrewsUp Works</h4>
+                    <p>KrewsUp is a digital marketplace connecting Event Organizers with verified Event Staff. Our platform facilitates registration, job posting, staff selection, booking, in-app communication, and secure payments to ensure a seamless and reliable experience for both parties.</p>
+
+                    <h4>4. Payments, Commissions, and Fees</h4>
+                    <p>KrewsUp utilizes Razorpay as its primary payment gateway for all transactions, including UPI, digital wallets, cards, and net banking. By using our service, you agree to Razorpay's terms.</p>
+                    <ul>
+                        <li><strong>For Organizers:</strong> You are responsible for ensuring sufficient funds for confirmed bookings. Payments are collected securely through Razorpay's gateway.</li>
+                        <li><strong>For Staff:</strong> Payments for completed work are processed through Razorpay's payout system to your registered bank account or UPI ID within 24-48 hours of event confirmation.</li>
+                        <li><strong>Commission Structure:</strong> KrewsUp charges a 13% commission on all transactions. This fee is inclusive of GST, Razorpay gateway charges, and platform fees.</li>
+                        <li><strong>Disputes:</strong> Payment disputes must be reported within 7 days and will be resolved through KrewsUp support, with escalation to Razorpay if necessary.</li>
+                    </ul>
+
+                    <h4>5. Privacy and Third-Party Services</h4>
+                    <p>Your privacy is important. Our data collection and use practices are detailed in our Privacy Policy. We use trusted third-party services for core functionality, and by using KrewsUp, you also agree to their terms:</p>
+                    <ul>
+                        <li><strong>Firebase (Google):</strong> Used for secure OTP authentication, user management, and analytics.</li>
+                        <li><strong>Razorpay:</strong> Used for all payment processing, transaction management, and financial compliance.</li>
+                    </ul>
+
+                    <h4>6. Termination</h4>
+                    <p>You may terminate your account at any time through the app settings, provided all outstanding commitments are fulfilled. We may suspend or terminate your account immediately, without prior notice, for any violation of these Terms, including fraudulent activity, harassment, poor performance, non-payment, or attempts to circumvent the platform.</p>
+                    
+                    <h4>7. Limitation of Liability</h4>
+                    <p>In no event shall KrewsUp, nor its directors, employees, or affiliates, be liable for any indirect, incidental, special, or consequential damages, including loss of profits, data, or goodwill, resulting from your use of or inability to use the Service. KrewsUp is a marketplace and is not responsible for the actions of its users, the safety of event locations, or the performance of Event Staff or Organizers.</p>
+
+                    <h4>8. Governing Law</h4>
+                    <p>These Terms are governed by the laws of India. Any disputes arising from these Terms will be subject to the exclusive jurisdiction of the courts in Karnataka, India.</p>
+
+                    <h4>9. Changes to Terms</h4>
+                    <p>We reserve the right to modify or replace these Terms at any time. We will provide notice of significant changes via in-app notification or email. Your continued use of the Service after such changes constitutes your acceptance of the new Terms.</p>
+                    
+                    <h4>10. Contact Us</h4>
+                    <p>For any questions or concerns regarding these Terms, please contact us:</p>
+                    <ul>
+                        <li><strong>Email:</strong> raghav@krewsup.com</li>
+                        <li><strong>Phone:</strong> +91 8296058467</li>
+                        <li><strong>Company:</strong> KrewsUp Technologies Private Limited</li>
+                    </ul>
+                </div>
+            )
+        },
     }), []);
 
     return (
@@ -2482,7 +2700,6 @@ function App() {
             <style>{GlobalCSS}</style>
             <GradientBackground />
             <ParticleBackground />
-            <CustomCursor />
             <RippleEffect />
 
             <Header onNavigate={handleNavigate} activePage={activePage} onToggleMobileNav={handleToggleMobileNav} />
@@ -2506,6 +2723,7 @@ function App() {
                     title={modalData[key].title}
                     subtitle={modalData[key].subtitle}
                     features={modalData[key].features}
+                    content={modalData[key].content}
                     show={openModal === key}
                     onClose={handleCloseModal}
                 />
