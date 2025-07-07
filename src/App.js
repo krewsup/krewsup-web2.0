@@ -418,7 +418,7 @@ const GlobalCSS = `
         font-size: 48px;
         font-weight: 700;
         text-align: center;
-        margin-bottom: 80px;
+        margin-bottom: 20px;
         text-transform: uppercase;
         transition: letter-spacing 0.3s ease, text-shadow 0.3s ease;
         position: relative;
@@ -447,6 +447,11 @@ const GlobalCSS = `
     .title-container {
         text-align: center;
         margin-bottom: 80px;
+    }
+    .why-us-section .title-container,
+    .partners-section .title-container,
+    .customers-section .title-container {
+        margin-bottom: 0;
     }
     .card-icon {
         font-size: 40px;
@@ -2191,7 +2196,7 @@ const HomePage = ({ onOpenModal }) => {
             </div>
             <section className="testimonials-section">
                 <div className="title-container">
-                    <h2 className="section-title">Dual Impact</h2>
+                    <h2 className="section-title">Win - Win</h2>
                 </div>
                 {testimonialPairs.map((pair, index) => (
                     <AnimatedCard key={index} className="testimonial-pair">
@@ -2243,7 +2248,7 @@ const WhyUsPage = () => {
         { icon: '🎯', title: 'Skill Development', desc: 'Enhance your professional skills through our curated workshops, mentorship programs, and performance feedback system to boost your career growth.' },
     ];
     return (
-        <section className="page">
+        <section className="page why-us-section">
             <div className="title-container"><h2 className="section-title">Why KrewsUp?</h2></div>
             <AutoRotatingCardStack items={features} />
         </section>
@@ -2449,7 +2454,7 @@ const CustomersPage = () => {
         { icon: '🎓', title: 'Skilled Professionals', desc: 'Find flexible work opportunities that fit your schedule, showcase your talents, and expand your professional network while earning competitive wages.' },
     ];
     return (
-        <section className="page">
+        <section className="page customers-section">
             <div className="title-container"><h2 className="section-title">Our Customers</h2></div>
             <AutoRotatingCardStack items={customers} />
         </section>
