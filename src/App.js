@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useLayoutEffect } from 'react';
 import * as THREE from 'three';
 import logo from './assets/logobabes.png';
 import rtdPhoto from './assets/rtd.jpg';
@@ -35,6 +35,7 @@ const GlobalCSS = `
       --bg-color: #050505;
       --cta-color: #00A3FF;
       --cta-color-rgb: 0, 163, 255;
+      --lamp-color: #00f2ea;
     }
     * {
         margin: 0;
@@ -142,16 +143,21 @@ const GlobalCSS = `
     .nav-item-wrapper:hover .nav-icon svg {
         fill: #fff;
     }
+    .nav-icon.active svg {
+        fill: #fff;
+    }
     .nav-icon.active::after {
         content: '';
         position: absolute;
-        bottom: -6px;
+        bottom: -8px;
         left: 50%;
         transform: translateX(-50%);
-        width: 4px;
-        height: 4px;
+        width: 70%;
+        height: 2px;
         background-color: var(--accent-color);
-        border-radius: 50%;
+        border-radius: 1px;
+        box-shadow: 0 0 8px 0px var(--accent-color);
+        transition: all 0.3s ease;
     }
     .nav-tooltip {
         position: absolute;
@@ -205,11 +211,23 @@ const GlobalCSS = `
     .mobile-nav a:hover {
         color: var(--accent-color);
     }
+    @keyframes pageFadeIn {
+        from { opacity: 0; transform: scale(0.98); }
+        to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes pageFadeOut {
+        from { opacity: 1; transform: scale(1); }
+        to { opacity: 0; transform: scale(0.98); }
+    }
     .page {
         padding: 150px 0 100px;
         position: relative;
         z-index: 2;
         transform: translateZ(0);
+        animation: pageFadeIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+    main.is-transitioning .page {
+        animation: pageFadeOut 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
     }
     .hero {
         min-height: calc(100vh - 250px);
@@ -240,8 +258,8 @@ const GlobalCSS = `
         max-width: 90%;
     }
     @keyframes fadeInHero {
-      from { opacity: 0; transform: translateY(40px); }
-      to { opacity: 1; transform: translateY(0); }
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
     .hero-content > *:not(.hero-button-grid) {
         opacity: 0;
@@ -252,9 +270,39 @@ const GlobalCSS = `
         font-weight: 700;
         line-height: 1.1;
         text-transform: uppercase;
-        margin-bottom: 30px;
+        margin-bottom: 5px;
         text-shadow: 0 0 30px rgba(var(--accent-color-rgb), 0.3);
         letter-spacing: -0.02em;
+    }
+    .lamp-effect {
+      width: 70%;
+      height: 80px;
+      margin: 0 auto 0;
+      position: relative;
+      animation-delay: 0.1s;
+    }
+    .lamp-effect::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: var(--lamp-color);
+      box-shadow: 0 0 10px 3px rgba(0, 242, 234, 0.6);
+    }
+    .lamp-effect::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(
+        ellipse 50% 100% at 50% 0%,
+        rgba(0, 242, 234, 0.4) 0%,
+        rgba(0, 242, 234, 0) 70%
+      );
     }
     .scramble-wrapper {
         position: relative;
@@ -420,7 +468,7 @@ const GlobalCSS = `
         text-align: center;
         margin-bottom: 20px;
         text-transform: uppercase;
-        transition: letter-spacing 0.3s ease, text-shadow 0.3s ease;
+        transition: letter-spacing: 0.3s ease, text-shadow 0.3s ease;
         position: relative;
         display: inline-block;
         color: #fff;
@@ -533,6 +581,7 @@ const GlobalCSS = `
         opacity: 0.7;
         transition: opacity 0.3s ease, color 0.3s ease, padding-left 0.3s ease;
         cursor: pointer;
+        position: relative;
     }
     .footer-links a:hover {
         opacity: 1;
@@ -1463,13 +1512,15 @@ const GlobalCSS = `
         .partners-carousel-wrapper {
             perspective: none;
             min-height: auto;
-            padding: 20px 0;
-            height: 60vh;
+            padding: 40px 0;
+            height: auto;
         }
         .partners-carousel {
             transform: none !important;
-            width: 55vw;
-            height: 100%;
+            width: 70vw;
+            aspect-ratio: 3 / 4;
+            height: auto;
+            position: relative;
             transform-style: flat;
         }
         .partners-carousel-card {
@@ -1834,7 +1885,7 @@ const AutoRotatingCardStack = ({ items }) => {
     useEffect(() => {
         const intervalId = setInterval(() => {
             setCurrentIndex(prevIndex => (prevIndex + 1) % items.length);
-        }, 2500);
+        }, 2000);
 
         return () => clearInterval(intervalId);
     }, [items.length]);
@@ -1961,122 +2012,6 @@ const FooterThreeAnimation = () => {
     return <div id="footer-three-container" ref={mountRef} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0 }} />;
 };
 
-const HeroThreeVisual = () => {
-    const mountRef = useRef(null);
-    const symbolsRef = useRef([]);
-
-    useEffect(() => {
-        const mount = mountRef.current;
-        if (!mount) return;
-
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, mount.clientWidth / mount.clientHeight, 0.1, 1000);
-        camera.position.z = 10;
-
-        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-        renderer.setSize(mount.clientWidth, mount.clientHeight);
-        renderer.setPixelRatio(window.devicePixelRatio);
-        mount.appendChild(renderer.domElement);
-
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-        scene.add(ambientLight);
-        const pointLight = new THREE.PointLight(0x00A3FF, 1.5, 100);
-        scene.add(pointLight);
-
-        const createSymbolSprite = (symbol, color = 'rgba(255, 255, 255, 0.7)') => {
-            const canvas = document.createElement('canvas');
-            canvas.width = 128;
-            canvas.height = 128;
-            const context = canvas.getContext('2d');
-            context.font = 'bold 96px Arial';
-            context.fillStyle = color;
-            context.textAlign = 'center';
-            context.textBaseline = 'middle';
-            context.fillText(symbol, canvas.width / 2, canvas.height / 2);
-
-            const texture = new THREE.CanvasTexture(canvas);
-            const material = new THREE.SpriteMaterial({ map: texture, transparent: true, opacity: 0.8 });
-            const sprite = new THREE.Sprite(material);
-            sprite.scale.set(1.5, 1.5, 1.5);
-            return sprite;
-        };
-
-        const symbolChars = ['₹', '📈', '🤝', '⭐'];
-        symbolsRef.current = [];
-        symbolChars.forEach(char => {
-            const symbol = createSymbolSprite(char);
-            symbol.position.set(
-                (Math.random() - 0.5) * 15,
-                (Math.random() - 0.5) * 10,
-                (Math.random() - 0.5) * 10
-            );
-
-            symbol.userData.velocity = new THREE.Vector3(
-                (Math.random() - 0.5) * 0.01,
-                (Math.random() - 0.5) * 0.01,
-                (Math.random() - 0.5) * 0.01
-            );
-            symbol.userData.rotationSpeed = (Math.random() - 0.5) * 0.01;
-
-            symbolsRef.current.push(symbol);
-            scene.add(symbol);
-        });
-
-        const mouse = new THREE.Vector2();
-        const onMouseMove = (event) => {
-            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-        };
-        window.addEventListener('mousemove', onMouseMove);
-
-        let frameId;
-        const bounds = { x: 10, y: 6, z: 8 };
-        const animate = () => {
-            frameId = requestAnimationFrame(animate);
-
-            symbolsRef.current.forEach(symbol => {
-                symbol.position.add(symbol.userData.velocity);
-                symbol.material.rotation += symbol.userData.rotationSpeed;
-
-                if (Math.abs(symbol.position.x) > bounds.x) symbol.userData.velocity.x *= -1;
-                if (Math.abs(symbol.position.y) > bounds.y) symbol.userData.velocity.y *= -1;
-                if (Math.abs(symbol.position.z) > bounds.z) symbol.userData.velocity.z *= -1;
-            });
-
-            pointLight.position.x = mouse.x * 5;
-            pointLight.position.y = mouse.y * 5;
-            pointLight.position.z = 5;
-
-            renderer.render(scene, camera);
-        };
-        animate();
-
-        const onResize = () => {
-            if (!mount) return;
-            camera.aspect = mount.clientWidth / mount.clientHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(mount.clientWidth, mount.clientHeight);
-        };
-        window.addEventListener('resize', onResize);
-
-        return () => {
-            window.removeEventListener('mousemove', onMouseMove);
-            window.removeEventListener('resize', onResize);
-            cancelAnimationFrame(frameId);
-            symbolsRef.current.forEach(symbol => {
-                symbol.geometry?.dispose();
-                symbol.material?.map?.dispose();
-                symbol.material?.dispose();
-            });
-            if (mount.contains(renderer.domElement)) {
-                mount.removeChild(renderer.domElement);
-            }
-        };
-    }, []);
-
-    return <div ref={mountRef} id="hero-canvas-container" />;
-};
-
 const Footer = ({ onOpenModal }) => {
   return (
     <footer>
@@ -2109,7 +2044,7 @@ const Footer = ({ onOpenModal }) => {
         </div>
       </div>
       <p className="copyright">© 2025 KrewsUp Technologies Private Limited.<br/> All Rights Reserved.</p>
-      <p className="footer-crafted-line">Engineered for the future of work in Bharat 🤍</p>
+      <p className="footer-crafted-line">We never sleep, We just reload Krews.</p>
     </footer>
   );
 };
@@ -2141,15 +2076,15 @@ const Cover = ({ children, className }) => {
 const HomePage = ({ onOpenModal }) => {
     const testimonialPairs = [
         {
-            business: { text: "KrewsUp helped us find the right crew instantly through the app. It made onboarding smooth and efficient", author: "Tanushri S N", role: "Founder - RollTheDice", logoUrl: rtdLogo },
+            business: { text: "KrewsUp helped us find the right krew instantly through the app. It made onboarding smooth and efficient", author: "Tanushri S N", role: "Founder - RollTheDice", logoUrl: rtdLogo },
             krew: { text: "I got to work on a unique event explaining traditional Indian games. KrewsUp made the process easy and exciting", author: "Thanusha", role: "Krew at RollTheDice Event" }
         },
         {
-            business: { text: "KrewsUp ensured smooth crew bookings with timely payments and seamless coordination throughout our Urbanaut event", author: "Samyuktha Ranganathan", role: "Founder - Urbanaut", logoUrl: utLogo },
+            business: { text: "KrewsUp ensured smooth krew bookings with timely payments and seamless coordination throughout our Urbanaut event", author: "Samyuktha Ranganathan", role: "Founder - Urbanaut", logoUrl: utLogo },
             krew: { text: "Working at Urbanaut gave me great hands-on experience, and KrewsUp ensured quick, professional payments post-event.", author: "Harsha Vardhan", role: "Krew at Urbanaut Event" }
         },
         {
-            business: { text: "KrewsUp gave us access to reliable, skilled crews and helpful insights that improved our event planning.", author: "Mehul Ramaswami", role: "Founder - Kathakonnect", logoUrl: kdaLogo },
+            business: { text: "KrewsUp gave us access to reliable, skilled krews and helpful insights that improved our event planning.", author: "Mehul Ramaswami", role: "Founder - Kathakonnect", logoUrl: kdaLogo },
             krew: { text: "KathaKonnect was thrilling to work at, and KrewsUp showed clear stats on my event count and performance.", author: "Kruthika S", role: "Krew at KathaKonnect Event" }
         }
     ];
@@ -2157,11 +2092,11 @@ const HomePage = ({ onOpenModal }) => {
     return (
         <section className="page">
             <div className="hero">
-                <HeroThreeVisual />
                 <div className="hero-content">
                     <h1>Brew Your <ScrambledText text="Connections" /></h1>
-                    <p className="tagline">Bharat's Ultimate Gig Platform</p>
-                    <p className="description">KrewsUp is a B2C platform connecting companies and organizers with KYC-verified gig workers. It offers reliable crew support for events of all sizes.</p>
+                    <div className="lamp-effect"></div>
+                    <p className="tagline">While the world rushes behind AI, <br/>we’re solving the aftermath.</p>
+                    <p className="description">KrewsUp is a B2C platform connecting companies and organizers with KYC-verified gig workers. It offers reliable krew support for events of all sizes.</p>
                     <div className="hero-button-grid">
                         <button className="btn" id="host-btn" onClick={() => onOpenModal('host')}>Host an Event</button>
                         <button className="btn" id="gig-btn" onClick={() => onOpenModal('gig')}>Find a Gig</button>
@@ -2190,7 +2125,7 @@ const HomePage = ({ onOpenModal }) => {
             </div>
             <div className="waitlist-section">
               <h3 className="waitlist-title">The Shift Has Begun</h3>
-              <p className="waitlist-subtitle">KrewsUp is reshaping how crews connect.<br/>Get in early. Be part of the new era.</p>
+              <p className="waitlist-subtitle">KrewsUp is reshaping how krews connect.<br/>Get in early. Be part of the new era.</p>
               <Cover>
                 <a href="https://docs.google.com/forms/d/e/1FAIpQLSf0AQJNcrFvLjr3FbYqqSPpjN6d9wlRLP2PIZzY0iGt6U3Htg/viewform?usp=header" target="_blank" rel="noopener noreferrer" className="waitlist-btn">
                   Join the Waitlist
@@ -2243,7 +2178,7 @@ const HomePage = ({ onOpenModal }) => {
 const WhyUsPage = () => {
     const features = [
         { icon: '⚡', title: 'Instant Gigs', desc: 'Find & post gigs in seconds. Our intelligent matching algorithm connects the right talent with the right opportunities based on skills, location, and availability.' },
-        { icon: '💸', title: 'Same-Day Payments', desc: 'Cash in your account within 24 hours of completing your gig. Our secure payment system ensures you get paid quickly with complete transparency.' },
+        { icon: '💸', title: 'Same-Day Payments', desc: 'Early payments to your account after completing your gig. Our secure payment system ensures you get paid quickly with complete transparency.' },
         { icon: '🔒', title: 'Verified Profiles', desc: 'Our rigorous verification process ensures every user is authentic and trustworthy. ID verification, skills assessment, and review systems maintain quality standards.' },
         { icon: '🌐', title: 'Pan-India Network', desc: 'Active in 23 cities across India with plans to expand to 50+ by end of year. Find opportunities or talent anywhere in the country without geographical limitations.' },
         { icon: '📱', title: 'Mobile-First Experience', desc: 'Our app-centric approach means you can manage your entire gig life from your smartphone. Real-time notifications, location services, and seamless communication.' },
@@ -2264,7 +2199,7 @@ const HowItWorksPage = () => {
         { num: '02', title: 'Find and Post Gigs', desc: 'Browse available opportunities or create your own gig listings with detailed requirements, location, timing, and compensation. Our algorithm matches the right talent with the right gigs.' },
         { num: '03', title: 'Connect and Confirm', desc: 'Direct communication with potential matches, discuss details, and confirm arrangements through our secure platform. Clear expectations and documentation protect both parties.' },
         { num: '04', title: 'Complete the Gig', desc: 'Show up, deliver exceptional service, and track your hours through our app\'s built-in time and location verification system. Get real-time feedback during the gig.' },
-        { num: '05', title: 'Get Paid & Review', desc: 'Receive payment within 24 hours of gig completion. Share your experience through our review system to help build the community\'s trust network and improve future matches.' },
+        { num: '05', title: 'Get Paid and Review', desc: 'Receive payment soon after gig completion. Share your experience through our review system to help build the trust and improve future matches.' },
     ];
     return (
         <section className="page">
@@ -2293,7 +2228,7 @@ const PartnersCarousel = ({ partners }) => {
         if (partners.length === 0) return;
         const interval = setInterval(() => {
             setCurrentIndex(prev => (prev + 1) % partners.length);
-        }, 3000);
+        }, 2500);
         return () => clearInterval(interval);
     }, [partners.length]);
 
@@ -2357,64 +2292,64 @@ const PartnersPage = () => {
 
 const gigscapeArticles = [
     {
-        category: "Rise of Blue-Collar",
-        title: "Blue-Collar Jobs Secure, White-Collar Roles at Risk",
+        category: "",
+        title: "",
         desc: "Ford CEO announces that blue-collar workers are 'safe' while AI is expected to replace nearly 50% of white-collar positions.",
         imageUrl: fordceo,
         mobileImageUrl: fmb,
         gridClass: 'gigscape-item-1'
     },
     {
-        category: "Macro Labor Trends",
-        title: "White‑Collar Workers Are Getting the Blues",
+        category: "",
+        title: "",
         desc: "As the labor market slows, white-collar roles face stagnation, signaling a potential shift in employment dynamics and long-term job security.",
         imageUrl: wb,
         mobileImageUrl: wcmb,
         gridClass: 'gigscape-item-2'
     },
     {
-        category: "Event Market Trends",
-        title: "Dynamic Growth of the Event Industry",
+        category: "",
+        title: "",
         desc: "Published in early 2025, this report highlights the accelerating expansion of the global event industry.",
         imageUrl: expo,
         mobileImageUrl: exmb,
         gridClass: 'gigscape-item-3'
     },
     {
-        category: "Labor Market Shifts",
-        title: "Blue-Collar Workers Now Scarcer Than White-Collar.",
+        category: "",
+        title: "",
         desc: "In a reversal of long-standing labor trends, Companies face growing difficulty in hiring blue-collar workers.",
         imageUrl: lm,
         mobileImageUrl: samb,
         gridClass: 'gigscape-item-4'
     },
     {
-        category: "The Event Industry",
-        title: "Industry Insights",
+        category: "",
+        title: "",
         desc: "Event Industry Poised for Revenue Growth in 2025 Despite Workforce Challenges.",
         imageUrl: ir,
         mobileImageUrl: epmb,
         gridClass: 'gigscape-item-5'
     },
     {
-        category: "Workforce Development",
-        title: "Gen Z Prefers Blue-Collar Jobs. Or Does It?",
+        category: "",
+        title: "",
         desc: "Emerging data questions whether Gen Z is truly embracing blue-collar roles or simply exploring alternative career paths amidst rising education and cost concerns.",
         imageUrl: genz,
         mobileImageUrl: gzmb,
         gridClass: 'gigscape-item-6'
     },
     {
-        category: "Global Workforce Trends",
-        title: "Staffing Industry Valued at $543 Billion in 2025, Fueled by Tech & Remote Work",
+        category: "",
+        title: "",
         desc: "According to Gitnux, the global staffing industry has reached a valuation of $543 billion in 2025.",
         imageUrl: ss,
         mobileImageUrl: ssmb,
         gridClass: 'gigscape-item-7'
     },
     {
-        category: "Krew Market - India",
-        title: "Addressing the Blue-Collar Job Market Challenges in India",
+        category: "",
+        title: "",
         desc: "In this member-only article, Pankaj Kumar explores the pressing issues affecting India's blue-collar workforce.",
         imageUrl: bcj,
         mobileImageUrl: atmb,
@@ -2484,9 +2419,15 @@ const FAQPage = () => {
 
 function App() {
     const [activePage, setActivePage] = useState('home-page');
+    const [renderedPage, setRenderedPage] = useState('home-page');
+    const [isTransitioning, setIsTransitioning] = useState(false);
     const [openModal, setOpenModal] = useState(null);
     const [showPageScrollIndicator, setShowPageScrollIndicator] = useState(false);
 
+    useLayoutEffect(() => {
+        window.scrollTo(0, 0);
+    }, [renderedPage]);
+    
     useEffect(() => {
         if (openModal) {
             document.body.classList.add('modal-open');
@@ -2519,7 +2460,7 @@ function App() {
         }, 150);
 
         return () => clearTimeout(timer);
-    }, [activePage]);
+    }, [renderedPage]);
 
     const handlePageScroll = () => {
         window.scrollBy({
@@ -2529,10 +2470,18 @@ function App() {
     };
 
     const handleNavigate = (pageId) => {
+        if (isTransitioning || pageId === activePage) return;
+
+        setIsTransitioning(true);
         setActivePage(pageId);
-        window.scrollTo(0, 0);
+        
         const mobileNav = document.querySelector('.mobile-nav');
         if (mobileNav) mobileNav.classList.remove('active');
+
+        setTimeout(() => {
+            setRenderedPage(pageId);
+            setIsTransitioning(false);
+        }, 400); 
     };
 
     const handleToggleMobileNav = () => {
@@ -2695,6 +2644,19 @@ function App() {
         },
     }), []);
 
+    const renderPage = () => {
+        switch (renderedPage) {
+            case 'home-page': return <HomePage onOpenModal={handleOpenModal} />;
+            case 'why-us-page': return <WhyUsPage />;
+            case 'how-page': return <HowItWorksPage />;
+            case 'partners-page': return <PartnersPage />;
+            case 'gigscape-page': return <GigscapePage />;
+            case 'customers-page': return <CustomersPage />;
+            case 'faq-page': return <FAQPage />;
+            default: return <HomePage onOpenModal={handleOpenModal} />;
+        }
+    };
+
     return (
         <>
             <style>{GlobalCSS}</style>
@@ -2704,14 +2666,8 @@ function App() {
 
             <Header onNavigate={handleNavigate} activePage={activePage} onToggleMobileNav={handleToggleMobileNav} />
 
-            <main className="container">
-                {activePage === 'home-page' && <HomePage onOpenModal={handleOpenModal} />}
-                {activePage === 'why-us-page' && <WhyUsPage />}
-                {activePage === 'how-page' && <HowItWorksPage />}
-                {activePage === 'partners-page' && <PartnersPage />}
-                {activePage === 'gigscape-page' && <GigscapePage />}
-                {activePage === 'customers-page' && <CustomersPage />}
-                {activePage === 'faq-page' && <FAQPage />}
+            <main className={`container ${isTransitioning ? 'is-transitioning' : ''}`}>
+                {renderPage()}
             </main>
 
             <Footer onOpenModal={handleOpenModal} />
